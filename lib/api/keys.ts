@@ -33,4 +33,8 @@ export const queryKeys = {
 
   // ─── Plantillas (futuro) ───────────────────────────────────────────────────
   plantillas: (companyId?: number) => ["plantillas", companyId] as const,
+
+  // ─── Corridas del Bot ─────────────────────────────────────────────────────
+  runs:    ()                             => ["runs"]                       as const,
+  runList: (companyId: number, page = 1) => ["runs", "list", companyId, page] as const,
 } as const;

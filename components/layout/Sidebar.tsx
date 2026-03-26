@@ -78,6 +78,15 @@ const NAV_ITEMS: NavItem[] = [
     ),
   },
   {
+    label: "Ejecuciones",
+    href: "/ejecuciones",
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M5 3l14 9-14 9V3z" />
+      </svg>
+    ),
+  },
+  {
     label: "Integraciones",
     href: "/integraciones",
     icon: (
@@ -132,8 +141,8 @@ export function Sidebar({ onClose }: { onClose?: () => void } = {}) {
 
   const filtered = search
     ? companies.filter(c =>
-        c.company_name.toLowerCase().includes(search.toLowerCase()) ||
-        c.comercial_name.toLowerCase().includes(search.toLowerCase())
+        (c.company_name ?? "").toLowerCase().includes(search.toLowerCase()) ||
+        (c.comercial_name ?? "").toLowerCase().includes(search.toLowerCase())
       )
     : companies;
 

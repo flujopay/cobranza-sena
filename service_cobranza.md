@@ -992,6 +992,515 @@ Al recibir `connection.update` con `state=open`:
 
 ---
 
+### 16. WhatsApp — Enviar por Criticidad (Plantilla Predefinida)
+
+Envía un mensaje de WhatsApp de cobranza con plantilla predefinida según criticidad. El backend genera el texto automáticamente con formato WhatsApp (*negrita*, emojis).
+
+```
+POST /api/v1/collection/whatsapp/send-collection/
+```
+
+**Headers:**
+
+```
+Authorization: Bearer <access_token>
+X-Company-Id: <company_id>
+Content-Type: application/json
+```
+
+**Body:**
+
+```json
+{
+  "criticality": "recordatorio",
+  "client_id": 123,
+  "invoice_ids": [456, 789],
+  "contact_id": null,
+  "phone_number": null,
+  "dias_plazo": 5
+}
+```
+
+| Campo                | Tipo     | Obligatorio | Notas                                                    |
+| -------------------- | -------- | :---------: | -------------------------------------------------------- |
+| `criticality`        | string   |     Si      | `recordatorio`, `por_vencer`, `en_mora`, `critico`       |
+| `client_id`          | integer  |     Si      | ID del cliente (deudor)                                  |
+| `invoice_ids`        | int[]    |     Si      | IDs de facturas a incluir en el mensaje                  |
+| `contact_id`         | integer  |     No      | ID del contacto. Si no se envía, usa el primer contacto con teléfono |
+| `phone_number`       | string   |     No      | Número destino. Si no se envía, usa contacto → cliente   |
+| `dias_plazo`         | integer  |     No      | Días de plazo para criticidad `critico` (default: 5)     |
+
+**Datos auto-resueltos por el backend:**
+- Contacto adecuado (el más antiguo con teléfono)
+- Nombre del contacto (contacto → nombre del cliente)
+- Nombre de la empresa
+- Teléfono de la empresa
+- Tabla de facturas (Folio, Vencimiento, Monto)
+- Monto total
+- **Link al portal de pagos** (generado automáticamente con `generate_payment_portal_link`)
+
+**Plantillas por criticidad (WhatsApp):**
+
+| Criticidad    | Emoji | Estilo del mensaje                                               |
+| ------------- | ----- | ---------------------------------------------------------------- |
+| `recordatorio`| 👋    | Saludo amigable, facturas pendientes, "puedes contactarnos aquí" |
+| `por_vencer`  | ⚠️    | Aviso vencimiento, "gestiona el pago a la brevedad"              |
+| `en_mora`     | 🔴    | Facturas vencidas, "coordinar plan de pago", teléfono            |
+| `critico`     | ⚠️    | ÚLTIMO AVISO, gestión de cobranza, DICOM, fecha límite           |
+
+**Response exitoso:** `200 OK`
+
+```json
+{
+  "message": "WhatsApp de cobranza enviado exitosamente.",
+  "whatsapp_text": "Hola Carlos Vega 👋\n\nTienes *3 factura(s)...",
+  "phone_number": "+56912345678",
+  "criticality": "recordatorio",
+  "invoices_count": 3,
+  "payment_portal_url": "https://app.somossena.com/verify?token=abc-123&company_id=1&redirect_to=..."
+}
+```
+
+**Errores:**
+
+| Código | error_code                | Descripción                                                 |
+| ------ | ------------------------- | ----------------------------------------------------------- |
+| 400    | `WHATSAPP_NOT_CONNECTED`  | La instancia de WhatsApp no está conectada                  |
+| 400    | `WHATSAPP_SEND_FAILED`    | Error al enviar el mensaje                                  |
+| 400    | `NO_INVOICES`             | No se encontraron facturas válidas                          |
+| 400    | `NO_PHONE`                | No se encontró teléfono de destino                          |
+| 404    | `CLIENT_NOT_FOUND`        | Cliente no encontrado o no pertenece a la empresa           |
+
+---
+
+### 17. SMS — Enviar por Criticidad (Plantilla Predefinida)
+
+Envía un SMS de cobranza con plantilla predefinida según criticidad. El backend genera el texto automáticamente.
+
+```
+POST /api/v1/collection/sms/send-collection/
+```
+
+**Headers:**
+
+```
+Authorization: Bearer <token>
+X-Company-Id: <id>
+Content-Type: application/json
+```
+
+**Body:**
+
+```json
+{
+  "criticality": "recordatorio",
+  "client_id": 123,
+  "invoice_ids": [1001, 1002, 1003],
+  "contact_id": 456,
+  "phone_number": "+56912345678",
+  "country": "chile",
+  "dias_plazo": 5
+}
+```
+
+| Campo                | Tipo   | Obligatorio | Notas                                                             |
+| -------------------- | ------ | :---------: | ----------------------------------------------------------------- |
+| `criticality`        | string |     Si      | `recordatorio`, `por_vencer`, `en_mora`, `critico`                |
+| `client_id`          | int    |     Si      | ID del cliente (deudor)                                           |
+| `invoice_ids`        | array  |     Si      | Lista de IDs de facturas (para calcular monto total)              |
+| `country`            | string |     Si      | `"chile"` o `"peru"`                                              |
+| `contact_id`         | int    |     No      | ID del contacto. Si no se envía, usa el primer contacto con teléfono |
+| `phone_number`       | string |     No      | Número destino. Si no se envía, usa el del contacto o cliente     |
+| `dias_plazo`         | int    |     No      | Días de plazo (para `critico`, default: 5)                        |
+
+**Datos auto-resueltos por el backend:**
+- Contacto adecuado (el más antiguo con teléfono)
+- **Link al portal de pagos** (generado automáticamente con `generate_payment_portal_link`)
+
+**Plantillas SMS por criticidad:**
+
+| Criticidad     | Mensaje generado                                                                                    |
+| -------------- | --------------------------------------------------------------------------------------------------- |
+| `recordatorio` | `{empresa}: Tiene 3 factura(s) pendiente(s) por $2.810.000. Consultas: (+56) 2 2345 6789`           |
+| `por_vencer`   | `{empresa}: Tiene 3 factura(s) por $2.810.000 próximas a vencer. Evite recargos: (+56) 2 2345 6789` |
+| `en_mora`      | `{empresa}: Tiene 3 factura(s) vencida(s) por $2.810.000. Regularice: (+56) 2 2345 6789`            |
+| `critico`      | `URGENTE {empresa}: Deuda $2.810.000 (3 factura(s)) en proceso de cobranza legal. Contacte (+56) 2 2345 6789 antes del 30/03/2026.` |
+
+El link al portal de pagos se genera automáticamente y se agrega como `\nPagar: {url}` al final.
+
+**Proveedores por país:**
+
+| País  | Proveedores (fallback)                                |
+| ----- | ----------------------------------------------------- |
+| Chile | Celmedia → AlteraGSM → LabsMobile → Infobip          |
+| Perú  | Contactahabilidad → Infobip → LabsMobile              |
+
+**Response exitoso:** `200 OK`
+
+```json
+{
+  "message": "SMS de cobranza enviado exitosamente.",
+  "sms_text": "Servicios Alfa SpA: Tiene 3 factura(s) pendiente(s) por $2.810.000...",
+  "phone_number": "+56912345678",
+  "criticality": "recordatorio",
+  "invoices_count": 3,
+  "payment_portal_url": "https://app.somossena.com/verify?token=abc-123&...",
+  "success": true,
+  "provider": "celmedia"
+}
+```
+
+**Errores posibles:**
+
+| Código | error_code          | Descripción                                         |
+| ------ | ------------------- | --------------------------------------------------- |
+| 400    | `SMS_SEND_FAILED`   | Todos los proveedores fallaron                      |
+| 400    | `NO_INVOICES`       | No se encontraron facturas válidas                  |
+| 400    | `NO_PHONE`          | No se encontró teléfono de destino                  |
+| 404    | `CLIENT_NOT_FOUND`  | Cliente no encontrado o no pertenece a la empresa   |
+
+---
+
+### 18. SMS — Enviar Libre
+
+Envía un SMS con texto libre (para casos personalizados).
+
+```
+POST /api/v1/collection/sms/send/
+```
+
+**Headers:**
+
+```
+Authorization: Bearer <token>
+X-Company-Id: <id>
+Content-Type: application/json
+```
+
+**Body:**
+
+```json
+{
+  "phone_number": "+56912345678",
+  "message": "Texto libre del SMS.",
+  "country": "chile",
+  "client_id": 123,
+  "contact_id": 456
+}
+```
+
+| Campo          | Tipo   | Obligatorio | Notas                                          |
+| -------------- | ------ | :---------: | ---------------------------------------------- |
+| `phone_number` | string |     Si      | Número con código de país (ej: `+56912345678`) |
+| `message`      | string |     Si      | Texto del SMS                                  |
+| `country`      | string |     Si      | `"chile"` o `"peru"`                           |
+| `client_id`    | int    |     No      | ID del cliente (para logging)                  |
+| `contact_id`   | int    |     No      | ID del contacto (para logging)                 |
+
+**Response exitoso:** `200 OK`
+
+```json
+{
+  "success": true,
+  "provider": "celmedia",
+  "message": "SMS enviado con éxito",
+  "response": { ... }
+}
+```
+
+---
+
+### 19. Email — Enviar por Criticidad (Plantilla Predefinida)
+
+Envía un correo de cobranza usando plantillas predefinidas según el nivel de criticidad. El backend construye el HTML completo: solo necesita `criticality`, `client_id` e `invoice_ids`.
+
+```
+POST /api/v1/collection/email/send-collection/
+```
+
+**Headers:**
+
+```
+Authorization: Bearer <token>
+X-Company-Id: <id>
+Content-Type: application/json
+```
+
+**Body:**
+
+```json
+{
+  "criticality": "recordatorio",
+  "client_id": 123,
+  "invoice_ids": [1001, 1002, 1003],
+  "contact_id": 456,
+  "to_email": "carlos.vega@empresa.cl",
+  "banco": "Banco Estado",
+  "cuenta": "12345678",
+  "dias_plazo": 5
+}
+```
+
+| Campo                | Tipo   | Obligatorio | Notas                                                             |
+| -------------------- | ------ | :---------: | ----------------------------------------------------------------- |
+| `criticality`        | string |     Si      | `recordatorio`, `por_vencer`, `en_mora`, `critico`                |
+| `client_id`          | int    |     Si      | ID del cliente (deudor)                                           |
+| `invoice_ids`        | array  |     Si      | Lista de IDs de facturas a incluir                                |
+| `contact_id`         | int    |     No      | ID del contacto. Si no se envía, usa el primer contacto con email |
+| `to_email`           | string |     No      | Email destino. Si no se envía, usa email del contacto o cliente   |
+| `banco`              | string |     No      | Nombre del banco (para `por_vencer`)                              |
+| `cuenta`             | string |     No      | Número de cuenta bancaria (para `por_vencer`)                     |
+| `dias_plazo`         | int    |     No      | Días de plazo (para `critico`, default: 5)                        |
+
+**Niveles de criticidad y plantillas:**
+
+| Criticidad     | Asunto generado                                              | Contenido                                      |
+| -------------- | ------------------------------------------------------------ | ----------------------------------------------- |
+| `recordatorio` | Recordatorio de facturas pendientes — {empresa}              | Tono amigable, tabla de facturas                |
+| `por_vencer`   | {n} factura(s) próximas a vencer — Acción requerida          | Datos bancarios, urgencia moderada              |
+| `en_mora`      | URGENTE: {n} factura(s) con mora — {monto}                   | Historial comercial, contacto directo           |
+| `critico`      | Último aviso — Deuda de {monto} en proceso de gestión legal  | DICOM/Equifax, gestión judicial, plazo límite   |
+
+**Datos que el backend resuelve automáticamente:**
+- Contacto adecuado (el más antiguo con email)
+- Nombre del contacto/deudor (desde `contact_id` o primer contacto del cliente)
+- Nombre, email, teléfono, RUT de la empresa emisora (desde `company`)
+- Tabla HTML con facturas (folio, vencimiento, días mora, monto)
+- Monto total calculado
+- Email destino (contacto → cliente → `to_email` override)
+- **Link al portal de pagos** (generado automáticamente con `generate_payment_portal_link`, usado en botón "Ir al Portal de Pagos")
+
+**Response exitoso:** `200 OK`
+
+```json
+{
+  "message": "Correo de cobranza enviado exitosamente.",
+  "subject": "Recordatorio de facturas pendientes — Servicios Alfa SpA",
+  "to_email": "carlos.vega@empresa.cl",
+  "criticality": "recordatorio",
+  "invoices_count": 3,
+  "payment_portal_url": "https://app.somossena.com/verify?token=abc-123&...",
+  "details": { "message": "Email sent successfully" }
+}
+```
+
+**Errores posibles:**
+
+| Código | error_code          | Descripción                                         |
+| ------ | ------------------- | --------------------------------------------------- |
+| 400    | `EMAIL_SEND_FAILED` | Error al enviar el correo vía SendGrid             |
+| 400    | `NO_INVOICES`       | No se encontraron facturas válidas                  |
+| 400    | `NO_EMAIL`          | No se encontró email destino                        |
+| 404    | `CLIENT_NOT_FOUND`  | Cliente no encontrado o no pertenece a la empresa   |
+
+---
+
+### 20. Email — Enviar Libre
+
+Envía un correo electrónico con HTML personalizado (para casos que no encajan en las plantillas predefinidas).
+
+```
+POST /api/v1/collection/email/send/
+```
+
+**Headers:**
+
+```
+Authorization: Bearer <token>
+X-Company-Id: <id>
+Content-Type: application/json
+```
+
+**Body:**
+
+```json
+{
+  "to_email": "carlos.vega@empresa.cl",
+  "to_name": "Carlos Vega",
+  "subject": "Asunto personalizado",
+  "html_body": "<html>...contenido...</html>",
+  "contact_id": 456
+}
+```
+
+| Campo        | Tipo   | Obligatorio | Notas                              |
+| ------------ | ------ | :---------: | ---------------------------------- |
+| `to_email`   | string |     Si      | Email del destinatario             |
+| `to_name`    | string |     Si      | Nombre del destinatario            |
+| `subject`    | string |     Si      | Asunto del correo                  |
+| `html_body`  | string |     Si      | HTML completo del correo           |
+| `client_id`  | int    |     No      | ID del cliente (para logging)      |
+| `contact_id` | int    |     No      | ID del contacto (para logging)     |
+
+**Response exitoso:** `200 OK`
+
+```json
+{
+  "message": "Correo enviado exitosamente.",
+  "details": { "message": "Email sent successfully" }
+}
+```
+
+---
+
+### 21. Corridas del Bot — Crear
+
+Crea una nueva corrida del bot de cobranza con `status=running`. N8N llama este endpoint al inicio de la ejecución.
+
+```
+POST /api/v1/collection/runs/
+```
+
+**Headers:**
+
+```
+Authorization: Bearer <token>
+X-Company-Id: <id>
+Content-Type: application/json
+```
+
+**Body:**
+
+```json
+{
+  "triggered_by": "manual",
+  "n8n_execution_id": "abc123"
+}
+```
+
+| Campo              | Tipo   | Obligatorio | Notas                                    |
+| ------------------ | ------ | :---------: | ---------------------------------------- |
+| `triggered_by`     | string |     No      | `manual` (default) o `scheduled`         |
+| `n8n_execution_id` | string |     No      | ID de ejecución de N8N                   |
+
+**Response exitoso:** `201 Created`
+
+```json
+{
+  "id": 1,
+  "uuid": "a1b2c3d4-...",
+  "status": "running",
+  "started_at": "2026-03-26T12:00:00Z"
+}
+```
+
+---
+
+### 22. Corridas del Bot — Listar
+
+Lista las corridas del bot de cobranza de la empresa, paginado.
+
+```
+GET /api/v1/collection/runs/
+```
+
+**Headers:**
+
+```
+Authorization: Bearer <token>
+X-Company-Id: <id>
+```
+
+**Query params:**
+
+| Param  | Tipo | Obligatorio | Notas                          |
+| ------ | ---- | :---------: | ------------------------------ |
+| `page` | int  |     No      | Página (default: 1, size: 20)  |
+
+**Response exitoso:** `200 OK`
+
+```json
+{
+  "count": 5,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 1,
+      "uuid": "a1b2c3d4-...",
+      "status": "completed",
+      "started_at": "2026-03-26T12:00:00Z",
+      "finished_at": "2026-03-26T12:05:30Z",
+      "n8n_execution_id": "abc123",
+      "debtors_processed": 15,
+      "messages_email": 10,
+      "messages_whatsapp": 3,
+      "messages_sms": 2,
+      "triggered_by": "manual",
+      "error_message": null,
+      "created": "2026-03-26T12:00:00Z"
+    }
+  ]
+}
+```
+
+| Campo               | Tipo     | Notas                                        |
+| -------------------- | -------- | -------------------------------------------- |
+| `id`                 | int      | ID de la corrida                             |
+| `uuid`               | string   | UUID único                                   |
+| `status`             | string   | `running`, `completed` o `failed`            |
+| `started_at`         | datetime | Inicio de la corrida                         |
+| `finished_at`        | datetime | Fin de la corrida (null si aún en ejecución) |
+| `n8n_execution_id`   | string   | ID de ejecución N8N (puede ser null)         |
+| `debtors_processed`  | int      | Cantidad de deudores procesados              |
+| `messages_email`     | int      | Emails enviados                              |
+| `messages_whatsapp`  | int      | WhatsApps enviados                           |
+| `messages_sms`       | int      | SMS enviados                                 |
+| `triggered_by`       | string   | `manual` o `scheduled`                       |
+| `error_message`      | string   | Mensaje de error (null si exitoso)           |
+| `created`            | datetime | Fecha de creación del registro               |
+
+---
+
+### 23. Corridas del Bot — Actualizar
+
+Actualiza una corrida existente. N8N llama este endpoint al finalizar la ejecución para marcar `status=completed` y actualizar contadores.
+
+```
+PATCH /api/v1/collection/runs/{id}/
+```
+
+**Headers:**
+
+```
+Authorization: Bearer <token>
+X-Company-Id: <id>
+Content-Type: application/json
+```
+
+**Body:**
+
+```json
+{
+  "status": "completed",
+  "debtors_processed": 15,
+  "messages_email": 10,
+  "messages_whatsapp": 3,
+  "messages_sms": 2
+}
+```
+
+| Campo               | Tipo     | Obligatorio | Notas                                              |
+| -------------------- | -------- | :---------: | -------------------------------------------------- |
+| `status`             | string   |     No      | `running`, `completed` o `failed`                  |
+| `finished_at`        | datetime |     No      | Se auto-asigna si status es `completed` o `failed` |
+| `n8n_execution_id`   | string   |     No      | ID de ejecución de N8N                             |
+| `debtors_processed`  | int      |     No      | Cantidad de deudores procesados                    |
+| `messages_email`     | int      |     No      | Emails enviados                                    |
+| `messages_whatsapp`  | int      |     No      | WhatsApps enviados                                 |
+| `messages_sms`       | int      |     No      | SMS enviados                                       |
+| `error_message`      | string   |     No      | Mensaje de error                                   |
+
+**Response exitoso:** `200 OK` (retorna el objeto completo de la corrida con los mismos campos del listado)
+
+**Errores posibles:**
+
+| Código | error_code      | Descripción              |
+| ------ | --------------- | ------------------------ |
+| 404    | `RUN_NOT_FOUND` | Corrida no encontrada    |
+
+---
+
 ## Lista de Endpoints
 
 | #  | Método   | URL                                    | ViewSet                    | Permiso                      |
@@ -1011,7 +1520,15 @@ Al recibir `connection.update` con `state=open`:
 | 13 | `GET`    | `/collection/whatsapp/status/`         | `CollectionWhatsAppViewSet`  | `CollectionJWTPermission`    |
 | 14 | `POST`   | `/collection/whatsapp/send-message/`   | `CollectionWhatsAppViewSet`  | `CollectionJWTPermission`    |
 | 15 | `DELETE` | `/collection/whatsapp/delete-instance/`| `CollectionWhatsAppViewSet`  | `CollectionJWTPermission`    |
-| 16 | `POST`   | `/collection/whatsapp/webhook/`        | `CollectionWhatsAppViewSet`  | Público (`AllowAny`)         |
+| 16 | `POST`   | `/collection/whatsapp/send-collection/`| `CollectionWhatsAppViewSet`  | `CollectionJWTPermission`    |
+| 17 | `POST`   | `/collection/whatsapp/webhook/`        | `CollectionWhatsAppViewSet`  | Público (`AllowAny`)         |
+| 18 | `POST`   | `/collection/sms/send-collection/`     | `CollectionSMSViewSet`       | `CollectionJWTPermission`    |
+| 19 | `POST`   | `/collection/sms/send/`                | `CollectionSMSViewSet`       | `CollectionJWTPermission`    |
+| 20 | `POST`   | `/collection/email/send-collection/`   | `CollectionEmailViewSet`     | `CollectionJWTPermission`    |
+| 21 | `POST`   | `/collection/email/send/`              | `CollectionEmailViewSet`     | `CollectionJWTPermission`    |
+| 22 | `POST`   | `/collection/runs/`                    | `CollectionRunViewSet`       | `CollectionJWTPermission`    |
+| 23 | `GET`    | `/collection/runs/`                    | `CollectionRunViewSet`       | `CollectionJWTPermission`    |
+| 24 | `PATCH`  | `/collection/runs/{id}/`               | `CollectionRunViewSet`       | `CollectionJWTPermission`    |
 
 > **Base URL:** `/api/v1/collection/`
 
@@ -1029,6 +1546,9 @@ router.register("collection/invoices", CollectionInvoiceViewSet, basename="colle
 router.register("collection/payments", CollectionPaymentViewSet, basename="collection-payments")
 router.register("collection/contacts", CollectionContactViewSet, basename="collection-contacts")
 router.register("collection/whatsapp", CollectionWhatsAppViewSet, basename="collection-whatsapp")
+router.register("collection/sms", CollectionSMSViewSet, basename="collection-sms")
+router.register("collection/email", CollectionEmailViewSet, basename="collection-email")
+router.register("collection/runs", CollectionRunViewSet, basename="collection-runs")
 ```
 
 ---
@@ -1066,7 +1586,11 @@ router.register("collection/whatsapp", CollectionWhatsAppViewSet, basename="coll
    (X-Company-Id: <id>)
    (?page=1&limit=20&search=...)
 
-7. POST /collection/whatsapp/send-message/ → Enviar mensaje WhatsApp
+7. POST /collection/sms/send-collection/       → Enviar SMS por criticidad (plantilla)
+   POST /collection/email/send-collection/    → Enviar email por criticidad (plantilla)
+   POST /collection/whatsapp/send-message/    → Enviar mensaje WhatsApp
+   POST /collection/sms/send/                 → Enviar SMS libre
+   POST /collection/email/send/               → Enviar email libre
    (Authorization: Bearer <token>)
    (X-Company-Id: <id>)
 ```

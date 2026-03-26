@@ -59,6 +59,17 @@ function IniciarCobranzaModal() {
           Asegúrate de tener el SII y WhatsApp integrados antes de iniciar.
         </p>
       </div>
+      <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 flex gap-3 items-start">
+        <svg className="shrink-0 text-amber-500 mt-0.5" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
+        </svg>
+        <p className="text-xs text-amber-700 leading-relaxed">
+          Este proceso puede tardar varios minutos. Puedes revisar el estado en{" "}
+          <a href="/ejecuciones" className="font-semibold underline underline-offset-2 hover:text-amber-900">
+            Ejecuciones
+          </a>.
+        </p>
+      </div>
       <div className="flex gap-3 pt-1">
         <button onClick={hideModal} disabled={loading}
           className="flex-1 rounded-xl border border-gray-200 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors cursor-pointer disabled:opacity-50">

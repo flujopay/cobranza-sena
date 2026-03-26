@@ -54,6 +54,16 @@ const SECTIONS = [
     ),
   },
   {
+    label: "Ejecuciones",
+    desc: "Historial de ejecuciones del agente de cobranza con métricas por ejecución.",
+    href: "/ejecuciones",
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M5 3l14 9-14 9V3z" />
+      </svg>
+    ),
+  },
+  {
     label: "Integraciones",
     desc: "Conecta el SII y WhatsApp para automatizar la importación y el envío de mensajes.",
     href: "/integraciones",
