@@ -54,6 +54,7 @@ export function IntegracionesGrid() {
         actionLabel="Sincronizar"
         connected={siiConnected}
         connectedDetail={siiDetail}
+        hideActionWhenConnected
         onAction={() => showModal({ title: "Configurar SII", content: <SiiModalContent />, closeOnOutsideClick: true, width: "520px", modalId: "sii" })}
         onDisconnect={handleDisconnectSii}
         isDisconnecting={deleteSii.isPending}
@@ -65,6 +66,7 @@ export function IntegracionesGrid() {
         actionLabel="Conectar ahora"
         connected={whatsappConnected}
         connectedDetail={waDetail}
+        hideActionWhenConnected
         onAction={() => showModal({ title: "Conectar WhatsApp", content: <WhatsAppModalContent />, closeOnOutsideClick: false, width: "420px", modalId: "whatsapp" })}
         onDisconnect={whatsappConnected ? handleDisconnectWhatsApp : undefined}
         isDisconnecting={deleteWa.isPending}

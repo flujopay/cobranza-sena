@@ -10,14 +10,14 @@ import type { Company } from "@/lib/api/types/auth";
 
 function Avatar({ email, photo, size = 48 }: { email: string; photo?: string | null; size?: number }) {
   const initial = email[0]?.toUpperCase() ?? "?";
-  if (photo) return <img src={photo} alt="" style={{ width: size, height: size, borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />;
+  if (photo) return <img src={photo} alt="" style={{ width: size, height: size }} className="rounded-full object-cover shrink-0" />;
   return (
-    <div style={{
-      width: size, height: size, borderRadius: "50%", flexShrink: 0,
-      background: "linear-gradient(135deg, #3771D1 0%, #5b90e8 100%)",
-      display: "flex", alignItems: "center", justifyContent: "center",
-      color: "#fff", fontSize: size * 0.38, fontWeight: 700,
-    }}>{initial}</div>
+    <div
+      className="rounded-full shrink-0 flex items-center justify-center text-white font-bold"
+      style={{ width: size, height: size, background: "linear-gradient(135deg, #3771D1 0%, #5b90e8 100%)", fontSize: size * 0.38 }}
+    >
+      {initial}
+    </div>
   );
 }
 
@@ -25,8 +25,8 @@ function Avatar({ email, photo, size = 48 }: { email: string; photo?: string | n
 
 function StatusDot({ ok, label }: { ok: boolean; label: string }) {
   return (
-    <span style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: 12, color: ok ? "#16a34a" : "#6b7280" }}>
-      <span style={{ width: 7, height: 7, borderRadius: "50%", background: ok ? "#22c55e" : "#d1d5db", display: "inline-block", flexShrink: 0 }} />
+    <span className="inline-flex items-center gap-1.5 text-xs" style={{ color: ok ? "#16a34a" : "#6b7280" }}>
+      <span className="w-1.5 h-1.5 rounded-full shrink-0 inline-block" style={{ background: ok ? "#22c55e" : "#d1d5db" }} />
       {label}
     </span>
   );
@@ -35,7 +35,7 @@ function StatusDot({ ok, label }: { ok: boolean; label: string }) {
 // ─── Skeleton ─────────────────────────────────────────────────────────────────
 
 function Sk({ w = "100%", h = 14 }: { w?: string | number; h?: number }) {
-  return <div style={{ width: w, height: h, borderRadius: 6, background: "#f3f4f6" }} />;
+  return <div className="rounded-md bg-gray-100" style={{ width: w, height: h }} />;
 }
 
 // ─── Company section ──────────────────────────────────────────────────────────
@@ -47,35 +47,36 @@ function CompanySection({ company, isActive, siiConnected, onConfigureSii }: {
   onConfigureSii: () => void;
 }) {
   return (
-    <div style={{
-      border: isActive ? "2px solid #3771D1" : "1.5px solid #e5e7eb",
-      borderRadius: 14, background: "#fff", overflow: "hidden",
-    }}>
+    <div className={[
+      "rounded-2xl bg-white overflow-hidden",
+      isActive ? "border-2 border-brand" : "border border-gray-200",
+    ].join(" ")}>
+
       {/* Header empresa */}
-      <div style={{ padding: "16px 20px", display: "flex", alignItems: "center", gap: 14, borderBottom: "1px solid #f3f4f6" }}>
-        <div style={{ width: 44, height: 44, borderRadius: 10, background: "#f3f4f6", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, overflow: "hidden" }}>
+      <div className="px-4 sm:px-5 py-4 flex items-center gap-3 sm:gap-4 border-b border-gray-50">
+        <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gray-100 flex items-center justify-center shrink-0 overflow-hidden">
           {company.photo
-            ? <img src={company.photo} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-            : <span style={{ fontSize: 18, fontWeight: 700, color: "#3771D1" }}>{company.company_name[0]}</span>
+            ? <img src={company.photo} alt="" className="w-full h-full object-cover" />
+            : <span className="text-lg font-bold text-brand">{company.company_name[0]}</span>
           }
         </div>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: 15, fontWeight: 600, color: "#111827", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+        <div className="flex-1 min-w-0">
+          <div className="text-sm sm:text-[15px] font-semibold text-gray-900 truncate">
             {company.comercial_name || company.company_name}
           </div>
-          <div style={{ fontSize: 12, color: "#6b7280", marginTop: 1 }}>RUT {company.ruc}</div>
+          <div className="text-xs text-gray-500 mt-0.5">RUT {company.ruc}</div>
         </div>
         {isActive && (
-          <span style={{ fontSize: 11, fontWeight: 600, color: "#3771D1", background: "#dbeafe", padding: "3px 10px", borderRadius: 20 }}>
+          <span className="text-[11px] font-semibold text-brand bg-blue-50 px-2.5 py-1 rounded-full shrink-0">
             Activa
           </span>
         )}
       </div>
 
       {/* Info + integraciones */}
-      <div style={{ padding: "16px 20px", display: "flex", flexDirection: "column", gap: 16 }}>
+      <div className="px-4 sm:px-5 py-4 flex flex-col gap-4">
         {/* Datos básicos */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px 24px" }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-x-6 sm:gap-y-2.5">
           {[
             { label: "Email comercial", value: company.comercial_email || "—" },
             { label: "Teléfono",        value: company.comercial_phone  || "—" },
@@ -83,27 +84,22 @@ function CompanySection({ company, isActive, siiConnected, onConfigureSii }: {
             { label: "Razón social",    value: company.company_name },
           ].map(({ label, value }) => (
             <div key={label}>
-              <div style={{ fontSize: 11, color: "#9ca3af", marginBottom: 2 }}>{label}</div>
-              <div style={{ fontSize: 13, color: "#374151", fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{value}</div>
+              <div className="text-[11px] text-gray-400 mb-0.5">{label}</div>
+              <div className="text-sm text-gray-700 font-medium truncate">{value}</div>
             </div>
           ))}
         </div>
 
         {/* Integraciones */}
-        <div style={{ borderTop: "1px solid #f3f4f6", paddingTop: 14, display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 10 }}>
-          <div style={{ display: "flex", gap: 20 }}>
+        <div className="border-t border-gray-100 pt-3 flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap gap-4">
             <StatusDot ok={siiConnected}               label={siiConnected ? "SII conectado" : "SII no conectado"} />
             <StatusDot ok={company.whatsapp.connected} label={company.whatsapp.connected ? `WhatsApp: ${company.whatsapp.phone}` : "WhatsApp no conectado"} />
           </div>
-          {/* Acceso directo a configurar SII sin salir de la página */}
           {!siiConnected && (
             <button
               onClick={onConfigureSii}
-              style={{
-                display: "inline-flex", alignItems: "center", gap: 6,
-                padding: "6px 14px", borderRadius: 8, fontSize: 12, fontWeight: 600,
-                background: "#3771D1", color: "#fff", border: "none", cursor: "pointer",
-              }}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-brand text-white hover:bg-brand-hover transition-colors cursor-pointer"
             >
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 0 0-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 0 0-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 0 0-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 0 0-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 0 0 1.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
@@ -121,14 +117,9 @@ function CompanySection({ company, isActive, siiConnected, onConfigureSii }: {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function CuentaPage() {
-  const { data: me, isLoading }     = useMe();
-  const { companyId }               = useAuthStore();
-  const { showModal }               = useModalStore();
-
-  // Empresa activa siempre primera
-  const companies = me?.companies
-    ? [...me.companies].sort((a, b) => (b.id === companyId ? 1 : 0) - (a.id === companyId ? 1 : 0))
-    : [];
+  const { data: me, isLoading } = useMe();
+  const { companyId }           = useAuthStore();
+  const { showModal }           = useModalStore();
 
   function openSiiModal() {
     showModal({
@@ -140,47 +131,54 @@ export default function CuentaPage() {
     });
   }
 
+  // Empresa activa siempre primera
+  const companies = me?.companies
+    ? [...me.companies].sort((a, b) => (b.id === companyId ? 1 : 0) - (a.id === companyId ? 1 : 0))
+    : [];
+
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 24, maxWidth: 860 }}>
+    <div className="flex flex-col gap-5 max-w-3xl">
       {/* Breadcrumb */}
       <div>
-        <p style={{ fontSize: 13, color: "#9ca3af", marginBottom: 4 }}>
-          Inicio / <span style={{ color: "#374151", fontWeight: 500 }}>Mi cuenta</span>
+        <p className="text-xs text-gray-400 mb-1">
+          Inicio / <span className="text-gray-600 font-medium">Mi cuenta</span>
         </p>
-        <h1 style={{ fontSize: 22, fontWeight: 600, color: "#111827" }}>Mi cuenta</h1>
+        <h1 className="text-xl sm:text-2xl font-semibold text-gray-900">Mi cuenta</h1>
       </div>
 
-      {/* Perfil + empresa en una sola card horizontal */}
-      <div style={{ background: "#fff", borderRadius: 14, border: "1.5px solid #e5e7eb", padding: "20px 24px", display: "flex", alignItems: "center", gap: 20, flexWrap: "wrap" }}>
+      {/* Perfil */}
+      <div className="bg-white rounded-2xl border border-gray-200 px-4 sm:px-6 py-4 flex items-center gap-4 flex-wrap">
         {isLoading
-          ? <div style={{ width: 48, height: 48, borderRadius: "50%", background: "#f3f4f6" }} />
+          ? <div className="w-12 h-12 rounded-full bg-gray-100" />
           : <Avatar email={me?.email ?? "?"} photo={me?.photo} size={48} />
         }
-        <div style={{ flex: 1, minWidth: 0 }}>
+        <div className="flex-1 min-w-0">
           {isLoading
-            ? <><Sk w={160} h={15} /><div style={{ marginTop: 6 }}><Sk w={200} h={12} /></div></>
+            ? <><Sk w={160} h={15} /><div className="mt-1.5"><Sk w={200} h={12} /></div></>
             : <>
-                <div style={{ fontSize: 15, fontWeight: 600, color: "#111827" }}>{me?.email}</div>
-                <div style={{ fontSize: 12, color: "#6b7280", marginTop: 2 }}>ID #{me?.id} · {me?.companies.length ?? 0} empresa{(me?.companies.length ?? 0) !== 1 ? "s" : ""}</div>
+                <div className="text-sm sm:text-[15px] font-semibold text-gray-900 truncate">{me?.email}</div>
+                <div className="text-xs text-gray-500 mt-0.5">
+                  ID #{me?.id} · {me?.companies.length ?? 0} empresa{(me?.companies.length ?? 0) !== 1 ? "s" : ""}
+                </div>
               </>
           }
         </div>
       </div>
 
       {/* Empresas */}
-      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-        <h2 style={{ fontSize: 14, fontWeight: 600, color: "#374151" }}>
+      <div className="flex flex-col gap-3">
+        <h2 className="text-sm font-semibold text-gray-700">
           Empresas registradas
-          {me && <span style={{ marginLeft: 6, fontWeight: 400, color: "#9ca3af" }}>({me.companies.length})</span>}
+          {me && <span className="ml-1.5 font-normal text-gray-400">({me.companies.length})</span>}
         </h2>
 
         {isLoading && (
-          <div style={{ border: "1.5px solid #e5e7eb", borderRadius: 14, padding: "20px 24px", display: "flex", flexDirection: "column", gap: 14 }}>
-            <div style={{ display: "flex", gap: 14, alignItems: "center" }}>
+          <div className="rounded-2xl border border-gray-200 p-4 sm:p-5 flex flex-col gap-4">
+            <div className="flex gap-3 items-center">
               <Sk w={44} h={44} />
-              <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 6 }}><Sk w="50%" h={15} /><Sk w="30%" h={12} /></div>
+              <div className="flex-1 flex flex-col gap-1.5"><Sk w="50%" h={15} /><Sk w="30%" h={12} /></div>
             </div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px 24px" }}>
+            <div className="grid grid-cols-2 gap-3">
               {[1,2,3,4].map(i => <Sk key={i} h={36} />)}
             </div>
           </div>

@@ -170,7 +170,7 @@ export function NuevaPlantillaModal() {
       {/* Nivel */}
       <div>
         <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Nivel de riesgo del deudor</label>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           {NIVELES.map(n => (
             <button
               key={n.value}

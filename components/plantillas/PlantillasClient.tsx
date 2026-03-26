@@ -36,24 +36,41 @@ const CANAL_ICONS: Record<Canal, React.ReactNode> = {
 
 // ─── Tabla de facturas de ejemplo ────────────────────────────────────────────
 
-function FacturasTable({ canal }: { canal: Canal }) {
+function FacturasListWhatsApp() {
   const fmt = (n: number) => "$" + n.toLocaleString("es-CL");
   const total = PREVIEW_FACTURAS.reduce((s, f) => s + f.monto, 0);
-
-  if (canal === "sms") {
-    // SMS no tiene tabla — solo texto resumido
-    return null;
-  }
-
   return (
-    <div className="mt-3 rounded-xl border border-gray-200 overflow-hidden text-[11px]">
-      <table className="w-full">
+    <div className="text-[12px] text-gray-800 flex flex-col gap-1.5">
+      <div className="flex justify-between gap-3 text-[11px] font-semibold text-gray-500 border-b border-[#c8f0b0] pb-1 mb-0.5">
+        <span>Folio</span>
+        <span>Vencimiento</span>
+        <span>Monto</span>
+      </div>
+      {PREVIEW_FACTURAS.map(f => (
+        <div key={f.folio} className="flex justify-between gap-3">
+          <span className="font-mono text-gray-600">{f.folio}</span>
+          <span className="text-gray-500">{f.fecha_vencimiento}</span>
+          <span className="font-semibold">{fmt(f.monto)}</span>
+        </div>
+      ))}
+      <div className="border-t border-[#c8f0b0] mt-1 pt-1 flex justify-between font-bold">
+        <span>Total</span>
+        <span>{fmt(total)}</span>
+      </div>
+    </div>
+  );
+}
+
+function FacturasTable() {
+  const fmt = (n: number) => "$" + n.toLocaleString("es-CL");
+  const total = PREVIEW_FACTURAS.reduce((s, f) => s + f.monto, 0);
+  return (
+    <div className="mt-3 rounded-xl border border-gray-200 overflow-x-auto text-[11px]">
+      <table className="w-full min-w-[300px]">
         <thead>
           <tr className="bg-gray-50 text-gray-500 font-semibold">
             <th className="text-left px-3 py-2">Folio</th>
-            <th className="text-left px-3 py-2">Emisión</th>
             <th className="text-left px-3 py-2">Vencimiento</th>
-            <th className="text-right px-3 py-2">Días mora</th>
             <th className="text-right px-3 py-2">Monto</th>
           </tr>
         </thead>
@@ -61,21 +78,14 @@ function FacturasTable({ canal }: { canal: Canal }) {
           {PREVIEW_FACTURAS.map(f => (
             <tr key={f.folio} className="bg-white">
               <td className="px-3 py-2 font-mono text-gray-700">{f.folio}</td>
-              <td className="px-3 py-2 text-gray-500">{f.fecha_emision}</td>
               <td className="px-3 py-2 text-gray-500">{f.fecha_vencimiento}</td>
-              <td className="px-3 py-2 text-right">
-                {f.dias_mora !== null
-                  ? <span className="text-red-600 font-semibold">{f.dias_mora}d</span>
-                  : <span className="text-gray-400">—</span>
-                }
-              </td>
               <td className="px-3 py-2 text-right font-semibold text-gray-800">{fmt(f.monto)}</td>
             </tr>
           ))}
         </tbody>
         <tfoot>
           <tr className="bg-gray-50 border-t border-gray-200 font-bold text-gray-700">
-            <td colSpan={4} className="px-3 py-2 text-right">Total</td>
+            <td colSpan={2} className="px-3 py-2 text-right">Total</td>
             <td className="px-3 py-2 text-right">{fmt(total)}</td>
           </tr>
         </tfoot>
@@ -138,12 +148,27 @@ function PlantillaCard({ plantilla }: { plantilla: Plantilla }) {
 
           {/* Burbuja de mensaje según canal */}
           {plantilla.canal === "whatsapp" ? (
-            <div className="bg-[#e7ffd9] rounded-2xl rounded-tl-sm px-4 py-3 text-[12px] text-gray-800 leading-relaxed whitespace-pre-wrap max-w-xs shadow-sm">
-              {preview.replace("{{facturas_detalle}}", "ver tabla abajo")}
+            <div className="flex flex-col gap-1 max-w-xs">
+              <div className="bg-[#e7ffd9] rounded-2xl rounded-tl-sm px-4 py-3 text-[12px] text-gray-800 leading-relaxed whitespace-pre-wrap shadow-sm">
+                {preview.replace("{{facturas_detalle}}", "ver tabla abajo")}
+              </div>
+              <div className="bg-[#e7ffd9] rounded-2xl rounded-tl-sm px-3 py-3 shadow-sm">
+                <FacturasListWhatsApp />
+              </div>
+              <div className="bg-[#e7ffd9] rounded-2xl rounded-tl-sm px-4 py-2 text-[12px] shadow-sm">
+                <span className="text-gray-500 font-medium">Pagar: </span>
+                <span className="text-blue-600 underline">https://somossena.com/pago/abc123</span>
+              </div>
             </div>
           ) : plantilla.canal === "sms" ? (
-            <div className="bg-gray-100 rounded-2xl rounded-tl-sm px-4 py-3 text-[12px] text-gray-800 leading-relaxed whitespace-pre-wrap max-w-xs shadow-sm">
-              {preview}
+            <div className="flex flex-col gap-1 max-w-xs">
+              <div className="bg-gray-100 rounded-2xl rounded-tl-sm px-4 py-3 text-[12px] text-gray-800 leading-relaxed whitespace-pre-wrap shadow-sm">
+                {preview}
+              </div>
+              <div className="bg-gray-100 rounded-2xl rounded-tl-sm px-4 py-2 text-[12px] shadow-sm">
+                <span className="text-gray-500 font-medium">Pagar: </span>
+                <span className="text-blue-600 underline">https://somossena.com/pago/abc123</span>
+              </div>
             </div>
           ) : (
             /* Email */
@@ -157,20 +182,17 @@ function PlantillaCard({ plantilla }: { plantilla: Plantilla }) {
               <div className="px-4 py-3 text-gray-700 leading-relaxed whitespace-pre-wrap bg-white">
                 {preview.replace("{{facturas_detalle}}", "ver tabla abajo")}
               </div>
+              <FacturasTable />
+              <div className="px-4 py-4 bg-white border-t border-gray-100">
+                <button
+                  type="button"
+                  className="px-5 py-2.5 bg-brand text-white text-[12px] font-semibold rounded-lg cursor-default"
+                >
+                  Ir al Portal de Pagos
+                </button>
+              </div>
             </div>
           )}
-
-          {/* Tabla de facturas */}
-          <FacturasTable canal={plantilla.canal} />
-
-          {/* Variables disponibles */}
-          <div className="mt-3 flex flex-wrap gap-1.5">
-            {plantilla.variables.map(v => (
-              <code key={v} className="text-[10px] bg-brand-light text-brand px-2 py-0.5 rounded-md font-mono border border-brand/10">
-                {v}
-              </code>
-            ))}
-          </div>
         </div>
       )}
     </div>
@@ -197,47 +219,38 @@ export function PlantillasClient() {
   return (
     <div className="max-w-4xl mx-auto">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Plantillas de Mensaje</h1>
-          <p className="text-sm text-gray-500 mt-0.5">
-            Mensajes predefinidos para contactar deudores según canal y nivel de riesgo.
-          </p>
-        </div>
-        {/* <button
-          onClick={abrirNuevaPlantilla}
-          className="flex items-center gap-2 px-4 py-2 bg-brand text-white text-sm font-semibold rounded-xl hover:bg-brand-hover active:bg-brand-active transition-colors shadow-sm shadow-brand/20 cursor-pointer"
-        >
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
-          </svg>
-          Nueva plantilla
-        </button> */}
+      <div className="mb-6">
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Plantillas de Mensaje</h1>
+        <p className="text-sm text-gray-500 mt-0.5">
+          Mensajes predefinidos para contactar deudores según canal y nivel de riesgo.
+        </p>
       </div>
 
-      {/* Tabs de canal */}
-      <div className="flex gap-2 mb-6 border-b border-gray-200">
-        {CANALES.map(c => (
-          <button
-            key={c}
-            onClick={() => setCanal(c)}
-            className={[
-              "flex items-center gap-2 px-4 py-2.5 text-sm font-medium transition-colors -mb-px border-b-2 cursor-pointer",
-              canal === c
-                ? "text-brand border-brand"
-                : "text-gray-500 border-transparent hover:text-gray-700 hover:border-gray-300",
-            ].join(" ")}
-          >
-            <span className={canal === c ? "text-brand" : "text-gray-400"}>{CANAL_ICONS[c]}</span>
-            {CANAL_LABELS[c]}
-            <span className={[
-              "text-[10px] font-semibold px-1.5 py-0.5 rounded-full",
-              canal === c ? "bg-brand text-white" : "bg-gray-100 text-gray-500",
-            ].join(" ")}>
-              {PLANTILLAS_MOCK.filter(p => p.canal === c).length}
-            </span>
-          </button>
-        ))}
+      {/* Tabs de canal — scrollable en mobile */}
+      <div className="mb-6 border-b border-gray-200 overflow-x-auto">
+        <div className="flex gap-1 min-w-max">
+          {CANALES.map(c => (
+            <button
+              key={c}
+              onClick={() => setCanal(c)}
+              className={[
+                "flex items-center gap-1.5 px-3 sm:px-4 py-2.5 text-sm font-medium transition-colors -mb-px border-b-2 cursor-pointer whitespace-nowrap",
+                canal === c
+                  ? "text-brand border-brand"
+                  : "text-gray-500 border-transparent hover:text-gray-700 hover:border-gray-300",
+              ].join(" ")}
+            >
+              <span className={canal === c ? "text-brand" : "text-gray-400"}>{CANAL_ICONS[c]}</span>
+              {CANAL_LABELS[c]}
+              <span className={[
+                "text-[10px] font-semibold px-1.5 py-0.5 rounded-full",
+                canal === c ? "bg-brand text-white" : "bg-gray-100 text-gray-500",
+              ].join(" ")}>
+                {PLANTILLAS_MOCK.filter(p => p.canal === c).length}
+              </span>
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Info banner */}

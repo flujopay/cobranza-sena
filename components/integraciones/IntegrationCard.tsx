@@ -8,7 +8,8 @@ interface IntegrationCardProps {
   descripcion: string;
   actionLabel: string;
   connected: boolean;
-  connectedDetail?: string; // ej. RUT o teléfono cuando está conectado
+  connectedDetail?: string;
+  hideActionWhenConnected?: boolean;
   onAction: () => void;
   onDisconnect?: () => void;
   isDisconnecting?: boolean;
@@ -21,6 +22,7 @@ export function IntegrationCard({
   actionLabel,
   connected,
   connectedDetail,
+  hideActionWhenConnected,
   onAction,
   onDisconnect,
   isDisconnecting,
@@ -51,17 +53,19 @@ export function IntegrationCard({
 
       {/* Acciones */}
       <div className="px-6 pb-6 flex flex-col gap-2">
-        <button
-          onClick={onAction}
-          className={[
-            "w-full rounded-xl py-2.5 text-sm font-semibold transition-all duration-150 cursor-pointer",
-            connected
-              ? "bg-green-50 text-green-700 hover:bg-green-100 border border-green-200"
-              : "bg-brand hover:bg-brand-hover active:scale-[0.98] text-white shadow-sm shadow-brand/20",
-          ].join(" ")}
-        >
-          {connected ? "Administrar" : actionLabel}
-        </button>
+        {(!connected || !hideActionWhenConnected) && (
+          <button
+            onClick={onAction}
+            className={[
+              "w-full rounded-xl py-2.5 text-sm font-semibold transition-all duration-150 cursor-pointer",
+              connected
+                ? "bg-green-50 text-green-700 hover:bg-green-100 border border-green-200"
+                : "bg-brand hover:bg-brand-hover active:scale-[0.98] text-white shadow-sm shadow-brand/20",
+            ].join(" ")}
+          >
+            {connected ? "Administrar" : actionLabel}
+          </button>
+        )}
 
         {/* Desconectar — solo visible cuando conectado */}
         {connected && onDisconnect && (

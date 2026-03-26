@@ -53,9 +53,16 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
 
   setActiveCompany(companies, companyId) {
-    const found = companies.find((c) => c.id === companyId) ?? companies[0] ?? null;
-    // Solo actualiza si cambió (evita re-renders innecesarios)
-    if (found?.id !== get().activeCompany?.id || found?.whatsapp.connected !== get().activeCompany?.whatsapp.connected) {
+    const found   = companies.find((c) => c.id === companyId) ?? companies[0] ?? null;
+    const current = get().activeCompany;
+    // Actualiza si cambió algún campo relevante
+    if (
+      found?.id                   !== current?.id                   ||
+      found?.whatsapp.connected   !== current?.whatsapp.connected   ||
+      found?.whatsapp.phone       !== current?.whatsapp.phone       ||
+      found?.has_sii_credentials  !== current?.has_sii_credentials  ||
+      found?.ruc                  !== current?.ruc
+    ) {
       set({ activeCompany: found });
     }
   },

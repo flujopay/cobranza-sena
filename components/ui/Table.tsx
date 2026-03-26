@@ -293,9 +293,9 @@ export function Table<T>({
     <div style={{ display: "flex", flexDirection: "column", background: "#fff", borderRadius: 16, border: "1px solid #e5e7eb", boxShadow: "0 1px 4px rgba(0,0,0,0.05)", overflow: "hidden" }}>
 
       {/* Toolbar */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "12px 16px", borderBottom: "1px solid #f3f4f6" }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "12px 16px", borderBottom: "1px solid #f3f4f6", flexWrap: "wrap" }}>
         {/* Búsqueda */}
-        <div style={{ position: "relative", flex: 1, maxWidth: 280 }}>
+        <div style={{ position: "relative", flex: 1, minWidth: 160, maxWidth: 320 }}>
           <svg style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", color: "#9ca3af", pointerEvents: "none" }}
             width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
@@ -324,7 +324,7 @@ export function Table<T>({
           )}
         </div>
 
-        <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0, flexWrap: "wrap" }}>
           {/* Indicador de fetching */}
           {isFetching && !isLoading && (
             <svg className="animate-spin" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2">
@@ -417,7 +417,7 @@ export function Table<T>({
 
       {/* Paginación */}
       {totalPages > 1 && (
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "10px 16px", borderTop: "1px solid #f3f4f6", background: "#fafafa" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, padding: "10px 12px", borderTop: "1px solid #f3f4f6", background: "#fafafa", flexWrap: "wrap" }}>
           <button
             onClick={() => changePage(Math.max(1, safePage - 1))}
             disabled={safePage === 1}
@@ -437,7 +437,10 @@ export function Table<T>({
             Anterior
           </button>
 
-          <PaginationControls page={safePage} totalPages={totalPages} onPageChange={changePage} />
+          <div className="hidden sm:flex">
+            <PaginationControls page={safePage} totalPages={totalPages} onPageChange={changePage} />
+          </div>
+          <span className="sm:hidden text-xs text-gray-500">{safePage} / {totalPages}</span>
 
           <button
             onClick={() => changePage(Math.min(totalPages, safePage + 1))}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useModalStore } from "@/store/modalStore";
+import { useRef, useState, useEffect, useCallback } from "react";
 
 function IniciarCobranzaModal() {
   const { hideModal } = useModalStore();
@@ -32,48 +33,141 @@ function IniciarCobranzaModal() {
   );
 }
 
+const STORAGE_KEY = "cobranza-fab-pos";
+const DEFAULT_POS = { x: -8, y: -32 }; // right/bottom offset from corner
+
 export function CobranzaFAB() {
   const { showModal } = useModalStore();
 
+  // Posición en px desde top-left de la ventana
+  const [pos, setPos] = useState<{ x: number; y: number } | null>(null);
+  const dragging   = useRef(false);
+  const moved      = useRef(false);
+  const offset     = useRef({ x: 0, y: 0 });
+  const btnRef     = useRef<HTMLDivElement>(null);
+
+  // Inicializar posición desde localStorage o default
+  useEffect(() => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      try {
+        const p = JSON.parse(saved);
+        setPos(clamp(p.x, p.y));
+        return;
+      } catch {}
+    }
+    setPos(clamp(
+      window.innerWidth  + DEFAULT_POS.x - 180,
+      window.innerHeight + DEFAULT_POS.y - 48,
+    ));
+  }, []);
+
+  function clamp(x: number, y: number) {
+    const w = btnRef.current?.offsetWidth  ?? 180;
+    const h = btnRef.current?.offsetHeight ?? 48;
+    return {
+      x: Math.max(8, Math.min(x, window.innerWidth  - w - 8)),
+      y: Math.max(8, Math.min(y, window.innerHeight - h - 8)),
+    };
+  }
+
+  const onMouseDown = useCallback((e: React.MouseEvent) => {
+    if (!btnRef.current) return;
+    dragging.current = true;
+    moved.current    = false;
+    const rect = btnRef.current.getBoundingClientRect();
+    offset.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+    e.preventDefault();
+  }, []);
+
+  const onTouchStart = useCallback((e: React.TouchEvent) => {
+    if (!btnRef.current) return;
+    dragging.current = true;
+    moved.current    = false;
+    const rect  = btnRef.current.getBoundingClientRect();
+    const touch = e.touches[0];
+    offset.current = { x: touch.clientX - rect.left, y: touch.clientY - rect.top };
+  }, []);
+
+  useEffect(() => {
+    function onMove(e: MouseEvent | TouchEvent) {
+      if (!dragging.current) return;
+      moved.current = true;
+      const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
+      const clientY = "touches" in e ? e.touches[0].clientY : e.clientY;
+      const next = clamp(clientX - offset.current.x, clientY - offset.current.y);
+      setPos(next);
+    }
+
+    function onUp() {
+      if (!dragging.current) return;
+      dragging.current = false;
+      setPos(prev => {
+        if (prev) localStorage.setItem(STORAGE_KEY, JSON.stringify(prev));
+        return prev;
+      });
+    }
+
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup",   onUp);
+    window.addEventListener("touchmove", onMove, { passive: true });
+    window.addEventListener("touchend",  onUp);
+    return () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup",   onUp);
+      window.removeEventListener("touchmove", onMove);
+      window.removeEventListener("touchend",  onUp);
+    };
+  }, []);
+
+  function handleClick() {
+    if (moved.current) return; // fue un drag, no un click
+    showModal({
+      title: "Iniciar Cobranza",
+      content: <IniciarCobranzaModal />,
+      closeOnOutsideClick: true,
+      width: "440px",
+      modalId: "iniciar-cobranza",
+    });
+  }
+
+  if (!pos) return null;
+
   return (
-    <div className="fixed bottom-8 right-8 z-40">
-      {/* Glow difuso */}
+    <div
+      ref={btnRef}
+      className="fixed z-40 select-none"
+      style={{ left: pos.x, top: pos.y, touchAction: "none" }}
+      onMouseDown={onMouseDown}
+      onTouchStart={onTouchStart}
+    >
+      {/* Glow */}
       <div className="absolute inset-0 rounded-2xl bg-brand blur-xl opacity-40 scale-110 animate-pulse pointer-events-none" />
-      {/* Anillo pulsante */}
       <span className="absolute -inset-2 rounded-[24px] border border-brand/25 animate-pulse pointer-events-none" />
 
       <button
-        onClick={() => showModal({
-          title: "Iniciar Cobranza",
-          content: <IniciarCobranzaModal />,
-          closeOnOutsideClick: true,
-          width: "440px",
-          modalId: "iniciar-cobranza",
-        })}
+        onClick={handleClick}
         className={[
-          "relative flex items-center gap-2.5 pl-4 pr-5 h-12 rounded-2xl cursor-pointer",
+          "relative flex items-center gap-2.5 pl-4 pr-5 h-12 rounded-2xl cursor-grab active:cursor-grabbing",
           "bg-gradient-to-r from-[#3771D1] to-[#2d5eb8]",
           "shadow-xl shadow-brand/40",
-          "hover:scale-105 hover:shadow-2xl hover:shadow-brand/50",
-          "active:scale-100",
-          "transition-all duration-200",
+          "hover:shadow-2xl hover:shadow-brand/50",
+          "transition-shadow duration-200",
         ].join(" ")}
         aria-label="Iniciar Cobranza"
+        draggable={false}
       >
-        {/* Líneas de scan */}
         <span className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none opacity-15">
           <span className="absolute inset-x-0 top-1/3 h-px bg-white" />
           <span className="absolute inset-x-0 top-2/3 h-px bg-white" />
         </span>
 
-        {/* Ícono rayo */}
         <span className="relative z-10 flex items-center justify-center w-6 h-6 rounded-lg bg-white/20">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="white">
             <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
           </svg>
         </span>
 
-        {/* Label */}
         <span className="relative z-10 text-white text-sm font-semibold tracking-wide whitespace-nowrap">
           Iniciar Cobranza
         </span>

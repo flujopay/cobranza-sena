@@ -75,7 +75,7 @@ function WhatsAppQr({
 }) {
   return (
     <div className="flex flex-col items-center gap-4 py-2">
-      <div className="relative w-48 h-48 rounded-xl border border-gray-200 bg-white p-2 shadow-sm">
+      <div className="relative w-40 h-40 sm:w-48 sm:h-48 rounded-xl border border-gray-200 bg-white p-2 shadow-sm">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={dataURL} alt="QR WhatsApp" className="w-full h-full object-contain" />
       </div>
@@ -103,7 +103,7 @@ function WhatsAppQr({
 
 function WhatsAppSpinner({ label }: { label: string }) {
   return (
-    <div className="w-48 h-48 rounded-xl bg-gray-50 border border-gray-200 flex flex-col items-center justify-center gap-3">
+    <div className="w-40 h-40 sm:w-48 sm:h-48 rounded-xl bg-gray-50 border border-gray-200 flex flex-col items-center justify-center gap-3">
       <svg className="animate-spin text-[#25D366]" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
         <path d="M21 12a9 9 0 1 1-9-9" />
       </svg>
@@ -224,7 +224,7 @@ export function WhatsAppModalContent() {
         {/* Disconnected — ofrecer reconectar */}
         {status?.status === "disconnected" && !qrDataURL && (
           <div className="flex flex-col items-center gap-3">
-            <div className="w-48 h-48 rounded-xl bg-red-50 border border-red-200 flex flex-col items-center justify-center gap-2">
+            <div className="w-40 h-40 sm:w-48 sm:h-48 rounded-xl bg-red-50 border border-red-200 flex flex-col items-center justify-center gap-2">
               <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="12" cy="12" r="10" />
                 <line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" />

@@ -57,16 +57,17 @@ export function ModalRenderer() {
               className={[
                 "relative z-10 bg-white shadow-2xl flex flex-col",
                 isPanel
-                  ? "h-full rounded-l-2xl"
-                  : "w-full rounded-t-2xl sm:rounded-2xl max-h-[92vh]",
+                  ? "h-full w-full sm:max-w-sm rounded-none sm:rounded-l-2xl"
+                  : "w-full rounded-t-2xl sm:rounded-2xl max-h-[92vh] sm:max-h-[90vh]",
                 "overflow-hidden",
                 slideClass[slideFrom] ?? "animate-slide-up",
                 modal.modalClassName ?? "",
               ].join(" ")}
-              style={{
-                width: modal.width ?? (isPanel ? "480px" : undefined),
-                maxWidth: isPanel ? undefined : (modal.width ?? "480px"),
-              }}
+              style={
+                isPanel
+                  ? undefined
+                  : { maxWidth: modal.width ?? "480px" }
+              }
             >
               {/* Header */}
               {modal.showHeader !== false && (

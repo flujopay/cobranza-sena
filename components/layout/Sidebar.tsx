@@ -89,17 +89,29 @@ const NAV_ITEMS: NavItem[] = [
   },
 ];
 
-export function Sidebar() {
+export function Sidebar({ onClose }: { onClose?: () => void } = {}) {
   const pathname      = usePathname();
   const router        = useRouter();
   const { showModal } = useModalStore();
   const { data: me }  = useMe();
-  const { clearSession, companyId, setSession, accessToken, refreshToken, activeCompany } = useAuthStore();
+  const { clearSession, setSession, accessToken, refreshToken, activeCompany } = useAuthStore();
   const queryClient   = useQueryClient();
 
   const [selectorOpen, setSelectorOpen] = useState(false);
   const [collapsed,    setCollapsed]    = useState(false);
+  const [isDesktop,    setIsDesktop]    = useState(true);
   const [search,       setSearch]       = useState("");
+
+  // En mobile nunca colapsar — el sidebar es un drawer y siempre va expandido
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 1024px)");
+    setIsDesktop(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+
+  const isCollapsed = isDesktop && collapsed;
 
   const selectorRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -156,8 +168,8 @@ export function Sidebar() {
   return (
     <aside
       style={{
-        width: collapsed ? 80 : 276,
-        minWidth: collapsed ? 80 : 276,
+        width: isCollapsed ? 80 : 276,
+        minWidth: isCollapsed ? 80 : 276,
         transition: "width 0.2s, min-width 0.2s",
         display: "flex",
         flexDirection: "column",
@@ -169,23 +181,24 @@ export function Sidebar() {
         position: "relative",
       }}
     >
-      {/* Botón colapso */}
+      {/* Botón colapso — solo desktop */}
       <button
         onClick={() => setCollapsed(v => !v)}
-        title={collapsed ? "Expandir" : "Colapsar"}
+        title={isCollapsed ? "Expandir" : "Colapsar"}
+        className="hidden lg:flex"
         style={{
           position: "absolute", top: 24, right: -12, zIndex: 20,
           width: 24, height: 24, borderRadius: "50%",
           background: "#fff", border: "1.5px solid #d1d5db",
           boxShadow: "0 1px 6px rgba(0,0,0,0.15)",
-          display: "flex", alignItems: "center", justifyContent: "center",
+          alignItems: "center", justifyContent: "center",
           color: "#3771D1", cursor: "pointer", transition: "background 0.15s, border-color 0.15s",
         }}
         onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "#3771D1"; (e.currentTarget as HTMLElement).style.color = "#fff"; (e.currentTarget as HTMLElement).style.borderColor = "#3771D1"; }}
         onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "#fff"; (e.currentTarget as HTMLElement).style.color = "#3771D1"; (e.currentTarget as HTMLElement).style.borderColor = "#d1d5db"; }}
       >
         <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-          {collapsed ? <polyline points="9 18 15 12 9 6" /> : <polyline points="15 18 9 12 15 6" />}
+          {isCollapsed ? <polyline points="9 18 15 12 9 6" /> : <polyline points="15 18 9 12 15 6" />}
         </svg>
       </button>
 
@@ -193,8 +206,8 @@ export function Sidebar() {
       <div style={{ background: "#3771D1", borderRadius: 16, display: "flex", flexDirection: "column", flex: 1, overflow: "hidden", boxShadow: "0 4px 24px rgba(55,113,209,0.25)" }}>
 
         {/* Logo */}
-        <div style={{ padding: collapsed ? "16px 8px" : "16px 14px", borderBottom: "1px solid rgba(255,255,255,0.12)", display: "flex", alignItems: "center", justifyContent: collapsed ? "center" : "flex-start", minHeight: 60 }}>
-          {!collapsed
+        <div style={{ padding: isCollapsed ? "16px 8px" : "16px 14px", borderBottom: "1px solid rgba(255,255,255,0.12)", display: "flex", alignItems: "center", justifyContent: isCollapsed ? "center" : "flex-start", minHeight: 60 }}>
+          {!isCollapsed
             ? <SenaLogo variant="white" height={28} />
             : <div style={{ width: 28, height: 28, borderRadius: 8, background: "rgba(255,255,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -205,14 +218,14 @@ export function Sidebar() {
         </div>
 
         {/* Workspace selector */}
-        <div ref={selectorRef} style={{ padding: collapsed ? "8px 6px" : "10px 10px", borderBottom: "1px solid rgba(255,255,255,0.12)", position: "relative" }}>
+        <div ref={selectorRef} style={{ padding: isCollapsed ? "8px 6px" : "10px 10px", borderBottom: "1px solid rgba(255,255,255,0.12)", position: "relative" }}>
           <button
             onClick={() => setSelectorOpen(v => !v)}
             style={{
               width: "100%", display: "flex", alignItems: "center",
-              justifyContent: collapsed ? "center" : "flex-start",
+              justifyContent: isCollapsed ? "center" : "flex-start",
               gap: 8, background: "rgba(255,255,255,0.15)", border: "none",
-              borderRadius: 8, padding: collapsed ? "7px 6px" : "8px 10px",
+              borderRadius: 8, padding: isCollapsed ? "7px 6px" : "8px 10px",
               cursor: "pointer", color: "#fff", textAlign: "left", transition: "background 0.15s",
             }}
             onMouseEnter={e => (e.currentTarget.style.background = "rgba(255,255,255,0.22)")}
@@ -226,7 +239,7 @@ export function Sidebar() {
                   </svg>
               }
             </div>
-            {!collapsed && (
+            {!isCollapsed && (
               <>
                 <span style={{ flex: 1, fontSize: 12, fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: "#fff" }}>
                   {empresaActiva ? (empresaActiva.comercial_name || empresaActiva.company_name) : "Cargando…"}
@@ -240,7 +253,7 @@ export function Sidebar() {
           </button>
 
           {/* Dropdown empresas */}
-          {selectorOpen && !collapsed && (
+          {selectorOpen && !isCollapsed && (
             <div style={{ position: "absolute", left: 10, right: 10, top: "100%", marginTop: 4, zIndex: 50, background: "#fff", borderRadius: 12, boxShadow: "0 8px 24px rgba(0,0,0,0.18)", overflow: "hidden" }}>
               {companies.length > 1 && (
                 <div style={{ padding: 8, borderBottom: "1px solid #f0f0f0" }}>
@@ -301,18 +314,18 @@ export function Sidebar() {
         </div>
 
         {/* Banner SII */}
-        <div style={{ padding: collapsed ? "8px 6px 0" : "8px 10px 0" }}>
+        <div style={{ padding: isCollapsed ? "8px 6px 0" : "8px 10px 0" }}>
           <button
             onClick={abrirSII}
             title={siiConnected ? "SII conectado" : "Sincronizar SII"}
             style={{
               width: "100%", display: "flex", alignItems: "center",
-              justifyContent: collapsed ? "center" : "flex-start",
-              gap: collapsed ? 0 : 8,
+              justifyContent: isCollapsed ? "center" : "flex-start",
+              gap: isCollapsed ? 0 : 8,
               background: siiConnected ? "#f0fdf4" : "#FFF8DD",
               border: siiConnected ? "1px solid #bbf7d0" : "1px solid #f5e3a8",
               borderRadius: 8,
-              padding: collapsed ? "8px 6px" : "8px 12px",
+              padding: isCollapsed ? "8px 6px" : "8px 12px",
               cursor: "pointer", textAlign: "left", transition: "background 0.15s",
               color: siiConnected ? "#16a34a" : "#F6B100",
             }}
@@ -328,7 +341,7 @@ export function Sidebar() {
                 <path d="M2.98 13.6694H13.02C14.0467 13.6694 14.6867 12.5561 14.1733 11.6694L9.15333 2.99605C8.64 2.10939 7.36 2.10939 6.84667 2.99605L1.82667 11.6694C1.31333 12.5561 1.95333 13.6694 2.98 13.6694ZM8 9.00272C7.63333 9.00272 7.33333 8.70272 7.33333 8.33606V7.00272C7.33333 6.63605 7.63333 6.33605 8 6.33605C8.36667 6.33605 8.66667 6.63605 8.66667 7.00272V8.33606C8.66667 8.70272 8.36667 9.00272 8 9.00272ZM8.66667 11.6694H7.33333V10.3361H8.66667V11.6694Z" />
               </svg>
             )}
-            {!collapsed && (
+            {!isCollapsed && (
               <>
                 <span style={{ flex: 1, fontSize: 12, fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                   {siiConnected ? "SII conectado" : "Sincronizar SII"}
@@ -342,7 +355,7 @@ export function Sidebar() {
         </div>
 
         {/* Etiqueta sección */}
-        {!collapsed && (
+        {!isCollapsed && (
           <div style={{ padding: "10px 14px 4px", fontSize: 10, fontWeight: 600, color: "rgba(255,255,255,0.45)", textTransform: "uppercase", letterSpacing: "0.07em" }}>
             Menú
           </div>
@@ -356,10 +369,11 @@ export function Sidebar() {
               <Link
                 key={item.href}
                 href={item.href}
+                onClick={onClose}
                 style={{
                   display: "flex", alignItems: "center",
-                  justifyContent: collapsed ? "center" : "flex-start",
-                  gap: collapsed ? 0 : 10, padding: collapsed ? "10px 6px" : "9px 10px",
+                  justifyContent: isCollapsed ? "center" : "flex-start",
+                  gap: isCollapsed ? 0 : 10, padding: isCollapsed ? "10px 6px" : "9px 10px",
                   borderRadius: 8, fontSize: 13,
                   fontWeight: active ? 600 : 400,
                   background: active ? "#ffffff" : "transparent",
@@ -370,12 +384,12 @@ export function Sidebar() {
                 onMouseLeave={e => { if (!active) { (e.currentTarget as HTMLElement).style.background = "transparent"; (e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.90)"; } }}
               >
                 <span style={{ flexShrink: 0, display: "flex", opacity: 1 }}>{item.icon}</span>
-                {!collapsed && (
+                {!isCollapsed && (
                   <span style={{ flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                     {item.label}
                   </span>
                 )}
-                {active && !collapsed && (
+                {active && !isCollapsed && (
                   <span style={{ width: 5, height: 5, borderRadius: "50%", background: "#3771D1", flexShrink: 0, opacity: 0.7 }} />
                 )}
               </Link>
@@ -387,9 +401,10 @@ export function Sidebar() {
         <div style={{ borderTop: "1px solid rgba(255,255,255,0.12)", padding: "8px" }}>
           <Link
             href="/cuenta"
+            onClick={onClose}
             style={{
               display: "flex", alignItems: "center",
-              justifyContent: collapsed ? "center" : "flex-start",
+              justifyContent: isCollapsed ? "center" : "flex-start",
               gap: 8, padding: "7px 8px", borderRadius: 8,
               textDecoration: "none", transition: "background 0.15s",
             }}
@@ -402,7 +417,7 @@ export function Sidebar() {
                 : <span style={{ color: "#fff", fontSize: 11, fontWeight: 700 }}>{initials}</span>
               }
             </div>
-            {!collapsed && (
+            {!isCollapsed && (
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ color: "#fff", fontSize: 11, fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                   {me ? [me.name, me.lastname].filter(Boolean).join(" ") || me.email : "…"}
@@ -419,8 +434,8 @@ export function Sidebar() {
             title="Cerrar sesión"
             style={{
               width: "100%", display: "flex", alignItems: "center",
-              justifyContent: collapsed ? "center" : "flex-start",
-              gap: collapsed ? 0 : 8, padding: collapsed ? "7px 6px" : "7px 10px",
+              justifyContent: isCollapsed ? "center" : "flex-start",
+              gap: isCollapsed ? 0 : 8, padding: isCollapsed ? "7px 6px" : "7px 10px",
               borderRadius: 8, border: "none", background: "transparent",
               color: "rgba(255,255,255,0.55)", fontSize: 12, cursor: "pointer",
               transition: "background 0.15s, color 0.15s",
@@ -433,7 +448,7 @@ export function Sidebar() {
               <polyline points="16 17 21 12 16 7" />
               <line x1="21" y1="12" x2="9" y2="12" />
             </svg>
-            {!collapsed && <span>Cerrar sesión</span>}
+            {!isCollapsed && <span>Cerrar sesión</span>}
           </button>
         </div>
 
