@@ -7,7 +7,7 @@ function IniciarCobranzaModal() {
   return (
     <div className="px-6 py-6 flex flex-col gap-4">
       <p className="text-sm text-gray-500 leading-relaxed">
-        El bot analizará tus facturas vencidas, calculará el score de riesgo de cada
+        El agente analizará tus facturas vencidas, calculará el score de riesgo de cada
         deudor y comenzará a enviar mensajes personalizados por el canal adecuado.
       </p>
       <div className="rounded-xl border border-brand/20 bg-brand-light px-4 py-3 flex gap-3 items-start">

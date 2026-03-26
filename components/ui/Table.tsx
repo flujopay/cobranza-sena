@@ -9,10 +9,21 @@ export type Column<T> = {
   render?: (row: T) => ReactNode;
   align?: "left" | "right" | "center";
   sortable?: boolean;
-  sortValue?: (row: T) => string | number; // valor para ordenar si usa render
+  sortValue?: (row: T) => string | number;
 };
 
 type SortDir = "asc" | "desc";
+
+export interface ServerPaginationProps {
+  page: number;
+  totalPages: number;
+  from: number;
+  to: number;
+  count: number;
+  limit: number;
+  onPageChange: (page: number) => void;
+  onLimitChange: (limit: number) => void;
+}
 
 interface TableProps<T> {
   columns: Column<T>[];
@@ -21,9 +32,14 @@ interface TableProps<T> {
   emptyMessage?: string;
   pageSize?: number;
   searchPlaceholder?: string;
+  isLoading?: boolean;
+  isFetching?: boolean;
+  // Cuando se provee, la paginación y búsqueda son server-side
+  serverPagination?: ServerPaginationProps;
+  onSearch?: (query: string) => void;
 }
 
-const PAGE_OPTIONS = [10, 25, 50, 100];
+const PAGE_OPTIONS = [10, 20, 25, 50, 100];
 
 /* ── Dropdown de filas por página ── */
 function PerPageDropdown({ value, onChange }: { value: number; onChange: (n: number) => void }) {
@@ -105,24 +121,78 @@ function PerPageDropdown({ value, onChange }: { value: number; onChange: (n: num
 function SortIcon({ dir }: { dir: SortDir | null }) {
   return (
     <span style={{ display: "inline-flex", flexDirection: "column", gap: 1, marginLeft: 4, opacity: dir ? 1 : 0.3 }}>
-      <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor"
-        style={{ opacity: dir === "asc" ? 1 : 0.35 }}>
+      <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor" style={{ opacity: dir === "asc" ? 1 : 0.35 }}>
         <path d="M4 1L7 6H1L4 1Z" />
       </svg>
-      <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor"
-        style={{ opacity: dir === "desc" ? 1 : 0.35 }}>
+      <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor" style={{ opacity: dir === "desc" ? 1 : 0.35 }}>
         <path d="M4 7L1 2H7L4 7Z" />
       </svg>
     </span>
   );
 }
 
-/* ── Paginación ── */
+/* ── Paginación — rango de páginas ── */
 function pageRange(current: number, total: number): (number | "…")[] {
   if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
   if (current <= 4) return [1, 2, 3, 4, 5, "…", total];
   if (current >= total - 3) return [1, "…", total - 4, total - 3, total - 2, total - 1, total];
   return [1, "…", current - 1, current, current + 1, "…", total];
+}
+
+/* ── Controles de paginación (reutilizado en ambos modos) ── */
+function PaginationControls({
+  page, totalPages, onPageChange,
+}: { page: number; totalPages: number; onPageChange: (p: number) => void }) {
+  if (totalPages <= 1) return null;
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 3 }}>
+      {pageRange(page, totalPages).map((p, i) =>
+        p === "…" ? (
+          <span key={`e${i}`} style={{ padding: "0 4px", color: "#9ca3af", fontSize: 12 }}>…</span>
+        ) : (
+          <button
+            key={p}
+            onClick={() => onPageChange(p as number)}
+            style={{
+              width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center",
+              borderRadius: 8, border: "none", fontSize: 12, fontWeight: page === p ? 600 : 400,
+              background: page === p ? "#3771D1" : "transparent",
+              color: page === p ? "#fff" : "#6b7280",
+              cursor: "pointer", transition: "background 0.15s",
+            }}
+            onMouseEnter={e => { if (page !== p) (e.currentTarget.style.background = "#f3f4f6"); }}
+            onMouseLeave={e => { if (page !== p) (e.currentTarget.style.background = "transparent"); }}
+          >
+            {p}
+          </button>
+        )
+      )}
+    </div>
+  );
+}
+
+/* ── Skeleton rows ── */
+function SkeletonRows({ cols, rows = 8 }: { cols: number; rows?: number }) {
+  return (
+    <>
+      {Array.from({ length: rows }).map((_, i) => (
+        <tr key={i} style={{ borderBottom: "1px solid #f3f4f6" }}>
+          {Array.from({ length: cols }).map((_, j) => (
+            <td key={j} style={{ padding: "14px 16px" }}>
+              <div style={{
+                height: 12, borderRadius: 6,
+                background: "linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%)",
+                backgroundSize: "200% 100%",
+                animation: "shimmer 1.4s infinite",
+                width: j === 0 ? "60%" : "80%",
+              }} />
+            </td>
+          ))}
+        </tr>
+      ))}
+      <style>{`@keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }`}</style>
+    </>
+  );
 }
 
 /* ── Tabla principal ── */
@@ -133,12 +203,22 @@ export function Table<T>({
   emptyMessage = "Sin resultados.",
   pageSize = 10,
   searchPlaceholder = "Buscar…",
+  isLoading = false,
+  isFetching = false,
+  serverPagination,
+  onSearch,
 }: TableProps<T>) {
-  const [query,   setQuery]   = useState("");
-  const [page,    setPage]    = useState(1);
-  const [perPage, setPerPage] = useState(pageSize);
+  // Estado local (solo aplica cuando NO hay serverPagination)
+  const [localQuery,   setLocalQuery]   = useState("");
+  const [localPage,    setLocalPage]    = useState(1);
+  const [localPerPage, setLocalPerPage] = useState(pageSize);
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortDir, setSortDir] = useState<SortDir>("asc");
+
+  // Input de búsqueda — puede ser controlado externamente o local
+  const [inputValue, setInputValue] = useState("");
+
+  const isServer = Boolean(serverPagination);
 
   function handleSort(key: string) {
     if (sortKey === key) {
@@ -147,12 +227,23 @@ export function Table<T>({
       setSortKey(key);
       setSortDir("asc");
     }
-    setPage(1);
+    if (!isServer) setLocalPage(1);
   }
 
-  // 1. Filtrado
+  function handleSearchChange(q: string) {
+    setInputValue(q);
+    if (isServer) {
+      onSearch?.(q);
+    } else {
+      setLocalQuery(q);
+      setLocalPage(1);
+    }
+  }
+
+  // ── Modo local: filtrado + ordenamiento + paginación ──
   const filtered = useMemo(() => {
-    const q = query.toLowerCase().trim();
+    if (isServer) return data;
+    const q = localQuery.toLowerCase().trim();
     if (!q) return data;
     return data.filter(row =>
       columns.some(col => {
@@ -163,32 +254,40 @@ export function Table<T>({
         return val.includes(q);
       })
     );
-  }, [data, query, columns]);
+  }, [data, localQuery, columns, isServer]);
 
-  // 2. Ordenamiento
   const sorted = useMemo(() => {
     if (!sortKey) return filtered;
     const col = columns.find(c => String(c.key) === sortKey);
     return [...filtered].sort((a, b) => {
       const va = col?.sortValue ? col.sortValue(a) : (a as any)[sortKey] ?? "";
       const vb = col?.sortValue ? col.sortValue(b) : (b as any)[sortKey] ?? "";
-      let cmp = 0;
-      if (typeof va === "number" && typeof vb === "number") {
-        cmp = va - vb;
-      } else {
-        cmp = String(va).localeCompare(String(vb), "es", { numeric: true, sensitivity: "base" });
-      }
+      const cmp = typeof va === "number" && typeof vb === "number"
+        ? va - vb
+        : String(va).localeCompare(String(vb), "es", { numeric: true, sensitivity: "base" });
       return sortDir === "asc" ? cmp : -cmp;
     });
   }, [filtered, sortKey, sortDir, columns]);
 
-  // 3. Paginación
-  const totalPages = Math.max(1, Math.ceil(sorted.length / perPage));
-  const safePage   = Math.min(page, totalPages);
-  const paged      = sorted.slice((safePage - 1) * perPage, safePage * perPage);
+  // ── Paginación ──
+  const localTotalPages = Math.max(1, Math.ceil(sorted.length / localPerPage));
+  const safePage        = isServer ? serverPagination!.page : Math.min(localPage, localTotalPages);
+  const paged           = isServer ? sorted : sorted.slice((safePage - 1) * localPerPage, safePage * localPerPage);
 
-  const from = sorted.length === 0 ? 0 : (safePage - 1) * perPage + 1;
-  const to   = Math.min(safePage * perPage, sorted.length);
+  const displayFrom  = isServer ? serverPagination!.from  : sorted.length === 0 ? 0 : (safePage - 1) * localPerPage + 1;
+  const displayTo    = isServer ? serverPagination!.to    : Math.min(safePage * localPerPage, sorted.length);
+  const displayCount = isServer ? serverPagination!.count : sorted.length;
+  const totalPages   = isServer ? serverPagination!.totalPages : localTotalPages;
+  const perPage      = isServer ? serverPagination!.limit  : localPerPage;
+
+  function changePage(p: number) {
+    if (isServer) serverPagination!.onPageChange(p);
+    else setLocalPage(p);
+  }
+  function changeLimit(n: number) {
+    if (isServer) serverPagination!.onLimitChange(n);
+    else { setLocalPerPage(n); setLocalPage(1); }
+  }
 
   return (
     <div style={{ display: "flex", flexDirection: "column", background: "#fff", borderRadius: 16, border: "1px solid #e5e7eb", boxShadow: "0 1px 4px rgba(0,0,0,0.05)", overflow: "hidden" }}>
@@ -203,11 +302,11 @@ export function Table<T>({
           </svg>
           <input
             type="text"
-            value={query}
-            onChange={e => { setQuery(e.target.value); setPage(1); }}
+            value={inputValue}
+            onChange={e => handleSearchChange(e.target.value)}
             placeholder={searchPlaceholder}
             style={{
-              width: "100%", paddingLeft: 32, paddingRight: query ? 28 : 12, paddingTop: 7, paddingBottom: 7,
+              width: "100%", paddingLeft: 32, paddingRight: inputValue ? 28 : 12, paddingTop: 7, paddingBottom: 7,
               fontSize: 13, borderRadius: 8, border: "1px solid #e5e7eb",
               background: "#f9fafb", outline: "none", color: "#374151",
               transition: "border-color 0.15s", boxSizing: "border-box",
@@ -215,8 +314,8 @@ export function Table<T>({
             onFocus={e => (e.currentTarget.style.borderColor = "#3771D1")}
             onBlur={e => (e.currentTarget.style.borderColor = "#e5e7eb")}
           />
-          {query && (
-            <button onClick={() => setQuery("")}
+          {inputValue && (
+            <button onClick={() => handleSearchChange("")}
               style={{ position: "absolute", right: 8, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "#9ca3af", display: "flex" }}>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
@@ -226,10 +325,17 @@ export function Table<T>({
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
+          {/* Indicador de fetching */}
+          {isFetching && !isLoading && (
+            <svg className="animate-spin" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2">
+              <circle cx="12" cy="12" r="10" strokeOpacity="0.25" />
+              <path d="M12 2a10 10 0 0 1 10 10" />
+            </svg>
+          )}
           <span style={{ fontSize: 12, color: "#9ca3af" }}>
-            {sorted.length === 0 ? "0 resultados" : `${from}–${to} de ${sorted.length}`}
+            {isLoading ? "Cargando…" : displayCount === 0 ? "0 resultados" : `${displayFrom}–${displayTo} de ${displayCount}`}
           </span>
-          <PerPageDropdown value={perPage} onChange={n => { setPerPage(n); setPage(1); }} />
+          <PerPageDropdown value={perPage} onChange={changeLimit} />
         </div>
       </div>
 
@@ -239,9 +345,9 @@ export function Table<T>({
           <thead>
             <tr style={{ background: "#f8f9fb" }}>
               {columns.map(col => {
-                const key    = String(col.key);
+                const key     = String(col.key);
                 const isSorted = sortKey === key;
-                const canSort  = col.sortable !== false; // sortable por defecto
+                const canSort  = col.sortable !== false;
                 return (
                   <th
                     key={key}
@@ -253,8 +359,7 @@ export function Table<T>({
                       textTransform: "uppercase", letterSpacing: "0.05em", whiteSpace: "nowrap",
                       borderBottom: "1px solid #f0f0f0",
                       cursor: canSort ? "pointer" : "default",
-                      userSelect: "none",
-                      transition: "color 0.15s",
+                      userSelect: "none", transition: "color 0.15s",
                     }}
                     onMouseEnter={e => { if (canSort && !isSorted) (e.currentTarget.style.color = "#6b7280"); }}
                     onMouseLeave={e => { if (!isSorted) (e.currentTarget.style.color = "#9ca3af"); }}
@@ -269,14 +374,16 @@ export function Table<T>({
             </tr>
           </thead>
           <tbody>
-            {paged.length === 0 ? (
+            {isLoading ? (
+              <SkeletonRows cols={columns.length} />
+            ) : paged.length === 0 ? (
               <tr>
                 <td colSpan={columns.length} style={{ padding: "56px 16px", textAlign: "center", color: "#9ca3af", fontSize: 13 }}>
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
                     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" style={{ color: "#d1d5db" }}>
                       <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
                     </svg>
-                    {query ? `Sin resultados para "${query}"` : emptyMessage}
+                    {inputValue ? `Sin resultados para "${inputValue}"` : emptyMessage}
                   </div>
                 </td>
               </tr>
@@ -312,7 +419,7 @@ export function Table<T>({
       {totalPages > 1 && (
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "10px 16px", borderTop: "1px solid #f3f4f6", background: "#fafafa" }}>
           <button
-            onClick={() => setPage(p => Math.max(1, p - 1))}
+            onClick={() => changePage(Math.max(1, safePage - 1))}
             disabled={safePage === 1}
             style={{
               display: "flex", alignItems: "center", gap: 5,
@@ -330,32 +437,10 @@ export function Table<T>({
             Anterior
           </button>
 
-          <div style={{ display: "flex", alignItems: "center", gap: 3 }}>
-            {pageRange(safePage, totalPages).map((p, i) =>
-              p === "…" ? (
-                <span key={`e${i}`} style={{ padding: "0 4px", color: "#9ca3af", fontSize: 12 }}>…</span>
-              ) : (
-                <button
-                  key={p}
-                  onClick={() => setPage(p as number)}
-                  style={{
-                    width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center",
-                    borderRadius: 8, border: "none", fontSize: 12, fontWeight: safePage === p ? 600 : 400,
-                    background: safePage === p ? "#3771D1" : "transparent",
-                    color: safePage === p ? "#fff" : "#6b7280",
-                    cursor: "pointer", transition: "background 0.15s",
-                  }}
-                  onMouseEnter={e => { if (safePage !== p) (e.currentTarget.style.background = "#f3f4f6"); }}
-                  onMouseLeave={e => { if (safePage !== p) (e.currentTarget.style.background = "transparent"); }}
-                >
-                  {p}
-                </button>
-              )
-            )}
-          </div>
+          <PaginationControls page={safePage} totalPages={totalPages} onPageChange={changePage} />
 
           <button
-            onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+            onClick={() => changePage(Math.min(totalPages, safePage + 1))}
             disabled={safePage === totalPages}
             style={{
               display: "flex", alignItems: "center", gap: 5,

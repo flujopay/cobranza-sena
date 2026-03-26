@@ -394,7 +394,7 @@ export function Sidebar() {
             {!collapsed && (
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ color: "#fff", fontSize: 11, fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                  {me ? `${me.name} ${me.lastname}`.trim() || me.email : "…"}
+                  {me ? [me.name, me.lastname].filter(Boolean).join(" ") || me.email : "…"}
                 </div>
                 <div style={{ color: "rgba(255,255,255,0.5)", fontSize: 10, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                   {me?.email ?? ""}
