@@ -1,6 +1,14 @@
 export type Canal = "email" | "sms" | "whatsapp";
 export type NivelRiesgo = "verde" | "amarillo" | "naranja" | "rojo";
 
+export type FacturaEjemplo = {
+  folio: string;
+  fecha_emision: string;
+  fecha_vencimiento: string;
+  dias_mora: number | null; // null = no vencida
+  monto: number;
+};
+
 export type Plantilla = {
   id: string;
   nombre: string;
@@ -8,29 +16,56 @@ export type Plantilla = {
   nivelRiesgo: NivelRiesgo;
   asunto?: string; // solo email
   cuerpo: string;
-  variables: string[]; // ej. ["{{nombre}}", "{{monto}}", "{{dias_vencida}}"]
+  variables: string[];
   activa: boolean;
 };
 
+// ─── Datos de ejemplo para preview ───────────────────────────────────────────
+
+export const PREVIEW_FACTURAS: FacturaEjemplo[] = [
+  { folio: "F-00842", fecha_emision: "01/02/2026", fecha_vencimiento: "01/03/2026", dias_mora: 24, monto: 1_850_000 },
+  { folio: "F-00901", fecha_emision: "15/02/2026", fecha_vencimiento: "17/03/2026", dias_mora: 8,  monto: 640_000  },
+  { folio: "F-00934", fecha_emision: "01/03/2026", fecha_vencimiento: "31/03/2026", dias_mora: null, monto: 320_000 },
+];
+
+export const PREVIEW_VARS: Record<string, string> = {
+  "{{nombre}}":           "Carlos Vega",
+  "{{empresa_emisora}}":  "Servicios Alfa SpA",
+  "{{rut_emisor}}":       "76.543.210-K",
+  "{{total_facturas}}":   "3",
+  "{{monto_total}}":      "2.810.000",
+  "{{facturas_detalle}}": "ver tabla adjunta",
+  "{{email_contacto}}":   "cobranza@alfa.cl",
+  "{{telefono_contacto}}":"(+56) 2 2345 6789",
+  "{{banco}}":            "Banco Estado",
+  "{{cuenta}}":           "12345678",
+  "{{dias_plazo}}":       "5",
+  "{{fecha_limite}}":     "30/03/2026",
+};
+
+// ─── Plantillas ───────────────────────────────────────────────────────────────
+
 export const PLANTILLAS_MOCK: Plantilla[] = [
-  // ─── Email ────────────────────────────────────────────────────────────────────
+  // ─── Email ─────────────────────────────────────────────────────────────────
   {
     id: "email-verde-1",
     canal: "email",
     nivelRiesgo: "verde",
     nombre: "Recordatorio amigable",
-    asunto: "Recordatorio de factura pendiente — {{empresa_emisora}}",
+    asunto: "Recordatorio de facturas pendientes — {{empresa_emisora}}",
     cuerpo: `Estimado/a {{nombre}},
 
-Esperamos que se encuentre bien. Le recordamos que tiene una factura pendiente de pago por \${{monto}} con vencimiento el {{fecha_vencimiento}}.
+Esperamos que se encuentre bien. Le recordamos que tiene {{total_facturas}} factura(s) pendiente(s) de pago con un total de \${{monto_total}}.
 
-Si ya realizó el pago, por favor ignore este mensaje.
+{{facturas_detalle}}
+
+Si ya realizó algún pago, por favor ignore las líneas correspondientes.
 
 Para cualquier consulta estamos disponibles en {{email_contacto}} o {{telefono_contacto}}.
 
 Saludos cordiales,
 {{empresa_emisora}}`,
-    variables: ["{{nombre}}", "{{monto}}", "{{fecha_vencimiento}}", "{{empresa_emisora}}", "{{email_contacto}}", "{{telefono_contacto}}"],
+    variables: ["{{nombre}}", "{{total_facturas}}", "{{monto_total}}", "{{facturas_detalle}}", "{{empresa_emisora}}", "{{email_contacto}}", "{{telefono_contacto}}"],
     activa: true,
   },
   {
@@ -38,10 +73,12 @@ Saludos cordiales,
     canal: "email",
     nivelRiesgo: "amarillo",
     nombre: "Aviso de vencimiento próximo",
-    asunto: "Factura N°{{folio}} vence en {{dias_para_vencer}} días — Acción requerida",
+    asunto: "{{total_facturas}} factura(s) próximas a vencer — Acción requerida",
     cuerpo: `Estimado/a {{nombre}},
 
-Le informamos que la factura N°{{folio}} por un monto de \${{monto}} vence el {{fecha_vencimiento}} (en {{dias_para_vencer}} días).
+Le informamos que tiene {{total_facturas}} factura(s) por un total de \${{monto_total}} próximas a vencer.
+
+{{facturas_detalle}}
 
 Le solicitamos gestionar el pago a la brevedad para evitar recargos o suspensión de servicios.
 
@@ -54,7 +91,7 @@ Ante cualquier consulta, contáctenos en {{email_contacto}}.
 
 Atentamente,
 {{empresa_emisora}}`,
-    variables: ["{{nombre}}", "{{folio}}", "{{monto}}", "{{fecha_vencimiento}}", "{{dias_para_vencer}}", "{{banco}}", "{{cuenta}}", "{{rut_emisor}}", "{{empresa_emisora}}", "{{email_contacto}}"],
+    variables: ["{{nombre}}", "{{total_facturas}}", "{{monto_total}}", "{{facturas_detalle}}", "{{banco}}", "{{cuenta}}", "{{rut_emisor}}", "{{empresa_emisora}}", "{{email_contacto}}"],
     activa: true,
   },
   {
@@ -62,10 +99,12 @@ Atentamente,
     canal: "email",
     nivelRiesgo: "naranja",
     nombre: "Aviso de mora",
-    asunto: "URGENTE: Factura N°{{folio}} con {{dias_vencida}} días de mora",
+    asunto: "URGENTE: {{total_facturas}} factura(s) con mora — ${{monto_total}}",
     cuerpo: `Estimado/a {{nombre}},
 
-Le comunicamos que la factura N°{{folio}} por \${{monto}} lleva {{dias_vencida}} días vencida sin registrar pago.
+Le comunicamos que tiene {{total_facturas}} factura(s) vencidas sin registrar pago, por un total de \${{monto_total}}.
+
+{{facturas_detalle}}
 
 Esta situación puede afectar su historial comercial. Le instamos a regularizar su situación a la brevedad.
 
@@ -74,21 +113,23 @@ Para coordinar un plan de pago o aclarar cualquier situación, contáctenos:
   • Teléfono: {{telefono_contacto}}
   • Horario: Lunes a Viernes de 9:00 a 18:00 hrs.
 
-Si el pago fue realizado, por favor envíenos el comprobante a {{email_contacto}}.
+Si algún pago fue realizado, por favor envíenos el comprobante a {{email_contacto}}.
 
 {{empresa_emisora}}`,
-    variables: ["{{nombre}}", "{{folio}}", "{{monto}}", "{{dias_vencida}}", "{{empresa_emisora}}", "{{email_contacto}}", "{{telefono_contacto}}"],
+    variables: ["{{nombre}}", "{{total_facturas}}", "{{monto_total}}", "{{facturas_detalle}}", "{{empresa_emisora}}", "{{email_contacto}}", "{{telefono_contacto}}"],
     activa: true,
   },
   {
     id: "email-rojo-1",
     canal: "email",
     nivelRiesgo: "rojo",
-    nombre: "Último aviso — gestión de cobranza",
-    asunto: "Último aviso — Deuda de \${{monto}} en proceso de gestión legal",
+    nombre: "Último aviso",
+    asunto: "Último aviso — Deuda de ${{monto_total}} en proceso de gestión legal",
     cuerpo: `Estimado/a {{nombre}},
 
-A pesar de nuestras comunicaciones previas, la factura N°{{folio}} por \${{monto}} continúa impaga con {{dias_vencida}} días de mora.
+A pesar de nuestras comunicaciones previas, tiene {{total_facturas}} factura(s) por un total de \${{monto_total}} que continúan impagas.
+
+{{facturas_detalle}}
 
 Le informamos que, de no regularizar su situación en un plazo de {{dias_plazo}} días corridos desde la fecha de este correo, procederemos con:
   1. Informe a DICOM/Equifax
@@ -101,18 +142,18 @@ Para evitar estas consecuencias, contáctenos de inmediato:
 
 {{empresa_emisora}}
 Área de Cobranza`,
-    variables: ["{{nombre}}", "{{folio}}", "{{monto}}", "{{dias_vencida}}", "{{dias_plazo}}", "{{empresa_emisora}}", "{{email_contacto}}", "{{telefono_contacto}}"],
+    variables: ["{{nombre}}", "{{total_facturas}}", "{{monto_total}}", "{{facturas_detalle}}", "{{dias_plazo}}", "{{empresa_emisora}}", "{{email_contacto}}", "{{telefono_contacto}}"],
     activa: true,
   },
 
-  // ─── SMS ─────────────────────────────────────────────────────────────────────
+  // ─── SMS ───────────────────────────────────────────────────────────────────
   {
     id: "sms-verde-1",
     canal: "sms",
     nivelRiesgo: "verde",
     nombre: "Recordatorio corto",
-    cuerpo: "{{empresa_emisora}}: Tiene una factura de \${{monto}} con vencimiento el {{fecha_vencimiento}}. Consultas: {{telefono_contacto}}",
-    variables: ["{{empresa_emisora}}", "{{monto}}", "{{fecha_vencimiento}}", "{{telefono_contacto}}"],
+    cuerpo: "{{empresa_emisora}}: Tiene {{total_facturas}} factura(s) pendiente(s) por ${{monto_total}}. Consultas: {{telefono_contacto}}",
+    variables: ["{{empresa_emisora}}", "{{total_facturas}}", "{{monto_total}}", "{{telefono_contacto}}"],
     activa: true,
   },
   {
@@ -120,8 +161,8 @@ Para evitar estas consecuencias, contáctenos de inmediato:
     canal: "sms",
     nivelRiesgo: "amarillo",
     nombre: "Aviso vencimiento",
-    cuerpo: "{{empresa_emisora}}: Su factura N°{{folio}} de \${{monto}} vence en {{dias_para_vencer}} días. Evite recargos: {{telefono_contacto}}",
-    variables: ["{{empresa_emisora}}", "{{folio}}", "{{monto}}", "{{dias_para_vencer}}", "{{telefono_contacto}}"],
+    cuerpo: "{{empresa_emisora}}: Tiene {{total_facturas}} factura(s) por ${{monto_total}} próximas a vencer. Evite recargos: {{telefono_contacto}}",
+    variables: ["{{empresa_emisora}}", "{{total_facturas}}", "{{monto_total}}", "{{telefono_contacto}}"],
     activa: true,
   },
   {
@@ -129,75 +170,83 @@ Para evitar estas consecuencias, contáctenos de inmediato:
     canal: "sms",
     nivelRiesgo: "naranja",
     nombre: "Aviso mora",
-    cuerpo: "{{empresa_emisora}}: Su factura N°{{folio}} tiene {{dias_vencida}} días de mora (\${{monto}}). Regularice: {{telefono_contacto}}",
-    variables: ["{{empresa_emisora}}", "{{folio}}", "{{dias_vencida}}", "{{monto}}", "{{telefono_contacto}}"],
+    cuerpo: "{{empresa_emisora}}: Tiene {{total_facturas}} factura(s) vencida(s) por ${{monto_total}}. Regularice: {{telefono_contacto}}",
+    variables: ["{{empresa_emisora}}", "{{total_facturas}}", "{{monto_total}}", "{{telefono_contacto}}"],
     activa: true,
   },
   {
     id: "sms-rojo-1",
     canal: "sms",
     nivelRiesgo: "rojo",
-    nombre: "Último aviso SMS",
-    cuerpo: "URGENTE {{empresa_emisora}}: Deuda \${{monto}} en proceso de cobranza legal. Contacte {{telefono_contacto}} antes del {{fecha_limite}}.",
-    variables: ["{{empresa_emisora}}", "{{monto}}", "{{telefono_contacto}}", "{{fecha_limite}}"],
+    nombre: "Último aviso",
+    cuerpo: "URGENTE {{empresa_emisora}}: Deuda ${{monto_total}} ({{total_facturas}} factura(s)) en proceso de cobranza legal. Contacte {{telefono_contacto}} antes del {{fecha_limite}}.",
+    variables: ["{{empresa_emisora}}", "{{total_facturas}}", "{{monto_total}}", "{{telefono_contacto}}", "{{fecha_limite}}"],
     activa: true,
   },
 
-  // ─── WhatsApp ─────────────────────────────────────────────────────────────────
+  // ─── WhatsApp ──────────────────────────────────────────────────────────────
   {
     id: "wsp-verde-1",
     canal: "whatsapp",
     nivelRiesgo: "verde",
-    nombre: "Recordatorio amigable WA",
+    nombre: "Recordatorio amigable",
     cuerpo: `Hola {{nombre}} 👋
 
-Te recuerdo que tienes una factura pendiente con *{{empresa_emisora}}* por *\${{monto}}* con vencimiento el *{{fecha_vencimiento}}*.
+Tienes *{{total_facturas}} factura(s) pendiente(s)* con *{{empresa_emisora}}* por un total de *\${{monto_total}}*.
 
-Si ya realizaste el pago, ¡muchas gracias! Si no, puedes contactarnos aquí mismo.`,
-    variables: ["{{nombre}}", "{{empresa_emisora}}", "{{monto}}", "{{fecha_vencimiento}}"],
+{{facturas_detalle}}
+
+Si ya realizaste algún pago, ¡muchas gracias! Si no, puedes contactarnos aquí mismo.`,
+    variables: ["{{nombre}}", "{{total_facturas}}", "{{monto_total}}", "{{facturas_detalle}}", "{{empresa_emisora}}"],
     activa: true,
   },
   {
     id: "wsp-amarillo-1",
     canal: "whatsapp",
     nivelRiesgo: "amarillo",
-    nombre: "Aviso vencimiento WA",
+    nombre: "Aviso de vencimiento próximo",
     cuerpo: `Hola {{nombre}} ⚠️
 
-La factura N°*{{folio}}* por *\${{monto}}* vence en *{{dias_para_vencer}} días*.
+Tienes *{{total_facturas}} factura(s)* por *\${{monto_total}}* próximas a vencer.
 
-Para evitar inconvenientes, te pedimos gestionar el pago a la brevedad. ¿Necesitas información de pago o tienes alguna consulta?`,
-    variables: ["{{nombre}}", "{{folio}}", "{{monto}}", "{{dias_para_vencer}}"],
+{{facturas_detalle}}
+
+Para evitar inconvenientes, gestiona el pago a la brevedad. ¿Necesitas información de pago o tienes alguna consulta?`,
+    variables: ["{{nombre}}", "{{total_facturas}}", "{{monto_total}}", "{{facturas_detalle}}"],
     activa: true,
   },
   {
     id: "wsp-naranja-1",
     canal: "whatsapp",
     nivelRiesgo: "naranja",
-    nombre: "Aviso mora WA",
+    nombre: "Aviso de mora",
     cuerpo: `Hola {{nombre}} 🔴
 
-Tu factura N°*{{folio}}* por *\${{monto}}* lleva *{{dias_vencida}} días vencida* sin registrar pago.
+Tienes *{{total_facturas}} factura(s) vencida(s)* por un total de *\${{monto_total}}* sin registrar pago.
 
-Queremos ayudarte a regularizar esta situación. ¿Podemos coordinar un plan de pago o tienes algún inconveniente?
+{{facturas_detalle}}
+
+Queremos ayudarte a regularizar esta situación. ¿Podemos coordinar un plan de pago?
 
 Escríbenos aquí o llámanos al {{telefono_contacto}}.`,
-    variables: ["{{nombre}}", "{{folio}}", "{{monto}}", "{{dias_vencida}}", "{{telefono_contacto}}"],
+    variables: ["{{nombre}}", "{{total_facturas}}", "{{monto_total}}", "{{facturas_detalle}}", "{{telefono_contacto}}"],
     activa: true,
   },
   {
     id: "wsp-rojo-1",
     canal: "whatsapp",
     nivelRiesgo: "rojo",
-    nombre: "Último aviso WA",
+    nombre: "Último aviso",
     cuerpo: `⚠️ *ÚLTIMO AVISO* — {{empresa_emisora}}
 
-Hola {{nombre}}, la deuda de *\${{monto}}* (factura N°{{folio}}) con *{{dias_vencida}} días de mora* está en proceso de gestión de cobranza.
+Hola {{nombre}}, tienes *{{total_facturas}} factura(s)* por un total de *\${{monto_total}}* en proceso de gestión de cobranza.
+
+{{facturas_detalle}}
 
 Para evitar consecuencias legales y reporte a DICOM, contáctanos *antes del {{fecha_limite}}*.
 
 📞 {{telefono_contacto}}`,
-    variables: ["{{nombre}}", "{{empresa_emisora}}", "{{folio}}", "{{monto}}", "{{dias_vencida}}", "{{fecha_limite}}", "{{telefono_contacto}}"],
+    variables: ["{{nombre}}", "{{empresa_emisora}}", "{{total_facturas}}", "{{monto_total}}", "{{facturas_detalle}}", "{{fecha_limite}}", "{{telefono_contacto}}"],
     activa: true,
   },
 ];

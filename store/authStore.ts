@@ -1,6 +1,7 @@
 "use client";
 
 import { create } from "zustand";
+import type { Company } from "@/lib/api/types/auth";
 
 const ACCESS_COOKIE    = "msena_access";
 const REFRESH_COOKIE   = "msena_refresh";
@@ -25,20 +26,24 @@ function getCookie(name: string): string | null {
 // ─── Store ────────────────────────────────────────────────────────────────────
 
 type AuthState = {
-  accessToken:  string | null;
-  refreshToken: string | null;
-  companyId:    number | null;
+  accessToken:    string | null;
+  refreshToken:   string | null;
+  companyId:      number | null;
+  activeCompany:  Company | null;
 
   setSession: (tokens: { access_token: string; refresh_token: string; company_id: number }) => void;
+  /** Sincroniza activeCompany cuando llega /me. Llama esto desde useMe. */
+  setActiveCompany: (companies: Company[], companyId: number) => void;
   clearSession: () => void;
   /** Carga tokens desde cookies al montar (hidratación) */
   hydrate: () => void;
 };
 
-export const useAuthStore = create<AuthState>((set) => ({
-  accessToken:  null,
-  refreshToken: null,
-  companyId:    null,
+export const useAuthStore = create<AuthState>((set, get) => ({
+  accessToken:   null,
+  refreshToken:  null,
+  companyId:     null,
+  activeCompany: null,
 
   setSession({ access_token, refresh_token, company_id }) {
     setCookie(ACCESS_COOKIE,  access_token);
@@ -47,11 +52,19 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({ accessToken: access_token, refreshToken: refresh_token, companyId: company_id });
   },
 
+  setActiveCompany(companies, companyId) {
+    const found = companies.find((c) => c.id === companyId) ?? companies[0] ?? null;
+    // Solo actualiza si cambió (evita re-renders innecesarios)
+    if (found?.id !== get().activeCompany?.id || found?.whatsapp.connected !== get().activeCompany?.whatsapp.connected) {
+      set({ activeCompany: found });
+    }
+  },
+
   clearSession() {
     deleteCookie(ACCESS_COOKIE);
     deleteCookie(REFRESH_COOKIE);
     deleteCookie(COMPANY_COOKIE);
-    set({ accessToken: null, refreshToken: null, companyId: null });
+    set({ accessToken: null, refreshToken: null, companyId: null, activeCompany: null });
   },
 
   hydrate() {

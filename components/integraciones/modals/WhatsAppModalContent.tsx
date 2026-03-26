@@ -1,26 +1,194 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useModalStore } from "@/store/modalStore";
+import { useToastStore } from "@/store/toastStore";
+import { ApiError } from "@/lib/api/client";
+import { queryKeys } from "@/lib/api/keys";
+import {
+  useWhatsAppStatus,
+  useCreateWhatsAppInstance,
+  useDeleteWhatsAppInstance,
+} from "@/lib/hooks/useWhatsApp";
+import { useAuthStore } from "@/store/authStore";
 
-type QrStatus = "idle" | "generating" | "ready" | "connected";
+// ─── Estado: conectado ────────────────────────────────────────────────────────
+
+function WhatsAppConnected({
+  phone,
+  onDisconnect,
+  isDeleting,
+}: {
+  phone: string | null;
+  onDisconnect: () => void;
+  isDeleting: boolean;
+}) {
+  const { hideModal } = useModalStore();
+
+  return (
+    <div className="flex flex-col gap-5 px-6 py-5">
+      <div className="flex items-center gap-3 p-4 rounded-xl bg-green-50 border border-green-200">
+        <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center shrink-0">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+        </div>
+        <div>
+          <p className="text-sm font-semibold text-green-800">WhatsApp conectado</p>
+          {phone && <p className="text-xs text-green-600 mt-0.5 font-mono">{phone}</p>}
+        </div>
+      </div>
+
+      <p className="text-sm text-gray-500">
+        Tu WhatsApp está vinculado. Ya puedes enviar mensajes de cobranza directamente a tus clientes.
+      </p>
+
+      <button
+        onClick={hideModal}
+        className="self-start text-sm font-medium text-blue-600 hover:text-blue-500 transition-colors"
+      >
+        Cerrar
+      </button>
+
+      <div className="border-t border-gray-100 pt-4">
+        <button
+          onClick={onDisconnect}
+          disabled={isDeleting}
+          className="text-sm text-red-500 hover:text-red-700 font-medium transition-colors underline underline-offset-2 disabled:opacity-50"
+        >
+          {isDeleting ? "Desconectando…" : "Desconectar WhatsApp"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ─── Estado: QR listo para escanear ──────────────────────────────────────────
+
+function WhatsAppQr({
+  dataURL,
+  onRefresh,
+}: {
+  dataURL: string;
+  onRefresh: () => void;
+}) {
+  return (
+    <div className="flex flex-col items-center gap-4 py-2">
+      <div className="relative w-48 h-48 rounded-xl border border-gray-200 bg-white p-2 shadow-sm">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={dataURL} alt="QR WhatsApp" className="w-full h-full object-contain" />
+      </div>
+
+      <div className="flex flex-col items-center gap-1 text-center">
+        <p className="text-xs text-gray-500">
+          Esperando que escanees el QR…
+        </p>
+        <p className="text-xs text-gray-400">
+          El QR se actualiza automáticamente cada 5 segundos.
+        </p>
+      </div>
+
+      <button
+        onClick={onRefresh}
+        className="text-xs text-[#25D366] hover:underline font-medium"
+      >
+        Forzar regeneración
+      </button>
+    </div>
+  );
+}
+
+// ─── Estado: generando / spinner ─────────────────────────────────────────────
+
+function WhatsAppSpinner({ label }: { label: string }) {
+  return (
+    <div className="w-48 h-48 rounded-xl bg-gray-50 border border-gray-200 flex flex-col items-center justify-center gap-3">
+      <svg className="animate-spin text-[#25D366]" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+        <path d="M21 12a9 9 0 1 1-9-9" />
+      </svg>
+      <p className="text-xs text-gray-400">{label}</p>
+    </div>
+  );
+}
+
+// ─── Modal principal ──────────────────────────────────────────────────────────
 
 export function WhatsAppModalContent() {
-  const [status, setStatus] = useState<QrStatus>("idle");
+  const { showToast }  = useToastStore();
+  const { hideModal }  = useModalStore();
+  const queryClient    = useQueryClient();
+  const createMutation = useCreateWhatsAppInstance();
+  const deleteMutation = useDeleteWhatsAppInstance();
+  const calledRef      = useRef(false);
 
-  function handleGenerate() {
-    setStatus("generating");
-    // TODO: llamar a Evolution API para obtener QR real
-    setTimeout(() => setStatus("ready"), 1800);
+  // Leer estado actual de WhatsApp desde activeCompany en el store
+  const activeCompany    = useAuthStore((s) => s.activeCompany);
+  const alreadyConnected = activeCompany?.whatsapp.connected ?? false;
+
+  // Estado local para el QR — se setea una sola vez cuando llega el POST
+  const [qrDataURL, setQrDataURL] = useState<string | null>(null);
+
+  // Polling SOLO cuando ya tenemos QR en pantalla (y no está ya conectado)
+  const { data: status } = useWhatsAppStatus({ enabled: Boolean(qrDataURL) });
+
+  // Crear instancia al montar — solo si NO está ya conectado
+  useEffect(() => {
+    if (alreadyConnected) return;
+    if (calledRef.current) return;
+    calledRef.current = true;
+    createMutation.mutateAsync()
+      .then((res) => { setQrDataURL(res.dataURL); })
+      .catch((err) => {
+        const msg = err instanceof ApiError ? err.message : "No se pudo crear la instancia.";
+        showToast({ message: "Error al conectar WhatsApp", subMessage: msg, iconType: "error" });
+      });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [alreadyConnected]);
+
+  // Cuando el polling confirma connected=true: actualiza /me, toast y cierra modal
+  useEffect(() => {
+    if (!status?.connected) return;
+    queryClient.invalidateQueries({ queryKey: queryKeys.me() });
+    showToast({
+      message: "WhatsApp conectado",
+      subMessage: status.phone ? `Número: ${status.phone}` : "Vinculado correctamente.",
+      iconType: "success",
+    });
+    hideModal();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status?.connected]);
+
+  async function handleDelete() {
+    try {
+      await deleteMutation.mutateAsync();
+      showToast({ message: "WhatsApp desconectado", subMessage: "La instancia fue eliminada.", iconType: "success" });
+    } catch (err) {
+      const msg = err instanceof ApiError ? err.message : "No se pudo desconectar.";
+      showToast({ message: "Error al desconectar", subMessage: msg, iconType: "error" });
+    }
+  }
+
+  // ── Conectado (ya estaba conectado o detectado por polling) ──
+  if (alreadyConnected || status?.connected) {
+    const phone = status?.phone ?? (activeCompany?.whatsapp.phone ?? null);
+    return (
+      <WhatsAppConnected
+        phone={phone}
+        onDisconnect={handleDelete}
+        isDeleting={deleteMutation.isPending}
+      />
+    );
   }
 
   return (
     <div className="px-6 py-5 flex flex-col gap-5">
-      {/* Steps */}
+      {/* Pasos */}
       <ol className="flex flex-col gap-2">
         {[
           "Abre WhatsApp en tu celular",
           'Ve a Configuración → Dispositivos vinculados',
-          "Toca \"Vincular un dispositivo\"",
+          'Toca "Vincular un dispositivo"',
           "Escanea el código QR que aparece abajo",
         ].map((step, i) => (
           <li key={i} className="flex items-start gap-3 text-sm text-gray-600">
@@ -32,79 +200,43 @@ export function WhatsAppModalContent() {
         ))}
       </ol>
 
-      {/* QR area */}
-      <div className="flex flex-col items-center gap-4 py-4">
-        {status === "idle" && (
-          <>
-            <div className="w-44 h-44 rounded-xl bg-gray-50 border-2 border-dashed border-gray-200 flex items-center justify-center">
-              <svg className="text-gray-300" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="3" y="3" width="5" height="5" /><rect x="16" y="3" width="5" height="5" />
-                <rect x="3" y="16" width="5" height="5" /><rect x="10" y="10" width="4" height="4" />
-                <line x1="16" y1="10" x2="21" y2="10" /><line x1="16" y1="14" x2="16" y2="21" />
-                <line x1="21" y1="14" x2="21" y2="21" />
+      {/* Área QR */}
+      <div className="flex flex-col items-center gap-4 py-2">
+
+        {/* Sin QR todavía → spinner */}
+        {!qrDataURL && (
+          <WhatsAppSpinner label="Creando instancia…" />
+        )}
+
+        {/* QR disponible */}
+        {qrDataURL && (
+          <WhatsAppQr
+            dataURL={qrDataURL}
+            onRefresh={() => {
+              setQrDataURL(null);
+              createMutation.mutateAsync()
+                .then((res) => setQrDataURL(res.dataURL))
+                .catch(() => {});
+            }}
+          />
+        )}
+
+        {/* Disconnected — ofrecer reconectar */}
+        {status?.status === "disconnected" && !qrDataURL && (
+          <div className="flex flex-col items-center gap-3">
+            <div className="w-48 h-48 rounded-xl bg-red-50 border border-red-200 flex flex-col items-center justify-center gap-2">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" />
               </svg>
+              <p className="text-xs text-red-500 font-medium">Sesión desconectada</p>
             </div>
             <button
-              onClick={handleGenerate}
-              className="rounded-lg bg-[#25D366] hover:bg-[#20ba5a] active:bg-[#1aa04e] transition-colors text-white text-sm font-semibold px-6 py-2.5 cursor-pointer"
+              onClick={() => createMutation.mutate()}
+              className="rounded-lg bg-[#25D366] hover:bg-[#20ba5a] transition-colors text-white text-sm font-semibold px-6 py-2.5"
             >
-              Generar código QR
+              Reconectar WhatsApp
             </button>
-          </>
-        )}
-
-        {status === "generating" && (
-          <div className="w-44 h-44 rounded-xl bg-gray-50 border border-gray-200 flex flex-col items-center justify-center gap-3">
-            <svg className="animate-spin text-[#25D366]" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-              <path d="M21 12a9 9 0 1 1-9-9" />
-            </svg>
-            <p className="text-xs text-gray-400">Generando QR…</p>
-          </div>
-        )}
-
-        {status === "ready" && (
-          <>
-            {/* QR simulado con patrón SVG */}
-            <div className="w-44 h-44 rounded-xl border border-gray-200 bg-white p-3 shadow-sm">
-              <svg viewBox="0 0 100 100" className="w-full h-full">
-                {/* Esquinas */}
-                <rect x="5" y="5" width="30" height="30" rx="2" fill="none" stroke="#111" strokeWidth="4" />
-                <rect x="12" y="12" width="16" height="16" rx="1" fill="#111" />
-                <rect x="65" y="5" width="30" height="30" rx="2" fill="none" stroke="#111" strokeWidth="4" />
-                <rect x="72" y="12" width="16" height="16" rx="1" fill="#111" />
-                <rect x="5" y="65" width="30" height="30" rx="2" fill="none" stroke="#111" strokeWidth="4" />
-                <rect x="12" y="72" width="16" height="16" rx="1" fill="#111" />
-                {/* Datos simulados */}
-                {[40,45,50,55,60,65,70,75,80,85,90].map((y) =>
-                  [5,10,15,20,40,45,55,65,75,85,90].map((x) =>
-                    Math.random() > 0.45 ? (
-                      <rect key={`${x}-${y}`} x={x} y={y} width="4" height="4" fill="#111" />
-                    ) : null
-                  )
-                )}
-              </svg>
-            </div>
-            <p className="text-xs text-gray-400 text-center">
-              El QR expira en <span className="font-semibold text-gray-600">60 seg</span>. Escanéalo pronto.
-            </p>
-            <button
-              onClick={handleGenerate}
-              className="text-xs text-[#25D366] hover:underline cursor-pointer"
-            >
-              Regenerar QR
-            </button>
-          </>
-        )}
-
-        {status === "connected" && (
-          <div className="flex flex-col items-center gap-3 py-4">
-            <div className="w-14 h-14 rounded-full bg-green-100 flex items-center justify-center">
-              <svg className="text-green-600" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="20 6 9 17 4 12" />
-              </svg>
-            </div>
-            <p className="font-semibold text-gray-900 text-sm">WhatsApp conectado</p>
-            <p className="text-xs text-gray-500">Ya puedes enviar y recibir mensajes desde Mini Sena.</p>
           </div>
         )}
       </div>

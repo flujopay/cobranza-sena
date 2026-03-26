@@ -8,6 +8,7 @@ interface IntegrationCardProps {
   descripcion: string;
   actionLabel: string;
   connected: boolean;
+  connectedDetail?: string; // ej. RUT o teléfono cuando está conectado
   onAction: () => void;
   onDisconnect?: () => void;
   isDisconnecting?: boolean;
@@ -19,6 +20,7 @@ export function IntegrationCard({
   descripcion,
   actionLabel,
   connected,
+  connectedDetail,
   onAction,
   onDisconnect,
   isDisconnecting,
@@ -30,11 +32,16 @@ export function IntegrationCard({
         {/* Logo + estado */}
         <div className="flex items-center justify-between mb-5">
           {logo}
-          <div className="flex items-center gap-1.5">
-            <span className={["w-2 h-2 rounded-full", connected ? "bg-green-500" : "bg-gray-300"].join(" ")} />
-            <span className={["text-xs font-medium", connected ? "text-green-700" : "text-gray-400"].join(" ")}>
-              {connected ? "Conectado" : "Sin conectar"}
-            </span>
+          <div className="flex flex-col items-end gap-0.5">
+            <div className="flex items-center gap-1.5">
+              <span className={["w-2 h-2 rounded-full", connected ? "bg-green-500" : "bg-gray-300"].join(" ")} />
+              <span className={["text-xs font-medium", connected ? "text-green-700" : "text-gray-400"].join(" ")}>
+                {connected ? "Conectado" : "Sin conectar"}
+              </span>
+            </div>
+            {connected && connectedDetail && (
+              <span className="text-[10px] text-gray-400 font-mono">{connectedDetail}</span>
+            )}
           </div>
         </div>
 

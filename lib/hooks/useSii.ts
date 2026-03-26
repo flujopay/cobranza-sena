@@ -27,9 +27,6 @@ export function useSaveSiiCreds() {
   return useMutation({
     mutationFn: saveSiiCreds,
     onSuccess() {
-      // Invalida el status para que se refresque con has_credentials: true
-      queryClient.invalidateQueries({ queryKey: queryKeys.siiStatus(companyId ?? undefined) });
-      // También invalida /me para actualizar has_sii_credentials en el sidebar
       queryClient.invalidateQueries({ queryKey: queryKeys.me() });
     },
   });
@@ -44,7 +41,6 @@ export function useDeleteSiiCreds() {
   return useMutation({
     mutationFn: deleteSiiCreds,
     onSuccess() {
-      queryClient.invalidateQueries({ queryKey: queryKeys.siiStatus(companyId ?? undefined) });
       queryClient.invalidateQueries({ queryKey: queryKeys.me() });
     },
   });

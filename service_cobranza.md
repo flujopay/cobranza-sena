@@ -380,6 +380,69 @@ Ejemplo error sin credenciales:
 
 ---
 
+### 7. Sincronizar Facturas SII
+
+Sincroniza facturas **emitidas** (ventas) desde el SII. Crea/actualiza clientes (deudores) y sus facturas automáticamente.
+
+```
+POST /api/v1/collection/sii/sync/
+```
+
+**Headers:**
+
+```
+Authorization: Bearer <access_token>
+X-Company-Id: <id>
+```
+
+**Body (opcional):**
+
+```json
+{
+  "days_before": 60
+}
+```
+
+| Campo        | Tipo | Default | Notas                                    |
+| ------------ | ---- | ------- | ---------------------------------------- |
+| `days_before`| int  | 60      | Días hacia atrás para buscar facturas    |
+
+**Response exitoso:** `200 OK`
+
+```json
+{
+  "message": "Sincronización completada exitosamente.",
+  "invoices_synced": 45,
+  "clients_synced": 12,
+  "invoices_not_iterated": 0
+}
+```
+
+| Campo                   | Tipo | Descripción                                      |
+| ----------------------- | ---- | ------------------------------------------------ |
+| `invoices_synced`       | int  | Total de facturas creadas/actualizadas            |
+| `clients_synced`        | int  | Total de clientes nuevos creados                  |
+| `invoices_not_iterated` | int  | Facturas no procesadas por límite de API Gateway  |
+
+**Flujo interno:**
+
+1. Obtiene credenciales SII del `RelationCompanyUser`
+2. Genera períodos fiscales (YYYYMM) para los últimos N días
+3. Consulta el SII por facturas emitidas (RCV, BHE, BTE)
+4. Para cada factura: extrae `receiver_ruc` → crea/actualiza `Client`
+5. Crea/actualiza `Invoice` con montos, fechas y tipo de documento
+
+**Errores posibles:**
+
+| Código | error_code            | Descripción                              |
+| ------ | --------------------- | ---------------------------------------- |
+| 400    | `NO_SII_CREDENTIALS`  | No hay credenciales SII configuradas    |
+| 400    | `SYNC_FAILED`         | Error durante la sincronización          |
+| 401    | —                     | Token JWT inválido o ausente             |
+| 404    | —                     | `X-Company-Id` ausente o sin acceso      |
+
+---
+
 ## Paginación
 
 Todos los endpoints de listado usan paginación con los siguientes query params:
@@ -693,6 +756,242 @@ X-Company-Id: <id>
 
 ---
 
+### 11. WhatsApp — Crear Instancia
+
+Crea una instancia de WhatsApp en Evolution API y retorna el código QR para vincular.
+
+```
+POST /api/v1/collection/whatsapp/create-instance/
+```
+
+**Headers:**
+
+```
+Authorization: Bearer <access_token>
+X-Company-Id: <id>
+```
+
+**Response exitoso:** `200 OK`
+
+```json
+{
+  "sessionId": "789",
+  "status": "qr",
+  "qr": "2@ABC123...",
+  "dataURL": "data:image/png;base64,iVBOR..."
+}
+```
+
+| Campo      | Tipo   | Descripción                              |
+| ---------- | ------ | ---------------------------------------- |
+| `sessionId`| string | ID de la sesión (= relation_company_user)|
+| `status`   | string | Estado: `qr`                             |
+| `qr`       | string | Código QR en texto (para librerías QR)   |
+| `dataURL`  | string | QR como imagen base64 (para `<img src>`) |
+
+**Errores posibles:**
+
+| Código | error_code              | Descripción                    |
+| ------ | ----------------------- | ------------------------------ |
+| 400    | `WHATSAPP_CREATE_FAILED`| Error al crear la instancia    |
+| 401    | —                       | Token JWT inválido o ausente   |
+| 404    | —                       | `X-Company-Id` ausente o sin acceso |
+
+---
+
+### 12. WhatsApp — Estado
+
+Retorna el estado actual de la instancia WhatsApp. Si está en estado `qr`, incluye el QR actualizado.
+
+```
+GET /api/v1/collection/whatsapp/status/
+```
+
+**Headers:**
+
+```
+Authorization: Bearer <access_token>
+X-Company-Id: <id>
+```
+
+**Response exitoso:** `200 OK`
+
+Sin instancia:
+
+```json
+{
+  "connected": false,
+  "status": "none",
+  "phone": null
+}
+```
+
+Esperando QR:
+
+```json
+{
+  "connected": false,
+  "status": "qr",
+  "phone": null,
+  "qr": {
+    "sessionId": "789",
+    "status": "qr",
+    "qr": "2@ABC123...",
+    "dataURL": "data:image/png;base64,iVBOR..."
+  }
+}
+```
+
+Conectado:
+
+```json
+{
+  "connected": true,
+  "status": "ready",
+  "phone": "+56912345678",
+  "session_id": "789",
+  "data": {
+    "event": "connection.update",
+    "data": {
+      "state": "open",
+      "wuid": "56912345678@s.whatsapp.net"
+    }
+  }
+}
+```
+
+| Campo        | Tipo        | Descripción                                    |
+| ------------ | ----------- | ---------------------------------------------- |
+| `connected`  | bool        | Si WhatsApp está conectado y listo              |
+| `status`     | string      | `none`, `qr`, `ready`, `disconnected`          |
+| `phone`      | string/null | Número de WhatsApp conectado                   |
+| `session_id` | string/null | ID de la sesión (solo si `ready`)              |
+| `data`       | object/null | Data completa del webhook (solo si `ready`)    |
+| `qr`         | object/null | Datos del QR (solo si status=`qr`)             |
+
+---
+
+### 13. WhatsApp — Enviar Mensaje
+
+Envía un mensaje de texto por WhatsApp. La instancia debe estar conectada (`ready`).
+
+```
+POST /api/v1/collection/whatsapp/send-message/
+```
+
+**Headers:**
+
+```
+Authorization: Bearer <access_token>
+X-Company-Id: <id>
+Content-Type: application/json
+```
+
+**Body:**
+
+```json
+{
+  "phone_number": "+56912345678",
+  "message": "Hola, le recordamos que tiene una factura pendiente."
+}
+```
+
+| Campo          | Tipo   | Obligatorio | Notas                           |
+| -------------- | ------ | :---------: | ------------------------------- |
+| `phone_number` | string |     Si      | Número con código de país       |
+| `message`      | string |     Si      | Texto del mensaje               |
+
+**Response exitoso:** `200 OK`
+
+```json
+{
+  "key": {
+    "remoteJid": "56912345678@s.whatsapp.net",
+    "fromMe": true,
+    "id": "BAE5F6A..."
+  },
+  "message": {
+    "conversation": "Hola, le recordamos que tiene una factura pendiente."
+  },
+  "messageTimestamp": "1711234567",
+  "status": "PENDING"
+}
+```
+
+**Errores posibles:**
+
+| Código | error_code                | Descripción                                   |
+| ------ | ------------------------- | --------------------------------------------- |
+| 400    | `MISSING_FIELDS`          | Faltan `phone_number` o `message`             |
+| 400    | `WHATSAPP_NOT_CONNECTED`  | La instancia no está conectada                |
+| 400    | `WHATSAPP_SEND_FAILED`    | Error al enviar el mensaje                    |
+| 401    | —                         | Token JWT inválido o ausente                  |
+| 404    | —                         | `X-Company-Id` ausente o sin acceso           |
+
+---
+
+### 14. WhatsApp — Eliminar Instancia
+
+Elimina la instancia de WhatsApp y desvincula el número.
+
+```
+DELETE /api/v1/collection/whatsapp/delete-instance/
+```
+
+**Headers:**
+
+```
+Authorization: Bearer <access_token>
+X-Company-Id: <id>
+```
+
+**Response exitoso:** `200 OK`
+
+```json
+{
+  "status": "SUCCESS"
+}
+```
+
+**Errores posibles:**
+
+| Código | error_code                | Descripción                    |
+| ------ | ------------------------- | ------------------------------ |
+| 400    | `WHATSAPP_DELETE_FAILED`  | Error al eliminar la instancia |
+| 401    | —                         | Token JWT inválido o ausente   |
+| 404    | —                         | `X-Company-Id` ausente o sin acceso |
+
+---
+
+### 15. WhatsApp — Webhook (Evolution API)
+
+Endpoint interno que recibe eventos de Evolution API. No lo consume el frontend directamente.
+
+```
+POST /api/v1/collection/whatsapp/webhook/?company_user_id=<id>
+```
+
+**Permiso:** Público (`AllowAny`)
+
+**Eventos manejados:**
+
+| Evento              | Acción                                                  |
+| ------------------- | ------------------------------------------------------- |
+| `qrcode.updated`    | Actualiza QR en DB + notifica por WebSocket             |
+| `connection.update`  | Actualiza estado (ready/disconnected) + notifica WS    |
+
+**Almacenamiento en `WhatsappCompanyUser`:**
+
+Al recibir `connection.update` con `state=open`:
+- `type` → `"ready"`
+- `phone` → extraído de `wuid` (ej: `56912345678@s.whatsapp.net` → `+56912345678`), fallback a `phoneNumber`
+- `data` → payload completo del webhook
+- `session_id` → ID de la sesión (= `relation_company_user.id`)
+
+**WebSocket channel:** `event_collection_whatsapp_{company_id}_{company_user_id}`
+
+---
+
 ## Lista de Endpoints
 
 | #  | Método   | URL                                    | ViewSet                    | Permiso                      |
@@ -703,10 +1002,16 @@ X-Company-Id: <id>
 | 4  | `GET`    | `/collection/sii/status/`              | `SiiCredentialsViewSet`    | `CollectionJWTPermission`    |
 | 5  | `POST`   | `/collection/sii/save/`                | `SiiCredentialsViewSet`    | `CollectionJWTPermission`    |
 | 6  | `DELETE` | `/collection/sii/delete/`              | `SiiCredentialsViewSet`    | `CollectionJWTPermission`    |
-| 7  | `GET`    | `/collection/clients/`                 | `CollectionClientViewSet`  | `CollectionJWTPermission`    |
-| 8  | `GET`    | `/collection/invoices/`                | `CollectionInvoiceViewSet` | `CollectionJWTPermission`    |
-| 9  | `GET`    | `/collection/payments/`                | `CollectionPaymentViewSet` | `CollectionJWTPermission`    |
-| 10 | `GET`    | `/collection/contacts/`                | `CollectionContactViewSet` | `CollectionJWTPermission`    |
+| 7  | `POST`   | `/collection/sii/sync/`                | `SiiCredentialsViewSet`    | `CollectionJWTPermission`    |
+| 8  | `GET`    | `/collection/clients/`                 | `CollectionClientViewSet`  | `CollectionJWTPermission`    |
+| 9  | `GET`    | `/collection/invoices/`                | `CollectionInvoiceViewSet` | `CollectionJWTPermission`    |
+| 10 | `GET`    | `/collection/payments/`                | `CollectionPaymentViewSet` | `CollectionJWTPermission`    |
+| 11 | `GET`    | `/collection/contacts/`                | `CollectionContactViewSet`   | `CollectionJWTPermission`    |
+| 12 | `POST`   | `/collection/whatsapp/create-instance/`| `CollectionWhatsAppViewSet`  | `CollectionJWTPermission`    |
+| 13 | `GET`    | `/collection/whatsapp/status/`         | `CollectionWhatsAppViewSet`  | `CollectionJWTPermission`    |
+| 14 | `POST`   | `/collection/whatsapp/send-message/`   | `CollectionWhatsAppViewSet`  | `CollectionJWTPermission`    |
+| 15 | `DELETE` | `/collection/whatsapp/delete-instance/`| `CollectionWhatsAppViewSet`  | `CollectionJWTPermission`    |
+| 16 | `POST`   | `/collection/whatsapp/webhook/`        | `CollectionWhatsAppViewSet`  | Público (`AllowAny`)         |
 
 > **Base URL:** `/api/v1/collection/`
 
@@ -723,6 +1028,7 @@ router.register("collection/clients", CollectionClientViewSet, basename="collect
 router.register("collection/invoices", CollectionInvoiceViewSet, basename="collection-invoices")
 router.register("collection/payments", CollectionPaymentViewSet, basename="collection-payments")
 router.register("collection/contacts", CollectionContactViewSet, basename="collection-contacts")
+router.register("collection/whatsapp", CollectionWhatsAppViewSet, basename="collection-whatsapp")
 ```
 
 ---
@@ -742,11 +1048,25 @@ router.register("collection/contacts", CollectionContactViewSet, basename="colle
    (Authorization: Bearer <token>)
    (X-Company-Id: <id>)
 
-4. GET  /collection/clients/           → Lista de clientes
+4. POST /collection/sii/sync/          → Sincroniza facturas emitidas + crea clientes
+   (Authorization: Bearer <token>)
+   (X-Company-Id: <id>)
+
+5. POST /collection/whatsapp/create-instance/ → Crea instancia + QR
+   GET  /collection/whatsapp/status/          → Polling hasta connected=true
+   (Authorization: Bearer <token>)
+   (X-Company-Id: <id>)
+   → WebSocket: event_collection_whatsapp_{company_id}_{cu_id}
+
+6. GET  /collection/clients/           → Lista de clientes
    GET  /collection/invoices/          → Lista de facturas
    GET  /collection/payments/          → Lista de pagos
    GET  /collection/contacts/          → Lista de contactos
    (Authorization: Bearer <token>)
    (X-Company-Id: <id>)
    (?page=1&limit=20&search=...)
+
+7. POST /collection/whatsapp/send-message/ → Enviar mensaje WhatsApp
+   (Authorization: Bearer <token>)
+   (X-Company-Id: <id>)
 ```

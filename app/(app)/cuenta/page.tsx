@@ -2,7 +2,6 @@
 
 import { useMe } from "@/lib/hooks/useMe";
 import { useAuthStore } from "@/store/authStore";
-import { useSiiStatus } from "@/lib/hooks/useSii";
 import { useModalStore } from "@/store/modalStore";
 import { SiiModalContent } from "@/components/integraciones/modals/SiiModalContent";
 import type { Company } from "@/lib/api/types/auth";
@@ -123,9 +122,13 @@ function CompanySection({ company, isActive, siiConnected, onConfigureSii }: {
 
 export default function CuentaPage() {
   const { data: me, isLoading }     = useMe();
-  const { data: siiStatus }         = useSiiStatus();
   const { companyId }               = useAuthStore();
   const { showModal }               = useModalStore();
+
+  // Empresa activa siempre primera
+  const companies = me?.companies
+    ? [...me.companies].sort((a, b) => (b.id === companyId ? 1 : 0) - (a.id === companyId ? 1 : 0))
+    : [];
 
   function openSiiModal() {
     showModal({
@@ -183,12 +186,12 @@ export default function CuentaPage() {
           </div>
         )}
 
-        {!isLoading && me?.companies.map(company => (
+        {!isLoading && companies.map(company => (
           <CompanySection
             key={company.id}
             company={company}
             isActive={company.id === companyId}
-            siiConnected={siiStatus?.has_credentials ?? false}
+            siiConnected={company.has_sii_credentials}
             onConfigureSii={openSiiModal}
           />
         ))}

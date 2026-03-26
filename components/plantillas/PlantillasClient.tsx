@@ -3,6 +3,8 @@
 import { useState } from "react";
 import {
   PLANTILLAS_MOCK,
+  PREVIEW_FACTURAS,
+  PREVIEW_VARS,
   CANAL_LABELS,
   RIESGO_LABELS,
   RIESGO_COLORS,
@@ -32,8 +34,72 @@ const CANAL_ICONS: Record<Canal, React.ReactNode> = {
   ),
 };
 
+// ─── Tabla de facturas de ejemplo ────────────────────────────────────────────
+
+function FacturasTable({ canal }: { canal: Canal }) {
+  const fmt = (n: number) => "$" + n.toLocaleString("es-CL");
+  const total = PREVIEW_FACTURAS.reduce((s, f) => s + f.monto, 0);
+
+  if (canal === "sms") {
+    // SMS no tiene tabla — solo texto resumido
+    return null;
+  }
+
+  return (
+    <div className="mt-3 rounded-xl border border-gray-200 overflow-hidden text-[11px]">
+      <table className="w-full">
+        <thead>
+          <tr className="bg-gray-50 text-gray-500 font-semibold">
+            <th className="text-left px-3 py-2">Folio</th>
+            <th className="text-left px-3 py-2">Emisión</th>
+            <th className="text-left px-3 py-2">Vencimiento</th>
+            <th className="text-right px-3 py-2">Días mora</th>
+            <th className="text-right px-3 py-2">Monto</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-gray-100">
+          {PREVIEW_FACTURAS.map(f => (
+            <tr key={f.folio} className="bg-white">
+              <td className="px-3 py-2 font-mono text-gray-700">{f.folio}</td>
+              <td className="px-3 py-2 text-gray-500">{f.fecha_emision}</td>
+              <td className="px-3 py-2 text-gray-500">{f.fecha_vencimiento}</td>
+              <td className="px-3 py-2 text-right">
+                {f.dias_mora !== null
+                  ? <span className="text-red-600 font-semibold">{f.dias_mora}d</span>
+                  : <span className="text-gray-400">—</span>
+                }
+              </td>
+              <td className="px-3 py-2 text-right font-semibold text-gray-800">{fmt(f.monto)}</td>
+            </tr>
+          ))}
+        </tbody>
+        <tfoot>
+          <tr className="bg-gray-50 border-t border-gray-200 font-bold text-gray-700">
+            <td colSpan={4} className="px-3 py-2 text-right">Total</td>
+            <td className="px-3 py-2 text-right">{fmt(total)}</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  );
+}
+
+// ─── Preview del cuerpo con variables reemplazadas ───────────────────────────
+
+function renderPreview(cuerpo: string): string {
+  return Object.entries(PREVIEW_VARS).reduce(
+    (text, [key, val]) => text.replaceAll(key, val),
+    cuerpo
+  );
+}
+
+// ─── Card ─────────────────────────────────────────────────────────────────────
+
 function PlantillaCard({ plantilla }: { plantilla: Plantilla }) {
   const [expanded, setExpanded] = useState(false);
+  const preview = renderPreview(plantilla.cuerpo);
+  const asuntoPreview = plantilla.asunto ? renderPreview(plantilla.asunto) : null;
+
   return (
     <div className="bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
       <div className="px-5 pt-4 pb-3 flex items-start justify-between gap-3">
@@ -50,29 +116,54 @@ function PlantillaCard({ plantilla }: { plantilla: Plantilla }) {
               <span className="text-[11px] text-gray-400">Inactiva</span>
             )}
           </div>
-          <h3 className="text-sm font-semibold text-gray-900 truncate">{plantilla.nombre}</h3>
-          {plantilla.asunto && (
-            <p className="text-xs text-gray-500 mt-0.5 truncate">Asunto: {plantilla.asunto}</p>
+          <h3 className="text-sm font-semibold text-gray-900">{plantilla.nombre}</h3>
+          {asuntoPreview && (
+            <p className="text-xs text-gray-500 mt-0.5 truncate">Asunto: {asuntoPreview}</p>
           )}
         </div>
-        <div className="flex gap-2 shrink-0">
-          <button
-            onClick={() => setExpanded(v => !v)}
-            className="text-xs text-brand font-medium hover:text-brand-hover transition-colors cursor-pointer"
-          >
-            {expanded ? "Ocultar" : "Ver plantilla"}
-          </button>
-          {/* <button className="text-xs text-gray-400 hover:text-gray-600 transition-colors cursor-pointer">
-            Editar
-          </button> */}
-        </div>
+        <button
+          onClick={() => setExpanded(v => !v)}
+          className="text-xs text-brand font-medium hover:text-brand-hover transition-colors cursor-pointer shrink-0"
+        >
+          {expanded ? "Ocultar" : "Ver plantilla"}
+        </button>
       </div>
 
       {expanded && (
-        <div className="px-5 pb-4 pt-0">
-          <pre className="text-xs text-gray-700 bg-gray-50 rounded-xl p-4 whitespace-pre-wrap font-mono leading-relaxed border border-gray-100 max-h-64 overflow-y-auto">
-            {plantilla.cuerpo}
-          </pre>
+        <div className="px-5 pb-5 pt-0 border-t border-gray-100">
+          {/* Cabecera de preview */}
+          <p className="text-[10px] font-semibold uppercase tracking-wide text-gray-400 mt-3 mb-2">
+            Vista previa con datos de ejemplo
+          </p>
+
+          {/* Burbuja de mensaje según canal */}
+          {plantilla.canal === "whatsapp" ? (
+            <div className="bg-[#e7ffd9] rounded-2xl rounded-tl-sm px-4 py-3 text-[12px] text-gray-800 leading-relaxed whitespace-pre-wrap max-w-xs shadow-sm">
+              {preview.replace("{{facturas_detalle}}", "ver tabla abajo")}
+            </div>
+          ) : plantilla.canal === "sms" ? (
+            <div className="bg-gray-100 rounded-2xl rounded-tl-sm px-4 py-3 text-[12px] text-gray-800 leading-relaxed whitespace-pre-wrap max-w-xs shadow-sm">
+              {preview}
+            </div>
+          ) : (
+            /* Email */
+            <div className="rounded-xl border border-gray-200 overflow-hidden text-[12px]">
+              {asuntoPreview && (
+                <div className="bg-gray-50 border-b border-gray-200 px-4 py-2 flex gap-2">
+                  <span className="text-gray-400 font-medium shrink-0">Asunto:</span>
+                  <span className="text-gray-700 font-semibold truncate">{asuntoPreview}</span>
+                </div>
+              )}
+              <div className="px-4 py-3 text-gray-700 leading-relaxed whitespace-pre-wrap bg-white">
+                {preview.replace("{{facturas_detalle}}", "ver tabla abajo")}
+              </div>
+            </div>
+          )}
+
+          {/* Tabla de facturas */}
+          <FacturasTable canal={plantilla.canal} />
+
+          {/* Variables disponibles */}
           <div className="mt-3 flex flex-wrap gap-1.5">
             {plantilla.variables.map(v => (
               <code key={v} className="text-[10px] bg-brand-light text-brand px-2 py-0.5 rounded-md font-mono border border-brand/10">
@@ -150,14 +241,14 @@ export function PlantillasClient() {
       </div>
 
       {/* Info banner */}
-      <div className="mb-5 rounded-xl bg-brand-light border border-brand/15 px-4 py-3 flex gap-3 items-start">
+      {/*<div className="mb-5 rounded-xl bg-brand-light border border-brand/15 px-4 py-3 flex gap-3 items-start">
         <svg className="shrink-0 text-brand mt-0.5" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" />
         </svg>
         <p className="text-xs text-brand leading-relaxed">
           Las variables entre <code className="font-mono bg-brand/10 px-1 rounded">{"{{llaves}}"}</code> se reemplazan automáticamente con los datos del deudor al enviar el mensaje.
         </p>
-      </div>
+      </div>*/}
 
       {/* Cards por nivel de riesgo */}
       <div className="flex flex-col gap-4">

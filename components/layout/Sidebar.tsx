@@ -2,14 +2,13 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { SenaLogo } from "@/components/ui/SenaLogo";
 import { useModalStore } from "@/store/modalStore";
 import { SiiModalContent } from "@/components/integraciones/modals/SiiModalContent";
 import { useMe } from "@/lib/hooks/useMe";
 import { useAuthStore } from "@/store/authStore";
 import { useQueryClient } from "@tanstack/react-query";
-import { useSiiStatus } from "@/lib/hooks/useSii";
 import type { Company } from "@/lib/api/types/auth";
 
 type NavItem = {
@@ -95,17 +94,29 @@ export function Sidebar() {
   const router        = useRouter();
   const { showModal } = useModalStore();
   const { data: me }  = useMe();
-  const { clearSession, companyId, setSession, accessToken, refreshToken } = useAuthStore();
+  const { clearSession, companyId, setSession, accessToken, refreshToken, activeCompany } = useAuthStore();
   const queryClient   = useQueryClient();
-  const { data: siiStatus } = useSiiStatus();
-  const siiConnected = siiStatus?.has_credentials ?? false;
 
   const [selectorOpen, setSelectorOpen] = useState(false);
   const [collapsed,    setCollapsed]    = useState(false);
   const [search,       setSearch]       = useState("");
 
+  const selectorRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!selectorOpen) return;
+    function handleClickOutside(e: MouseEvent) {
+      if (selectorRef.current && !selectorRef.current.contains(e.target as Node)) {
+        setSelectorOpen(false);
+        setSearch("");
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [selectorOpen]);
+
   const companies: Company[] = me?.companies ?? [];
-  const empresaActiva = companies.find(c => c.id === companyId) ?? companies[0] ?? null;
+  const empresaActiva = activeCompany ?? companies[0] ?? null;
+  const siiConnected  = empresaActiva?.has_sii_credentials ?? false;
 
   const filtered = search
     ? companies.filter(c =>
@@ -194,7 +205,7 @@ export function Sidebar() {
         </div>
 
         {/* Workspace selector */}
-        <div style={{ padding: collapsed ? "8px 6px" : "10px 10px", borderBottom: "1px solid rgba(255,255,255,0.12)", position: "relative" }}>
+        <div ref={selectorRef} style={{ padding: collapsed ? "8px 6px" : "10px 10px", borderBottom: "1px solid rgba(255,255,255,0.12)", position: "relative" }}>
           <button
             onClick={() => setSelectorOpen(v => !v)}
             style={{
