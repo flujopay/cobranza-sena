@@ -21,6 +21,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className={`${geistSans.variable} h-full antialiased`}>
+      <head>
+        <link rel="icon" type="image/svg+xml" href="/somossena.svg" />
+      </head>
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
         <QueryProvider>
           {children}

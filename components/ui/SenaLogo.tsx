@@ -1,35 +1,46 @@
-"use client";
-
 type SenaLogoProps = {
   variant?: "white" | "black" | "color";
   height?: number;
 };
 
 export function SenaLogo({ variant = "white", height = 40 }: SenaLogoProps) {
-  const src =
-    variant === "white"
-      ? "/images/logo-sena-white.png"
-      : variant === "black"
-      ? "/images/logo-sena-black.png"
-      : "/images/logo-sena.png";
-
-  const fallbackColor = variant === "white" ? "#ffffff" : "#0041B5";
+  const textColor = variant === "white" ? "#ffffff" : "#0041B5";
+  const dotColor  = variant === "white" ? "#ffffff" : "#00FF66";
 
   return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      src={src}
-      alt="Sena"
-      style={{ height, width: "auto" }}
-      onError={(e) => {
-        // Si el PNG no carga, muestra el nombre como texto
-        const el = e.currentTarget;
-        el.style.display = "none";
-        const span = document.createElement("span");
-        span.textContent = "SENA";
-        span.style.cssText = `font-size:${height * 0.6}px;font-weight:700;letter-spacing:0.1em;color:${fallbackColor}`;
-        el.parentNode?.insertBefore(span, el);
-      }}
-    />
+    <div style={{ display: "flex", alignItems: "center", gap: height * 0.25, height }}>
+      {/* Inline SVG — nunca falla, no depende de red */}
+      <svg
+        width={height * 0.85}
+        height={height}
+        viewBox="0 0 20 22"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M1.87781 21.9197C2.91058 21.9197 3.74781 21.0825 3.74781 20.0497C3.74781 19.0169 2.91058 18.1797 1.87781 18.1797C0.84504 18.1797 0.0078125 19.0169 0.0078125 20.0497C0.0078125 21.0825 0.84504 21.9197 1.87781 21.9197Z"
+          fill={dotColor}
+        />
+        <path
+          d="M0.293908 17.4597C0.353908 17.4497 0.373908 17.4597 0.383908 17.4397C0.423908 17.4097 0.453908 17.3697 0.483908 17.3397C1.02391 16.6897 1.66391 16.1597 2.40391 15.7397C3.64391 15.0397 4.98391 14.7797 6.39391 14.7697C8.70391 14.7497 11.0139 14.7097 13.3239 14.6797C14.1739 14.6697 15.0139 14.5397 15.7939 14.1797C18.1039 13.1197 19.3839 11.3297 19.6039 8.79969C19.6239 8.53969 19.5639 8.42969 19.2639 8.42969C15.5339 8.43969 11.7939 8.42969 8.06391 8.44969C7.15391 8.44969 6.24391 8.55969 5.34391 8.70969C4.14391 8.91969 3.01391 9.34969 2.09391 10.1697C0.833908 11.2897 0.173908 12.7197 0.0339079 14.3897C-0.0560921 15.4197 0.0339079 16.4397 0.293908 17.4597Z"
+          fill={textColor}
+        />
+        <path
+          d="M0.293908 9.03C0.353908 9.02 0.373908 9.03 0.383908 9.01C0.423908 8.98 0.453908 8.94 0.483908 8.91C1.02391 8.26 1.66391 7.73 2.40391 7.31C3.64391 6.61 4.98391 6.35 6.39391 6.34C8.70391 6.32 11.0139 6.28 13.3239 6.25C14.1739 6.24 15.0139 6.11 15.7939 5.75C18.1039 4.69 19.3839 2.9 19.6039 0.37C19.6239 0.11 19.5639 0 19.2639 0C15.5339 0.01 11.7939 -1.86265e-08 8.06391 0.02C7.15391 0.02 6.24391 0.13 5.34391 0.28C4.14391 0.49 3.01391 0.92 2.09391 1.74C0.833908 2.86 0.173908 4.29 0.0339079 5.96C-0.0560921 6.99 0.0339079 8.01 0.293908 9.03Z"
+          fill={textColor}
+        />
+      </svg>
+      <span
+        style={{
+          fontSize: height * 0.55,
+          fontWeight: 700,
+          letterSpacing: "0.04em",
+          color: textColor,
+          lineHeight: 1,
+        }}
+      >
+        sena
+      </span>
+    </div>
   );
 }
