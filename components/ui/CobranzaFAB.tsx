@@ -1,10 +1,50 @@
 "use client";
 
 import { useModalStore } from "@/store/modalStore";
+import { useAuthStore } from "@/store/authStore";
+import { useToastStore } from "@/store/toastStore";
 import { useRef, useState, useEffect, useCallback } from "react";
+import { iniciarCobranza } from "@/lib/api/cobranza";
 
 function IniciarCobranzaModal() {
   const { hideModal } = useModalStore();
+  const accessToken = useAuthStore((s) => s.accessToken);
+  const companyId = useAuthStore((s) => s.companyId);
+  const showToast = useToastStore((s) => s.showToast);
+  const [loading, setLoading] = useState(false);
+
+  async function handleConfirm() {
+    if (!accessToken || !companyId) {
+      showToast({ message: "Sesión no válida", subMessage: "Inicia sesión nuevamente.", iconType: "error" });
+      hideModal();
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const result = await iniciarCobranza(accessToken, companyId);
+
+      if (result.status === "ok") {
+        showToast({
+          message: "Cobranza iniciada",
+          subMessage: `${result.debtors_processed} deudores procesados, ${result.messages_sent} mensajes enviados.`,
+          iconType: "success",
+        });
+      } else {
+        showToast({ message: "Error al iniciar cobranza", subMessage: result.message, iconType: "error" });
+      }
+    } catch (err) {
+      showToast({
+        message: "Error de conexión",
+        subMessage: err instanceof Error ? err.message : "No se pudo conectar con el servicio.",
+        iconType: "error",
+      });
+    } finally {
+      setLoading(false);
+      hideModal();
+    }
+  }
+
   return (
     <div className="px-6 py-6 flex flex-col gap-4">
       <p className="text-sm text-gray-500 leading-relaxed">
@@ -20,13 +60,23 @@ function IniciarCobranzaModal() {
         </p>
       </div>
       <div className="flex gap-3 pt-1">
-        <button onClick={hideModal}
-          className="flex-1 rounded-xl border border-gray-200 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors cursor-pointer">
+        <button onClick={hideModal} disabled={loading}
+          className="flex-1 rounded-xl border border-gray-200 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors cursor-pointer disabled:opacity-50">
           Cancelar
         </button>
-        <button onClick={hideModal}
-          className="flex-1 rounded-xl bg-brand hover:bg-brand-hover active:bg-brand-active py-2.5 text-sm font-semibold text-white transition-colors cursor-pointer shadow-md shadow-brand/30">
-          Confirmar y ejecutar
+        <button onClick={handleConfirm} disabled={loading}
+          className="flex-1 rounded-xl bg-brand hover:bg-brand-hover active:bg-brand-active py-2.5 text-sm font-semibold text-white transition-colors cursor-pointer shadow-md shadow-brand/30 disabled:opacity-50 flex items-center justify-center gap-2">
+          {loading ? (
+            <>
+              <svg className="animate-spin h-4 w-4 text-white" viewBox="0 0 24 24" fill="none">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+              </svg>
+              Ejecutando…
+            </>
+          ) : (
+            "Confirmar y ejecutar"
+          )}
         </button>
       </div>
     </div>
