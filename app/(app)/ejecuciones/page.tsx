@@ -45,22 +45,42 @@ const columns: Column<CollectionRun>[] = [
   {
     key: "started_at",
     header: "Inicio",
-    render: r => <span className="text-xs text-gray-700">{formatDate(r.started_at)}</span>,
+    render: r => (
+      <div className="flex flex-col gap-0.5">
+        <span className="text-xs font-medium text-gray-800">{formatDate(r.started_at).split(",")[0]}</span>
+        <span className="text-[11px] text-gray-400">{formatDate(r.started_at).split(",")[1]?.trim()}</span>
+      </div>
+    ),
     sortValue: r => r.started_at,
+  },
+  {
+    key: "finished_at",
+    header: "Fin",
+    render: r => {
+      if (!r.finished_at) return <span className="text-gray-400 text-xs italic">En curso…</span>;
+      const parts = formatDate(r.finished_at).split(",");
+      return (
+        <div className="flex flex-col gap-0.5">
+          <span className="text-xs font-medium text-gray-800">{parts[0]}</span>
+          <span className="text-[11px] text-gray-400">{parts[1]?.trim()}</span>
+        </div>
+      );
+    },
+    sortValue: r => r.finished_at ?? "",
+  },
+  {
+    key: "uuid",
+    header: "Duración",
+    render: r => {
+      const d = duration(r.started_at, r.finished_at);
+      if (!d) return <span className="text-gray-400 text-xs italic">—</span>;
+      return <span className="text-xs font-mono text-gray-600">{d}</span>;
+    },
   },
   {
     key: "status",
     header: "Estado",
     render: r => <StatusBadge status={r.status} />,
-  },
-  {
-    key: "triggered_by",
-    header: "Origen",
-    render: r => (
-      <span className="text-xs text-gray-500 capitalize">
-        {r.triggered_by === "manual" ? "Manual" : "Programado"}
-      </span>
-    ),
   },
   {
     key: "debtors_processed",
@@ -89,14 +109,6 @@ const columns: Column<CollectionRun>[] = [
     align: "right",
     render: r => <span className="text-xs text-gray-600">{r.messages_sms}</span>,
     sortValue: r => r.messages_sms,
-  },
-  {
-    key: "finished_at",
-    header: "Duración",
-    render: r => {
-      const d = duration(r.started_at, r.finished_at);
-      return <span className="text-xs text-gray-500">{d ?? <span className="italic text-gray-400">—</span>}</span>;
-    },
   },
   {
     key: "error_message",
@@ -141,7 +153,7 @@ export default function EjecucionesPage() {
           columns={columns}
           data={results}
           keyField="id"
-          emptyMessage="No hay corridas registradas."
+          emptyMessage="No hay ejecuciones registradas."
           isLoading={isLoading}
           isFetching={isFetching}
           serverPagination={{
