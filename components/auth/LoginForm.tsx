@@ -3,7 +3,7 @@
 import { useForm } from "react-hook-form";
 import { InputField } from "@/components/ui/InputField";
 import { SubmitButton } from "@/components/ui/SubmitButton";
-import { loginAction } from "@/lib/actions/auth";
+import { useLogin, parseApiError } from "@/lib/hooks/useAuth";
 
 type LoginFields = {
   email: string;
@@ -16,18 +16,17 @@ export function LoginForm() {
     handleSubmit,
     setError,
     formState: { errors, isSubmitting },
-  } = useForm<LoginFields>();
+  } = useForm<LoginFields>({ mode: "onChange" });
+
+  const loginMutation = useLogin();
 
   async function onSubmit(data: LoginFields) {
-    const formData = new FormData();
-    formData.set("email", data.email);
-    formData.set("password", data.password);
-    const result = await loginAction({}, formData);
-    if (result?.errors?.general) {
-      setError("root", { message: result.errors.general });
-    } else if (result?.errors) {
-      Object.entries(result.errors).forEach(([field, msg]) => {
-        setError(field as keyof LoginFields, { message: msg });
+    try {
+      await loginMutation.mutateAsync(data);
+    } catch (err) {
+      const fieldErrors = parseApiError(err);
+      Object.entries(fieldErrors).forEach(([field, msg]) => {
+        setError(field as keyof LoginFields | "root", { message: msg });
       });
     }
   }
@@ -76,7 +75,11 @@ export function LoginForm() {
         </p>
       )}
 
-      <SubmitButton label="Continuar" loadingLabel="Verificando…" isLoading={isSubmitting} />
+      <SubmitButton
+        label="Continuar"
+        loadingLabel="Verificando…"
+        isLoading={isSubmitting || loginMutation.isPending}
+      />
     </form>
   );
 }

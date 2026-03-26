@@ -1,3 +1,5 @@
+"use client";
+
 import type { ReactNode } from "react";
 
 interface IntegrationCardProps {
@@ -7,6 +9,8 @@ interface IntegrationCardProps {
   actionLabel: string;
   connected: boolean;
   onAction: () => void;
+  onDisconnect?: () => void;
+  isDisconnecting?: boolean;
 }
 
 export function IntegrationCard({
@@ -16,6 +20,8 @@ export function IntegrationCard({
   actionLabel,
   connected,
   onAction,
+  onDisconnect,
+  isDisconnecting,
 }: IntegrationCardProps) {
   return (
     <div className="group rounded-2xl border border-gray-200 bg-white flex flex-col overflow-hidden hover:border-blue-200 hover:shadow-lg transition-all duration-200">
@@ -25,30 +31,19 @@ export function IntegrationCard({
         <div className="flex items-center justify-between mb-5">
           {logo}
           <div className="flex items-center gap-1.5">
-            <span
-              className={[
-                "w-2 h-2 rounded-full",
-                connected ? "bg-green-500" : "bg-gray-300",
-              ].join(" ")}
-            />
-            <span
-              className={[
-                "text-xs font-medium",
-                connected ? "text-green-700" : "text-gray-400",
-              ].join(" ")}
-            >
+            <span className={["w-2 h-2 rounded-full", connected ? "bg-green-500" : "bg-gray-300"].join(" ")} />
+            <span className={["text-xs font-medium", connected ? "text-green-700" : "text-gray-400"].join(" ")}>
               {connected ? "Conectado" : "Sin conectar"}
             </span>
           </div>
         </div>
 
-        {/* Texto */}
         <p className="font-semibold text-gray-900 text-sm mb-1.5">{nombre}</p>
         <p className="text-xs text-gray-500 leading-relaxed">{descripcion}</p>
       </div>
 
-      {/* CTA — separado visualmente, ancho completo */}
-      <div className="px-6 pb-6">
+      {/* Acciones */}
+      <div className="px-6 pb-6 flex flex-col gap-2">
         <button
           onClick={onAction}
           className={[
@@ -60,6 +55,17 @@ export function IntegrationCard({
         >
           {connected ? "Administrar" : actionLabel}
         </button>
+
+        {/* Desconectar — solo visible cuando conectado */}
+        {connected && onDisconnect && (
+          <button
+            onClick={onDisconnect}
+            disabled={isDisconnecting}
+            className="w-full rounded-xl py-2 text-xs font-medium text-red-400 hover:text-red-600 hover:bg-red-50 border border-transparent hover:border-red-100 transition-all duration-150 cursor-pointer disabled:opacity-50"
+          >
+            {isDisconnecting ? "Desconectando…" : "Desconectar"}
+          </button>
+        )}
       </div>
     </div>
   );

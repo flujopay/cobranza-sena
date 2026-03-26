@@ -3,7 +3,8 @@
 import { useForm } from "react-hook-form";
 import { InputField } from "@/components/ui/InputField";
 import { SubmitButton } from "@/components/ui/SubmitButton";
-import { registerAction } from "@/lib/actions/auth";
+import { useRegister, parseApiError } from "@/lib/hooks/useAuth";
+import { isValidRut, formatRut, cleanRut } from "@/lib/rut";
 
 type RegisterFields = {
   rut: string;
@@ -17,22 +18,35 @@ export function RegisterForm() {
     register,
     handleSubmit,
     watch,
+    setValue,
     setError,
-    formState: { errors, isSubmitting },
-  } = useForm<RegisterFields>();
+    formState: { errors, isSubmitting, touchedFields },
+  } = useForm<RegisterFields>({ mode: "onChange" });
+
+  const registerMutation = useRegister();
+  const password = watch("password");
 
   async function onSubmit(data: RegisterFields) {
-    const formData = new FormData();
-    formData.set("rut", data.rut);
-    formData.set("email", data.email);
-    formData.set("password", data.password);
-    formData.set("confirmPassword", data.confirmPassword);
-    const result = await registerAction({}, formData);
-    if (result?.errors) {
-      Object.entries(result.errors).forEach(([field, msg]) => {
-        setError(field as keyof RegisterFields, { message: msg });
+    try {
+      await registerMutation.mutateAsync({
+        rut: data.rut,
+        email: data.email,
+        password: data.password,
+        password_confirm: data.confirmPassword,
+      });
+    } catch (err) {
+      const fieldErrors = parseApiError(err);
+      Object.entries(fieldErrors).forEach(([field, msg]) => {
+        setError(field as keyof RegisterFields | "root", { message: msg });
       });
     }
+  }
+
+  function handleRutChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const raw = cleanRut(e.target.value);
+    const formatted = raw.length >= 2 ? formatRut(raw) : raw;
+    setValue("rut", formatted, { shouldValidate: touchedFields.rut });
+    e.target.value = formatted;
   }
 
   return (
@@ -45,8 +59,9 @@ export function RegisterForm() {
         error={errors.rut?.message}
         {...register("rut", {
           required: "El RUT es obligatorio.",
-          minLength: { value: 8, message: "Ingresa un RUT válido (ej: 12.345.678-9)." },
+          validate: (v) => isValidRut(v) || "Ingresa un RUT chileno válido (ej: 12.345.678-9).",
         })}
+        onChange={handleRutChange}
       />
 
       <InputField
@@ -84,11 +99,21 @@ export function RegisterForm() {
         error={errors.confirmPassword?.message}
         {...register("confirmPassword", {
           required: "Confirma tu contraseña.",
-          validate: (val) => val === watch("password") || "Las contraseñas no coinciden.",
+          validate: (val) => val === password || "Las contraseñas no coinciden.",
         })}
       />
 
-      <SubmitButton label="Crear cuenta" loadingLabel="Registrando…" isLoading={isSubmitting} />
+      {errors.root && (
+        <p className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+          {errors.root.message}
+        </p>
+      )}
+
+      <SubmitButton
+        label="Crear cuenta"
+        loadingLabel="Registrando…"
+        isLoading={isSubmitting || registerMutation.isPending}
+      />
     </form>
   );
 }

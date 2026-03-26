@@ -1,10 +1,10 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { SESSION_COOKIE, SESSION_VALUE } from "@/lib/session";
+import { SESSION_COOKIE } from "@/lib/session";
 
 // Rutas públicas que no requieren autenticación
 const PUBLIC_PATHS = ["/login", "/registro"];
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Dejar pasar rutas públicas y assets
@@ -14,7 +14,7 @@ export function middleware(request: NextRequest) {
     pathname.startsWith("/favicon");
 
   const session = request.cookies.get(SESSION_COOKIE)?.value;
-  const isAuthenticated = session === SESSION_VALUE;
+  const isAuthenticated = Boolean(session);
 
   // Sin sesión intentando acceder a ruta protegida → al login
   if (!isPublic && !isAuthenticated) {

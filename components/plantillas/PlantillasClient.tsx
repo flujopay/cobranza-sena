@@ -62,9 +62,9 @@ function PlantillaCard({ plantilla }: { plantilla: Plantilla }) {
           >
             {expanded ? "Ocultar" : "Ver plantilla"}
           </button>
-          <button className="text-xs text-gray-400 hover:text-gray-600 transition-colors cursor-pointer">
+          {/* <button className="text-xs text-gray-400 hover:text-gray-600 transition-colors cursor-pointer">
             Editar
-          </button>
+          </button> */}
         </div>
       </div>
 
@@ -113,7 +113,7 @@ export function PlantillasClient() {
             Mensajes predefinidos para contactar deudores según canal y nivel de riesgo.
           </p>
         </div>
-        <button
+        {/* <button
           onClick={abrirNuevaPlantilla}
           className="flex items-center gap-2 px-4 py-2 bg-brand text-white text-sm font-semibold rounded-xl hover:bg-brand-hover active:bg-brand-active transition-colors shadow-sm shadow-brand/20 cursor-pointer"
         >
@@ -121,7 +121,7 @@ export function PlantillasClient() {
             <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
           </svg>
           Nueva plantilla
-        </button>
+        </button> */}
       </div>
 
       {/* Tabs de canal */}

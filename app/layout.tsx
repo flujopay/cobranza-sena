@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
+import { QueryProvider } from "@/components/providers/QueryProvider";
+import { Toast } from "@/components/ui/Toast";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -8,7 +10,7 @@ const geistSans = Geist({
 });
 
 export const metadata: Metadata = {
-  title: "Mini Sena — Plataforma de Cobranza",
+  title: "Cobranza Sena",
   description: "Plataforma de gestión y cobranza para empresas chilenas.",
 };
 
@@ -19,7 +21,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className={`${geistSans.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col" suppressHydrationWarning>
+        <QueryProvider>
+          {children}
+          <Toast />
+        </QueryProvider>
+      </body>
     </html>
   );
 }

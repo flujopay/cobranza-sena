@@ -2,17 +2,16 @@
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { SESSION_COOKIE, SESSION_VALUE } from "@/lib/session";
+import { SESSION_COOKIE, REFRESH_COOKIE, COMPANY_ID_COOKIE, COOKIE_OPTS } from "@/lib/session";
+import { isValidRut } from "@/lib/rut";
+import { login, register } from "@/lib/api/auth";
+import { ApiError } from "@/lib/api/client";
 
 export type AuthFormState = {
   errors?: Record<string, string>;
 };
 
-// ─── Login ───────────────────────────────────────────────────────────────────
-
-/** Mock credentials — replace with real DB/JWT check */
-const MOCK_EMAIL    = "demo@minisena.cl";
-const MOCK_PASSWORD = "sena1234";
+// ─── Login ────────────────────────────────────────────────────────────────────
 
 export async function loginAction(
   _prev: AuthFormState,
@@ -31,18 +30,22 @@ export async function loginAction(
   }
   if (Object.keys(errors).length > 0) return { errors };
 
-  if (email !== MOCK_EMAIL || password !== MOCK_PASSWORD) {
-    return { errors: { general: "Credenciales incorrectas." } };
+  try {
+    const { access_token, refresh_token, company_id } = await login({ email, password });
+    const jar = await cookies();
+    jar.set(SESSION_COOKIE,    access_token,        COOKIE_OPTS);
+    jar.set(REFRESH_COOKIE,    refresh_token,       COOKIE_OPTS);
+    jar.set(COMPANY_ID_COOKIE, String(company_id),  { ...COOKIE_OPTS, httpOnly: false });
+  } catch (err) {
+    if (err instanceof ApiError) {
+      const code = err.body.error_code;
+      if (code === "USER_NOT_FOUND") return { errors: { email: "No existe una cuenta con este correo." } };
+      if (code === "INVALID_CREDENTIALS") return { errors: { password: "Contraseña incorrecta." } };
+      if (code === "PASSWORD_LOGIN_DISABLED") return { errors: { general: "Esta cuenta usa inicio de sesión con Google o Microsoft." } };
+    }
+    console.error("[loginAction] unexpected error:", err);
+    return { errors: { general: String(err instanceof Error ? err.message : err) } };
   }
-
-  // Escribir cookie de sesión (httpOnly, sameSite strict)
-  const jar = await cookies();
-  jar.set(SESSION_COOKIE, SESSION_VALUE, {
-    httpOnly: true,
-    sameSite: "strict",
-    path: "/",
-    // En producción agregar: secure: true, maxAge: 60 * 60 * 8 (8h)
-  });
 
   redirect("/clientes");
 }
@@ -60,8 +63,8 @@ export async function registerAction(
 
   const errors: Record<string, string> = {};
 
-  if (!rut || rut.length < 8) {
-    errors.rut = "Ingresa un RUT válido (ej: 12.345.678-9).";
+  if (!rut || !isValidRut(rut)) {
+    errors.rut = "Ingresa un RUT chileno válido (ej: 12.345.678-9).";
   }
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     errors.email = "Ingresa un correo electrónico válido.";
@@ -74,14 +77,32 @@ export async function registerAction(
   }
   if (Object.keys(errors).length > 0) return { errors };
 
-  // TODO: crear usuario en backend
-
-  const jar = await cookies();
-  jar.set(SESSION_COOKIE, SESSION_VALUE, {
-    httpOnly: true,
-    sameSite: "strict",
-    path: "/",
-  });
+  try {
+    const { access_token, refresh_token, company_id } = await register({
+      email,
+      password,
+      password_confirm: confirmPassword,
+      rut,
+    });
+    const jar = await cookies();
+    jar.set(SESSION_COOKIE,    access_token,        COOKIE_OPTS);
+    jar.set(REFRESH_COOKIE,    refresh_token,       COOKIE_OPTS);
+    jar.set(COMPANY_ID_COOKIE, String(company_id),  { ...COOKIE_OPTS, httpOnly: false });
+  } catch (err) {
+    if (err instanceof ApiError) {
+      const code = err.body.error_code;
+      if (code === "RUT_ALREADY_EXISTS") return { errors: { rut: "Ya existe una empresa registrada con este RUT." } };
+      const fieldErrors: Record<string, string> = {};
+      for (const key of ["rut", "email", "password", "password_confirm"]) {
+        const msg = err.fieldMessage(key);
+        if (msg) fieldErrors[key === "password_confirm" ? "confirmPassword" : key] = msg;
+      }
+      if (Object.keys(fieldErrors).length > 0) return { errors: fieldErrors };
+      return { errors: { general: err.message } };
+    }
+    console.error("[registerAction] unexpected error:", err);
+    return { errors: { general: String(err instanceof Error ? err.message : err) } };
+  }
 
   redirect("/clientes");
 }
@@ -91,5 +112,7 @@ export async function registerAction(
 export async function logoutAction() {
   const jar = await cookies();
   jar.delete(SESSION_COOKIE);
+  jar.delete(REFRESH_COOKIE);
+  jar.delete(COMPANY_ID_COOKIE);
   redirect("/login");
 }

@@ -306,7 +306,7 @@ export function NuevaPlantillaModal() {
             ].join(" ")}>
               {canal === "whatsapp"
                 ? <div dangerouslySetInnerHTML={{ __html: renderPreview(cuerpo, canal) }} />
-                : <span className="text-gray-700">{renderPreview(cuerpo, canal)}</span>
+                : <span className="text-gray-700">{canal ? renderPreview(cuerpo, canal) : cuerpo}</span>
               }
               <p className="mt-3 pt-3 border-t border-current/10 text-[11px] text-gray-400 italic">
                 Vista previa con datos de ejemplo — las variables se reemplazarán con los datos reales del deudor.
