@@ -42,6 +42,7 @@ mini-sena/
 ## Fase 1 — Autenticación (maquetación) ✅
 
 ### Login (`/login`)
+
 - Fondo oscuro azul con glows radiales (identidad visual Sena).
 - Card blanca centrada, bordes redondeados, sombra prominente.
 - Logotipo Sena (wordmark + doble chevron blanco).
@@ -52,6 +53,7 @@ mini-sena/
 - Al éxito redirige a `/dashboard`.
 
 ### Registro (`/registro`)
+
 - Misma identidad visual que Login.
 - Campos: **RUT**, **Correo electrónico**, **Contraseña**, **Confirmar contraseña**.
 - Validaciones individuales por campo con mensajes de error inline.
@@ -59,13 +61,15 @@ mini-sena/
 - Al éxito redirige a `/dashboard`.
 
 ### Componentes reutilizables
-| Componente | Descripción |
-|---|---|
-| `SenaLogo` | Wordmark "sena" + icono SVG de doble chevron |
-| `InputField` | Input con label, placeholder, error inline, focus ring azul |
+
+| Componente     | Descripción                                                      |
+| -------------- | ---------------------------------------------------------------- |
+| `SenaLogo`     | Wordmark "sena" + icono SVG de doble chevron                     |
+| `InputField`   | Input con label, placeholder, error inline, focus ring azul      |
 | `SubmitButton` | Botón submit que lee `useFormStatus` para mostrar estado pending |
 
 ### Server Actions (`lib/actions/auth.ts`)
+
 - `loginAction`: valida email + password, retorna errores o `{ message: "ok" }`.
 - `registerAction`: valida RUT + email + password + confirmación.
 - Ambas son stubs listos para integrar con backend / NextAuth / JWT.

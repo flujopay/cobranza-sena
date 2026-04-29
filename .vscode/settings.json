@@ -1,0 +1,13 @@
+{
+  "appService.zipIgnorePattern": ["node_modules{,/**}", ".vscode{,/**}"],
+  "appService.defaultWebAppToDeploy": "/subscriptions/63276ee6-f620-4c9a-a735-9241e864aa6d/resourceGroups/flujopay/providers/Microsoft.Web/sites/flujopay-frontend-next",
+  "appService.deploySubpath": ".",
+  "workbench.colorTheme": "One Dark Pro Darker",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.fixAll": "explicit",
+    "source.organizeImports": "explicit"
+  },
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode"
+}

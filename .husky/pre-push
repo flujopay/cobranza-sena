@@ -1,0 +1,5 @@
+if [ "$(uname)" = "Linux" ]; then
+    sudo chown -R $USER:$USER $(pwd)
+fi
+
+yarn run build

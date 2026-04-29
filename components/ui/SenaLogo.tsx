@@ -1,14 +1,14 @@
 type SenaLogoProps = {
-  variant?: "white" | "black" | "color";
-  height?: number;
-};
+  variant?: 'white' | 'black' | 'color'
+  height?: number
+}
 
-export function SenaLogo({ variant = "white", height = 40 }: SenaLogoProps) {
-  const textColor = variant === "white" ? "#ffffff" : "#0041B5";
-  const dotColor  = variant === "white" ? "#ffffff" : "#00FF66";
+export function SenaLogo({ variant = 'white', height = 40 }: SenaLogoProps) {
+  const textColor = variant === 'white' ? '#ffffff' : '#0041B5'
+  const dotColor = variant === 'white' ? '#ffffff' : '#00FF66'
 
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: height * 0.25, height }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: height * 0.25, height }}>
       {/* Inline SVG — nunca falla, no depende de red */}
       <svg
         width={height * 0.85}
@@ -34,7 +34,7 @@ export function SenaLogo({ variant = "white", height = 40 }: SenaLogoProps) {
         style={{
           fontSize: height * 0.55,
           fontWeight: 700,
-          letterSpacing: "0.04em",
+          letterSpacing: '0.04em',
           color: textColor,
           lineHeight: 1,
         }}
@@ -42,5 +42,5 @@ export function SenaLogo({ variant = "white", height = 40 }: SenaLogoProps) {
         sena
       </span>
     </div>
-  );
+  )
 }

@@ -276,17 +276,17 @@ Sin credenciales:
 }
 ```
 
-| Campo             | Tipo        | Descripción                              |
-| ----------------- | ----------- | ---------------------------------------- |
-| `has_credentials` | bool        | Si tiene credenciales SII configuradas   |
-| `rut`             | string/null | RUT del usuario SII (null si no existe)  |
+| Campo             | Tipo        | Descripción                             |
+| ----------------- | ----------- | --------------------------------------- |
+| `has_credentials` | bool        | Si tiene credenciales SII configuradas  |
+| `rut`             | string/null | RUT del usuario SII (null si no existe) |
 
 **Errores posibles:**
 
-| Código | Descripción                                        |
-| ------ | -------------------------------------------------- |
-| 401    | Token JWT inválido o ausente                       |
-| 404    | `X-Company-Id` ausente o usuario sin acceso        |
+| Código | Descripción                                 |
+| ------ | ------------------------------------------- |
+| 401    | Token JWT inválido o ausente                |
+| 404    | `X-Company-Id` ausente o usuario sin acceso |
 
 ---
 
@@ -315,10 +315,10 @@ Content-Type: application/json
 }
 ```
 
-| Campo      | Tipo   | Obligatorio | Notas                                      |
-| ---------- | ------ | :---------: | ------------------------------------------ |
-| `rut`      | string |     Si      | RUT del usuario en el portal SII           |
-| `password` | string |     Si      | Contraseña del portal SII (se cifra)       |
+| Campo      | Tipo   | Obligatorio | Notas                                |
+| ---------- | ------ | :---------: | ------------------------------------ |
+| `rut`      | string |     Si      | RUT del usuario en el portal SII     |
+| `password` | string |     Si      | Contraseña del portal SII (se cifra) |
 
 **Response exitoso:** `200 OK`
 
@@ -330,11 +330,11 @@ Content-Type: application/json
 
 **Errores posibles:**
 
-| Código | Descripción                                        |
-| ------ | -------------------------------------------------- |
-| 400    | Errores de validación (campos faltantes)           |
-| 401    | Token JWT inválido o ausente                       |
-| 404    | `X-Company-Id` ausente o usuario sin acceso        |
+| Código | Descripción                                 |
+| ------ | ------------------------------------------- |
+| 400    | Errores de validación (campos faltantes)    |
+| 401    | Token JWT inválido o ausente                |
+| 404    | `X-Company-Id` ausente o usuario sin acceso |
 
 ---
 
@@ -363,11 +363,11 @@ X-Company-Id: <id>
 
 **Errores posibles:**
 
-| Código | error_code        | Descripción                                 |
-| ------ | ----------------- | ------------------------------------------- |
-| 400    | `NO_CREDENTIALS`  | No hay credenciales SII configuradas        |
-| 401    | —                 | Token JWT inválido o ausente                |
-| 404    | —                 | `X-Company-Id` ausente o usuario sin acceso |
+| Código | error_code       | Descripción                                 |
+| ------ | ---------------- | ------------------------------------------- |
+| 400    | `NO_CREDENTIALS` | No hay credenciales SII configuradas        |
+| 401    | —                | Token JWT inválido o ausente                |
+| 404    | —                | `X-Company-Id` ausente o usuario sin acceso |
 
 Ejemplo error sin credenciales:
 
@@ -403,9 +403,9 @@ X-Company-Id: <id>
 }
 ```
 
-| Campo        | Tipo | Default | Notas                                    |
-| ------------ | ---- | ------- | ---------------------------------------- |
-| `days_before`| int  | 60      | Días hacia atrás para buscar facturas    |
+| Campo         | Tipo | Default | Notas                                 |
+| ------------- | ---- | ------- | ------------------------------------- |
+| `days_before` | int  | 60      | Días hacia atrás para buscar facturas |
 
 **Response exitoso:** `200 OK`
 
@@ -420,9 +420,9 @@ X-Company-Id: <id>
 
 | Campo                   | Tipo | Descripción                                      |
 | ----------------------- | ---- | ------------------------------------------------ |
-| `invoices_synced`       | int  | Total de facturas creadas/actualizadas            |
-| `clients_synced`        | int  | Total de clientes nuevos creados                  |
-| `invoices_not_iterated` | int  | Facturas no procesadas por límite de API Gateway  |
+| `invoices_synced`       | int  | Total de facturas creadas/actualizadas           |
+| `clients_synced`        | int  | Total de clientes nuevos creados                 |
+| `invoices_not_iterated` | int  | Facturas no procesadas por límite de API Gateway |
 
 **Flujo interno:**
 
@@ -434,12 +434,12 @@ X-Company-Id: <id>
 
 **Errores posibles:**
 
-| Código | error_code            | Descripción                              |
-| ------ | --------------------- | ---------------------------------------- |
-| 400    | `NO_SII_CREDENTIALS`  | No hay credenciales SII configuradas    |
-| 400    | `SYNC_FAILED`         | Error durante la sincronización          |
-| 401    | —                     | Token JWT inválido o ausente             |
-| 404    | —                     | `X-Company-Id` ausente o sin acceso      |
+| Código | error_code           | Descripción                          |
+| ------ | -------------------- | ------------------------------------ |
+| 400    | `NO_SII_CREDENTIALS` | No hay credenciales SII configuradas |
+| 400    | `SYNC_FAILED`        | Error durante la sincronización      |
+| 401    | —                    | Token JWT inválido o ausente         |
+| 404    | —                    | `X-Company-Id` ausente o sin acceso  |
 
 ---
 
@@ -447,11 +447,11 @@ X-Company-Id: <id>
 
 Todos los endpoints de listado usan paginación con los siguientes query params:
 
-| Parámetro | Tipo | Default | Descripción                          |
-| --------- | ---- | ------- | ------------------------------------ |
-| `page`    | int  | 1       | Número de página                     |
-| `limit`   | int  | 20      | Registros por página (máximo 100)    |
-| `search`  | str  | —       | Búsqueda por campos relevantes       |
+| Parámetro | Tipo | Default | Descripción                       |
+| --------- | ---- | ------- | --------------------------------- |
+| `page`    | int  | 1       | Número de página                  |
+| `limit`   | int  | 20      | Registros por página (máximo 100) |
+| `search`  | str  | —       | Búsqueda por campos relevantes    |
 
 **Estructura de respuesta paginada:**
 
@@ -520,25 +520,25 @@ X-Company-Id: <id>
 }
 ```
 
-| Campo             | Tipo        | Descripción                   |
-| ----------------- | ----------- | ----------------------------- |
-| `id`              | int         | ID del cliente                |
-| `ruc`             | string      | RUT del cliente               |
-| `company_name`    | string/null | Razón social                  |
-| `comercial_name`  | string/null | Nombre comercial              |
-| `comercial_email` | string/null | Email comercial               |
-| `comercial_phone` | string/null | Teléfono comercial            |
-| `ammount_total`   | decimal/null | Monto total facturado        |
-| `ammount_paid`    | decimal/null | Monto pagado                 |
-| `ammount_expired` | decimal/null | Monto vencido                |
-| `ammount_current` | decimal/null | Monto vigente                |
-| `ammount_debt`    | decimal/null | Monto deuda                  |
-| `count_total`     | int/null    | Total de facturas             |
-| `count_paid`      | int/null    | Facturas pagadas              |
-| `count_expired`   | int/null    | Facturas vencidas             |
-| `count_current`   | int/null    | Facturas vigentes             |
-| `count_debt`      | int/null    | Facturas en deuda             |
-| `created`         | datetime    | Fecha de creación             |
+| Campo             | Tipo         | Descripción           |
+| ----------------- | ------------ | --------------------- |
+| `id`              | int          | ID del cliente        |
+| `ruc`             | string       | RUT del cliente       |
+| `company_name`    | string/null  | Razón social          |
+| `comercial_name`  | string/null  | Nombre comercial      |
+| `comercial_email` | string/null  | Email comercial       |
+| `comercial_phone` | string/null  | Teléfono comercial    |
+| `ammount_total`   | decimal/null | Monto total facturado |
+| `ammount_paid`    | decimal/null | Monto pagado          |
+| `ammount_expired` | decimal/null | Monto vencido         |
+| `ammount_current` | decimal/null | Monto vigente         |
+| `ammount_debt`    | decimal/null | Monto deuda           |
+| `count_total`     | int/null     | Total de facturas     |
+| `count_paid`      | int/null     | Facturas pagadas      |
+| `count_expired`   | int/null     | Facturas vencidas     |
+| `count_current`   | int/null     | Facturas vigentes     |
+| `count_debt`      | int/null     | Facturas en deuda     |
+| `created`         | datetime     | Fecha de creación     |
 
 ---
 
@@ -597,27 +597,27 @@ X-Company-Id: <id>
 }
 ```
 
-| Campo                   | Tipo        | Descripción                    |
-| ----------------------- | ----------- | ------------------------------ |
-| `id`                    | int         | ID de la factura               |
-| `invoice_number`        | string/null | Número de factura              |
-| `serial_number`         | string/null | Número de serie                |
-| `issue_date`            | date/null   | Fecha de emisión               |
-| `due_date`              | date/null   | Fecha de vencimiento           |
-| `total_amount`          | decimal/null | Monto total                   |
-| `net_amount`            | decimal/null | Monto neto                    |
-| `vat`                   | decimal/null | IVA                           |
-| `paid_amount`           | decimal/null | Monto pagado                  |
-| `pending_balance`       | decimal/null | Saldo pendiente               |
-| `issuer_ruc`            | string/null | RUT emisor                     |
-| `receiver_ruc`          | string/null | RUT receptor (cliente)         |
-| `client_business_name`  | string/null | Razón social del cliente       |
-| `client_comercial_name` | string/null | Nombre comercial del cliente   |
-| `management_state_name` | string/null | Estado de gestión              |
-| `type_document_name`    | string/null | Tipo de documento              |
-| `currency_code`         | string/null | Código de moneda (CLP, USD)    |
-| `currency_symbol`       | string/null | Símbolo de moneda ($, US$)     |
-| `created`               | datetime    | Fecha de creación              |
+| Campo                   | Tipo         | Descripción                  |
+| ----------------------- | ------------ | ---------------------------- |
+| `id`                    | int          | ID de la factura             |
+| `invoice_number`        | string/null  | Número de factura            |
+| `serial_number`         | string/null  | Número de serie              |
+| `issue_date`            | date/null    | Fecha de emisión             |
+| `due_date`              | date/null    | Fecha de vencimiento         |
+| `total_amount`          | decimal/null | Monto total                  |
+| `net_amount`            | decimal/null | Monto neto                   |
+| `vat`                   | decimal/null | IVA                          |
+| `paid_amount`           | decimal/null | Monto pagado                 |
+| `pending_balance`       | decimal/null | Saldo pendiente              |
+| `issuer_ruc`            | string/null  | RUT emisor                   |
+| `receiver_ruc`          | string/null  | RUT receptor (cliente)       |
+| `client_business_name`  | string/null  | Razón social del cliente     |
+| `client_comercial_name` | string/null  | Nombre comercial del cliente |
+| `management_state_name` | string/null  | Estado de gestión            |
+| `type_document_name`    | string/null  | Tipo de documento            |
+| `currency_code`         | string/null  | Código de moneda (CLP, USD)  |
+| `currency_symbol`       | string/null  | Símbolo de moneda ($, US$)   |
+| `created`               | datetime     | Fecha de creación            |
 
 ---
 
@@ -669,20 +669,20 @@ X-Company-Id: <id>
 }
 ```
 
-| Campo                  | Tipo        | Descripción                    |
-| ---------------------- | ----------- | ------------------------------ |
-| `id`                   | int         | ID del pago                    |
-| `amount`               | decimal/null | Monto del pago                |
-| `payment_date_estimated` | date/null | Fecha estimada de pago         |
-| `validated`            | bool        | Si el pago está validado       |
-| `client_ruc`           | string/null | RUT del cliente                |
-| `client_name`          | string/null | Nombre del cliente             |
-| `type_payment_name`    | string/null | Tipo de pago                   |
-| `account_number`       | string/null | Número de cuenta               |
-| `email`                | string/null | Email asociado al pago         |
-| `created_by_name`      | string/null | Nombre de quien creó el pago   |
-| `created_by_email`     | string/null | Email de quien creó el pago    |
-| `created`              | datetime    | Fecha de creación              |
+| Campo                    | Tipo         | Descripción                  |
+| ------------------------ | ------------ | ---------------------------- |
+| `id`                     | int          | ID del pago                  |
+| `amount`                 | decimal/null | Monto del pago               |
+| `payment_date_estimated` | date/null    | Fecha estimada de pago       |
+| `validated`              | bool         | Si el pago está validado     |
+| `client_ruc`             | string/null  | RUT del cliente              |
+| `client_name`            | string/null  | Nombre del cliente           |
+| `type_payment_name`      | string/null  | Tipo de pago                 |
+| `account_number`         | string/null  | Número de cuenta             |
+| `email`                  | string/null  | Email asociado al pago       |
+| `created_by_name`        | string/null  | Nombre de quien creó el pago |
+| `created_by_email`       | string/null  | Email de quien creó el pago  |
+| `created`                | datetime     | Fecha de creación            |
 
 ---
 
@@ -733,26 +733,26 @@ X-Company-Id: <id>
 }
 ```
 
-| Campo         | Tipo        | Descripción                    |
-| ------------- | ----------- | ------------------------------ |
-| `id`          | int         | ID del contacto                |
-| `name`        | string/null | Nombre                         |
-| `lastname`    | string/null | Apellido                       |
-| `email`       | string/null | Email                          |
-| `phone`       | string/null | Teléfono                       |
-| `ruc`         | string/null | RUT del contacto               |
-| `position`    | string/null | Cargo                          |
-| `area`        | string/null | Área                           |
-| `client_ruc`  | string/null | RUT del cliente asociado       |
-| `client_name` | string/null | Nombre del cliente asociado    |
-| `created`     | datetime    | Fecha de creación              |
+| Campo         | Tipo        | Descripción                 |
+| ------------- | ----------- | --------------------------- |
+| `id`          | int         | ID del contacto             |
+| `name`        | string/null | Nombre                      |
+| `lastname`    | string/null | Apellido                    |
+| `email`       | string/null | Email                       |
+| `phone`       | string/null | Teléfono                    |
+| `ruc`         | string/null | RUT del contacto            |
+| `position`    | string/null | Cargo                       |
+| `area`        | string/null | Área                        |
+| `client_ruc`  | string/null | RUT del cliente asociado    |
+| `client_name` | string/null | Nombre del cliente asociado |
+| `created`     | datetime    | Fecha de creación           |
 
 **Errores posibles (aplica a los 4 listados):**
 
-| Código | Descripción                                        |
-| ------ | -------------------------------------------------- |
-| 401    | Token JWT inválido o ausente                       |
-| 404    | `X-Company-Id` ausente o usuario sin acceso        |
+| Código | Descripción                                 |
+| ------ | ------------------------------------------- |
+| 401    | Token JWT inválido o ausente                |
+| 404    | `X-Company-Id` ausente o usuario sin acceso |
 
 ---
 
@@ -782,20 +782,20 @@ X-Company-Id: <id>
 }
 ```
 
-| Campo      | Tipo   | Descripción                              |
-| ---------- | ------ | ---------------------------------------- |
-| `sessionId`| string | ID de la sesión (= relation_company_user)|
-| `status`   | string | Estado: `qr`                             |
-| `qr`       | string | Código QR en texto (para librerías QR)   |
-| `dataURL`  | string | QR como imagen base64 (para `<img src>`) |
+| Campo       | Tipo   | Descripción                               |
+| ----------- | ------ | ----------------------------------------- |
+| `sessionId` | string | ID de la sesión (= relation_company_user) |
+| `status`    | string | Estado: `qr`                              |
+| `qr`        | string | Código QR en texto (para librerías QR)    |
+| `dataURL`   | string | QR como imagen base64 (para `<img src>`)  |
 
 **Errores posibles:**
 
-| Código | error_code              | Descripción                    |
-| ------ | ----------------------- | ------------------------------ |
-| 400    | `WHATSAPP_CREATE_FAILED`| Error al crear la instancia    |
-| 401    | —                       | Token JWT inválido o ausente   |
-| 404    | —                       | `X-Company-Id` ausente o sin acceso |
+| Código | error_code               | Descripción                         |
+| ------ | ------------------------ | ----------------------------------- |
+| 400    | `WHATSAPP_CREATE_FAILED` | Error al crear la instancia         |
+| 401    | —                        | Token JWT inválido o ausente        |
+| 404    | —                        | `X-Company-Id` ausente o sin acceso |
 
 ---
 
@@ -860,14 +860,14 @@ Conectado:
 }
 ```
 
-| Campo        | Tipo        | Descripción                                    |
-| ------------ | ----------- | ---------------------------------------------- |
-| `connected`  | bool        | Si WhatsApp está conectado y listo              |
-| `status`     | string      | `none`, `qr`, `ready`, `disconnected`          |
-| `phone`      | string/null | Número de WhatsApp conectado                   |
-| `session_id` | string/null | ID de la sesión (solo si `ready`)              |
-| `data`       | object/null | Data completa del webhook (solo si `ready`)    |
-| `qr`         | object/null | Datos del QR (solo si status=`qr`)             |
+| Campo        | Tipo        | Descripción                                 |
+| ------------ | ----------- | ------------------------------------------- |
+| `connected`  | bool        | Si WhatsApp está conectado y listo          |
+| `status`     | string      | `none`, `qr`, `ready`, `disconnected`       |
+| `phone`      | string/null | Número de WhatsApp conectado                |
+| `session_id` | string/null | ID de la sesión (solo si `ready`)           |
+| `data`       | object/null | Data completa del webhook (solo si `ready`) |
+| `qr`         | object/null | Datos del QR (solo si status=`qr`)          |
 
 ---
 
@@ -896,10 +896,10 @@ Content-Type: application/json
 }
 ```
 
-| Campo          | Tipo   | Obligatorio | Notas                           |
-| -------------- | ------ | :---------: | ------------------------------- |
-| `phone_number` | string |     Si      | Número con código de país       |
-| `message`      | string |     Si      | Texto del mensaje               |
+| Campo          | Tipo   | Obligatorio | Notas                     |
+| -------------- | ------ | :---------: | ------------------------- |
+| `phone_number` | string |     Si      | Número con código de país |
+| `message`      | string |     Si      | Texto del mensaje         |
 
 **Response exitoso:** `200 OK`
 
@@ -920,13 +920,13 @@ Content-Type: application/json
 
 **Errores posibles:**
 
-| Código | error_code                | Descripción                                   |
-| ------ | ------------------------- | --------------------------------------------- |
-| 400    | `MISSING_FIELDS`          | Faltan `phone_number` o `message`             |
-| 400    | `WHATSAPP_NOT_CONNECTED`  | La instancia no está conectada                |
-| 400    | `WHATSAPP_SEND_FAILED`    | Error al enviar el mensaje                    |
-| 401    | —                         | Token JWT inválido o ausente                  |
-| 404    | —                         | `X-Company-Id` ausente o sin acceso           |
+| Código | error_code               | Descripción                         |
+| ------ | ------------------------ | ----------------------------------- |
+| 400    | `MISSING_FIELDS`         | Faltan `phone_number` o `message`   |
+| 400    | `WHATSAPP_NOT_CONNECTED` | La instancia no está conectada      |
+| 400    | `WHATSAPP_SEND_FAILED`   | Error al enviar el mensaje          |
+| 401    | —                        | Token JWT inválido o ausente        |
+| 404    | —                        | `X-Company-Id` ausente o sin acceso |
 
 ---
 
@@ -955,11 +955,11 @@ X-Company-Id: <id>
 
 **Errores posibles:**
 
-| Código | error_code                | Descripción                    |
-| ------ | ------------------------- | ------------------------------ |
-| 400    | `WHATSAPP_DELETE_FAILED`  | Error al eliminar la instancia |
-| 401    | —                         | Token JWT inválido o ausente   |
-| 404    | —                         | `X-Company-Id` ausente o sin acceso |
+| Código | error_code               | Descripción                         |
+| ------ | ------------------------ | ----------------------------------- |
+| 400    | `WHATSAPP_DELETE_FAILED` | Error al eliminar la instancia      |
+| 401    | —                        | Token JWT inválido o ausente        |
+| 404    | —                        | `X-Company-Id` ausente o sin acceso |
 
 ---
 
@@ -975,14 +975,15 @@ POST /api/v1/collection/whatsapp/webhook/?company_user_id=<id>
 
 **Eventos manejados:**
 
-| Evento              | Acción                                                  |
-| ------------------- | ------------------------------------------------------- |
-| `qrcode.updated`    | Actualiza QR en DB + notifica por WebSocket             |
-| `connection.update`  | Actualiza estado (ready/disconnected) + notifica WS    |
+| Evento              | Acción                                              |
+| ------------------- | --------------------------------------------------- |
+| `qrcode.updated`    | Actualiza QR en DB + notifica por WebSocket         |
+| `connection.update` | Actualiza estado (ready/disconnected) + notifica WS |
 
 **Almacenamiento en `WhatsappCompanyUser`:**
 
 Al recibir `connection.update` con `state=open`:
+
 - `type` → `"ready"`
 - `phone` → extraído de `wuid` (ej: `56912345678@s.whatsapp.net` → `+56912345678`), fallback a `phoneNumber`
 - `data` → payload completo del webhook
@@ -994,7 +995,7 @@ Al recibir `connection.update` con `state=open`:
 
 ### 16. WhatsApp — Enviar por Criticidad (Plantilla Predefinida)
 
-Envía un mensaje de WhatsApp de cobranza con plantilla predefinida según criticidad. El backend genera el texto automáticamente con formato WhatsApp (*negrita*, emojis).
+Envía un mensaje de WhatsApp de cobranza con plantilla predefinida según criticidad. El backend genera el texto automáticamente con formato WhatsApp (_negrita_, emojis).
 
 ```
 POST /api/v1/collection/whatsapp/send-collection/
@@ -1021,16 +1022,17 @@ Content-Type: application/json
 }
 ```
 
-| Campo                | Tipo     | Obligatorio | Notas                                                    |
-| -------------------- | -------- | :---------: | -------------------------------------------------------- |
-| `criticality`        | string   |     Si      | `recordatorio`, `por_vencer`, `en_mora`, `critico`       |
-| `client_id`          | integer  |     Si      | ID del cliente (deudor)                                  |
-| `invoice_ids`        | int[]    |     Si      | IDs de facturas a incluir en el mensaje                  |
-| `contact_id`         | integer  |     No      | ID del contacto. Si no se envía, usa el primer contacto con teléfono |
-| `phone_number`       | string   |     No      | Número destino. Si no se envía, usa contacto → cliente   |
-| `dias_plazo`         | integer  |     No      | Días de plazo para criticidad `critico` (default: 5)     |
+| Campo          | Tipo    | Obligatorio | Notas                                                                |
+| -------------- | ------- | :---------: | -------------------------------------------------------------------- |
+| `criticality`  | string  |     Si      | `recordatorio`, `por_vencer`, `en_mora`, `critico`                   |
+| `client_id`    | integer |     Si      | ID del cliente (deudor)                                              |
+| `invoice_ids`  | int[]   |     Si      | IDs de facturas a incluir en el mensaje                              |
+| `contact_id`   | integer |     No      | ID del contacto. Si no se envía, usa el primer contacto con teléfono |
+| `phone_number` | string  |     No      | Número destino. Si no se envía, usa contacto → cliente               |
+| `dias_plazo`   | integer |     No      | Días de plazo para criticidad `critico` (default: 5)                 |
 
 **Datos auto-resueltos por el backend:**
+
 - Contacto adecuado (el más antiguo con teléfono)
 - Nombre del contacto (contacto → nombre del cliente)
 - Nombre de la empresa
@@ -1041,12 +1043,12 @@ Content-Type: application/json
 
 **Plantillas por criticidad (WhatsApp):**
 
-| Criticidad    | Emoji | Estilo del mensaje                                               |
-| ------------- | ----- | ---------------------------------------------------------------- |
-| `recordatorio`| 👋    | Saludo amigable, facturas pendientes, "puedes contactarnos aquí" |
-| `por_vencer`  | ⚠️    | Aviso vencimiento, "gestiona el pago a la brevedad"              |
-| `en_mora`     | 🔴    | Facturas vencidas, "coordinar plan de pago", teléfono            |
-| `critico`     | ⚠️    | ÚLTIMO AVISO, gestión de cobranza, DICOM, fecha límite           |
+| Criticidad     | Emoji | Estilo del mensaje                                               |
+| -------------- | ----- | ---------------------------------------------------------------- |
+| `recordatorio` | 👋    | Saludo amigable, facturas pendientes, "puedes contactarnos aquí" |
+| `por_vencer`   | ⚠️    | Aviso vencimiento, "gestiona el pago a la brevedad"              |
+| `en_mora`      | 🔴    | Facturas vencidas, "coordinar plan de pago", teléfono            |
+| `critico`      | ⚠️    | ÚLTIMO AVISO, gestión de cobranza, DICOM, fecha límite           |
 
 **Response exitoso:** `200 OK`
 
@@ -1063,13 +1065,13 @@ Content-Type: application/json
 
 **Errores:**
 
-| Código | error_code                | Descripción                                                 |
-| ------ | ------------------------- | ----------------------------------------------------------- |
-| 400    | `WHATSAPP_NOT_CONNECTED`  | La instancia de WhatsApp no está conectada                  |
-| 400    | `WHATSAPP_SEND_FAILED`    | Error al enviar el mensaje                                  |
-| 400    | `NO_INVOICES`             | No se encontraron facturas válidas                          |
-| 400    | `NO_PHONE`                | No se encontró teléfono de destino                          |
-| 404    | `CLIENT_NOT_FOUND`        | Cliente no encontrado o no pertenece a la empresa           |
+| Código | error_code               | Descripción                                       |
+| ------ | ------------------------ | ------------------------------------------------- |
+| 400    | `WHATSAPP_NOT_CONNECTED` | La instancia de WhatsApp no está conectada        |
+| 400    | `WHATSAPP_SEND_FAILED`   | Error al enviar el mensaje                        |
+| 400    | `NO_INVOICES`            | No se encontraron facturas válidas                |
+| 400    | `NO_PHONE`               | No se encontró teléfono de destino                |
+| 404    | `CLIENT_NOT_FOUND`       | Cliente no encontrado o no pertenece a la empresa |
 
 ---
 
@@ -1103,37 +1105,38 @@ Content-Type: application/json
 }
 ```
 
-| Campo                | Tipo   | Obligatorio | Notas                                                             |
-| -------------------- | ------ | :---------: | ----------------------------------------------------------------- |
-| `criticality`        | string |     Si      | `recordatorio`, `por_vencer`, `en_mora`, `critico`                |
-| `client_id`          | int    |     Si      | ID del cliente (deudor)                                           |
-| `invoice_ids`        | array  |     Si      | Lista de IDs de facturas (para calcular monto total)              |
-| `country`            | string |     Si      | `"chile"` o `"peru"`                                              |
-| `contact_id`         | int    |     No      | ID del contacto. Si no se envía, usa el primer contacto con teléfono |
-| `phone_number`       | string |     No      | Número destino. Si no se envía, usa el del contacto o cliente     |
-| `dias_plazo`         | int    |     No      | Días de plazo (para `critico`, default: 5)                        |
+| Campo          | Tipo   | Obligatorio | Notas                                                                |
+| -------------- | ------ | :---------: | -------------------------------------------------------------------- |
+| `criticality`  | string |     Si      | `recordatorio`, `por_vencer`, `en_mora`, `critico`                   |
+| `client_id`    | int    |     Si      | ID del cliente (deudor)                                              |
+| `invoice_ids`  | array  |     Si      | Lista de IDs de facturas (para calcular monto total)                 |
+| `country`      | string |     Si      | `"chile"` o `"peru"`                                                 |
+| `contact_id`   | int    |     No      | ID del contacto. Si no se envía, usa el primer contacto con teléfono |
+| `phone_number` | string |     No      | Número destino. Si no se envía, usa el del contacto o cliente        |
+| `dias_plazo`   | int    |     No      | Días de plazo (para `critico`, default: 5)                           |
 
 **Datos auto-resueltos por el backend:**
+
 - Contacto adecuado (el más antiguo con teléfono)
 - **Link al portal de pagos** (generado automáticamente con `generate_payment_portal_link`)
 
 **Plantillas SMS por criticidad:**
 
-| Criticidad     | Mensaje generado                                                                                    |
-| -------------- | --------------------------------------------------------------------------------------------------- |
-| `recordatorio` | `{empresa}: Tiene 3 factura(s) pendiente(s) por $2.810.000. Consultas: (+56) 2 2345 6789`           |
-| `por_vencer`   | `{empresa}: Tiene 3 factura(s) por $2.810.000 próximas a vencer. Evite recargos: (+56) 2 2345 6789` |
-| `en_mora`      | `{empresa}: Tiene 3 factura(s) vencida(s) por $2.810.000. Regularice: (+56) 2 2345 6789`            |
+| Criticidad     | Mensaje generado                                                                                                                    |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `recordatorio` | `{empresa}: Tiene 3 factura(s) pendiente(s) por $2.810.000. Consultas: (+56) 2 2345 6789`                                           |
+| `por_vencer`   | `{empresa}: Tiene 3 factura(s) por $2.810.000 próximas a vencer. Evite recargos: (+56) 2 2345 6789`                                 |
+| `en_mora`      | `{empresa}: Tiene 3 factura(s) vencida(s) por $2.810.000. Regularice: (+56) 2 2345 6789`                                            |
 | `critico`      | `URGENTE {empresa}: Deuda $2.810.000 (3 factura(s)) en proceso de cobranza legal. Contacte (+56) 2 2345 6789 antes del 30/03/2026.` |
 
 El link al portal de pagos se genera automáticamente y se agrega como `\nPagar: {url}` al final.
 
 **Proveedores por país:**
 
-| País  | Proveedores (fallback)                                |
-| ----- | ----------------------------------------------------- |
-| Chile | Celmedia → AlteraGSM → LabsMobile → Infobip          |
-| Perú  | Contactahabilidad → Infobip → LabsMobile              |
+| País  | Proveedores (fallback)                      |
+| ----- | ------------------------------------------- |
+| Chile | Celmedia → AlteraGSM → LabsMobile → Infobip |
+| Perú  | Contactahabilidad → Infobip → LabsMobile    |
 
 **Response exitoso:** `200 OK`
 
@@ -1152,12 +1155,12 @@ El link al portal de pagos se genera automáticamente y se agrega como `\nPagar:
 
 **Errores posibles:**
 
-| Código | error_code          | Descripción                                         |
-| ------ | ------------------- | --------------------------------------------------- |
-| 400    | `SMS_SEND_FAILED`   | Todos los proveedores fallaron                      |
-| 400    | `NO_INVOICES`       | No se encontraron facturas válidas                  |
-| 400    | `NO_PHONE`          | No se encontró teléfono de destino                  |
-| 404    | `CLIENT_NOT_FOUND`  | Cliente no encontrado o no pertenece a la empresa   |
+| Código | error_code         | Descripción                                       |
+| ------ | ------------------ | ------------------------------------------------- |
+| 400    | `SMS_SEND_FAILED`  | Todos los proveedores fallaron                    |
+| 400    | `NO_INVOICES`      | No se encontraron facturas válidas                |
+| 400    | `NO_PHONE`         | No se encontró teléfono de destino                |
+| 404    | `CLIENT_NOT_FOUND` | Cliente no encontrado o no pertenece a la empresa |
 
 ---
 
@@ -1241,27 +1244,28 @@ Content-Type: application/json
 }
 ```
 
-| Campo                | Tipo   | Obligatorio | Notas                                                             |
-| -------------------- | ------ | :---------: | ----------------------------------------------------------------- |
-| `criticality`        | string |     Si      | `recordatorio`, `por_vencer`, `en_mora`, `critico`                |
-| `client_id`          | int    |     Si      | ID del cliente (deudor)                                           |
-| `invoice_ids`        | array  |     Si      | Lista de IDs de facturas a incluir                                |
-| `contact_id`         | int    |     No      | ID del contacto. Si no se envía, usa el primer contacto con email |
-| `to_email`           | string |     No      | Email destino. Si no se envía, usa email del contacto o cliente   |
-| `banco`              | string |     No      | Nombre del banco (para `por_vencer`)                              |
-| `cuenta`             | string |     No      | Número de cuenta bancaria (para `por_vencer`)                     |
-| `dias_plazo`         | int    |     No      | Días de plazo (para `critico`, default: 5)                        |
+| Campo         | Tipo   | Obligatorio | Notas                                                             |
+| ------------- | ------ | :---------: | ----------------------------------------------------------------- |
+| `criticality` | string |     Si      | `recordatorio`, `por_vencer`, `en_mora`, `critico`                |
+| `client_id`   | int    |     Si      | ID del cliente (deudor)                                           |
+| `invoice_ids` | array  |     Si      | Lista de IDs de facturas a incluir                                |
+| `contact_id`  | int    |     No      | ID del contacto. Si no se envía, usa el primer contacto con email |
+| `to_email`    | string |     No      | Email destino. Si no se envía, usa email del contacto o cliente   |
+| `banco`       | string |     No      | Nombre del banco (para `por_vencer`)                              |
+| `cuenta`      | string |     No      | Número de cuenta bancaria (para `por_vencer`)                     |
+| `dias_plazo`  | int    |     No      | Días de plazo (para `critico`, default: 5)                        |
 
 **Niveles de criticidad y plantillas:**
 
-| Criticidad     | Asunto generado                                              | Contenido                                      |
-| -------------- | ------------------------------------------------------------ | ----------------------------------------------- |
-| `recordatorio` | Recordatorio de facturas pendientes — {empresa}              | Tono amigable, tabla de facturas                |
-| `por_vencer`   | {n} factura(s) próximas a vencer — Acción requerida          | Datos bancarios, urgencia moderada              |
-| `en_mora`      | URGENTE: {n} factura(s) con mora — {monto}                   | Historial comercial, contacto directo           |
-| `critico`      | Último aviso — Deuda de {monto} en proceso de gestión legal  | DICOM/Equifax, gestión judicial, plazo límite   |
+| Criticidad     | Asunto generado                                             | Contenido                                     |
+| -------------- | ----------------------------------------------------------- | --------------------------------------------- |
+| `recordatorio` | Recordatorio de facturas pendientes — {empresa}             | Tono amigable, tabla de facturas              |
+| `por_vencer`   | {n} factura(s) próximas a vencer — Acción requerida         | Datos bancarios, urgencia moderada            |
+| `en_mora`      | URGENTE: {n} factura(s) con mora — {monto}                  | Historial comercial, contacto directo         |
+| `critico`      | Último aviso — Deuda de {monto} en proceso de gestión legal | DICOM/Equifax, gestión judicial, plazo límite |
 
 **Datos que el backend resuelve automáticamente:**
+
 - Contacto adecuado (el más antiguo con email)
 - Nombre del contacto/deudor (desde `contact_id` o primer contacto del cliente)
 - Nombre, email, teléfono, RUT de la empresa emisora (desde `company`)
@@ -1286,12 +1290,12 @@ Content-Type: application/json
 
 **Errores posibles:**
 
-| Código | error_code          | Descripción                                         |
-| ------ | ------------------- | --------------------------------------------------- |
-| 400    | `EMAIL_SEND_FAILED` | Error al enviar el correo vía SendGrid             |
-| 400    | `NO_INVOICES`       | No se encontraron facturas válidas                  |
-| 400    | `NO_EMAIL`          | No se encontró email destino                        |
-| 404    | `CLIENT_NOT_FOUND`  | Cliente no encontrado o no pertenece a la empresa   |
+| Código | error_code          | Descripción                                       |
+| ------ | ------------------- | ------------------------------------------------- |
+| 400    | `EMAIL_SEND_FAILED` | Error al enviar el correo vía SendGrid            |
+| 400    | `NO_INVOICES`       | No se encontraron facturas válidas                |
+| 400    | `NO_EMAIL`          | No se encontró email destino                      |
+| 404    | `CLIENT_NOT_FOUND`  | Cliente no encontrado o no pertenece a la empresa |
 
 ---
 
@@ -1323,14 +1327,14 @@ Content-Type: application/json
 }
 ```
 
-| Campo        | Tipo   | Obligatorio | Notas                              |
-| ------------ | ------ | :---------: | ---------------------------------- |
-| `to_email`   | string |     Si      | Email del destinatario             |
-| `to_name`    | string |     Si      | Nombre del destinatario            |
-| `subject`    | string |     Si      | Asunto del correo                  |
-| `html_body`  | string |     Si      | HTML completo del correo           |
-| `client_id`  | int    |     No      | ID del cliente (para logging)      |
-| `contact_id` | int    |     No      | ID del contacto (para logging)     |
+| Campo        | Tipo   | Obligatorio | Notas                          |
+| ------------ | ------ | :---------: | ------------------------------ |
+| `to_email`   | string |     Si      | Email del destinatario         |
+| `to_name`    | string |     Si      | Nombre del destinatario        |
+| `subject`    | string |     Si      | Asunto del correo              |
+| `html_body`  | string |     Si      | HTML completo del correo       |
+| `client_id`  | int    |     No      | ID del cliente (para logging)  |
+| `contact_id` | int    |     No      | ID del contacto (para logging) |
 
 **Response exitoso:** `200 OK`
 
@@ -1368,10 +1372,10 @@ Content-Type: application/json
 }
 ```
 
-| Campo              | Tipo   | Obligatorio | Notas                                    |
-| ------------------ | ------ | :---------: | ---------------------------------------- |
-| `triggered_by`     | string |     No      | `manual` (default) o `scheduled`         |
-| `n8n_execution_id` | string |     No      | ID de ejecución de N8N                   |
+| Campo              | Tipo   | Obligatorio | Notas                            |
+| ------------------ | ------ | :---------: | -------------------------------- |
+| `triggered_by`     | string |     No      | `manual` (default) o `scheduled` |
+| `n8n_execution_id` | string |     No      | ID de ejecución de N8N           |
 
 **Response exitoso:** `201 Created`
 
@@ -1403,9 +1407,9 @@ X-Company-Id: <id>
 
 **Query params:**
 
-| Param  | Tipo | Obligatorio | Notas                          |
-| ------ | ---- | :---------: | ------------------------------ |
-| `page` | int  |     No      | Página (default: 1, size: 20)  |
+| Param  | Tipo | Obligatorio | Notas                         |
+| ------ | ---- | :---------: | ----------------------------- |
+| `page` | int  |     No      | Página (default: 1, size: 20) |
 
 **Response exitoso:** `200 OK`
 
@@ -1435,20 +1439,20 @@ X-Company-Id: <id>
 ```
 
 | Campo               | Tipo     | Notas                                        |
-| -------------------- | -------- | -------------------------------------------- |
-| `id`                 | int      | ID de la corrida                             |
-| `uuid`               | string   | UUID único                                   |
-| `status`             | string   | `running`, `completed` o `failed`            |
-| `started_at`         | datetime | Inicio de la corrida                         |
-| `finished_at`        | datetime | Fin de la corrida (null si aún en ejecución) |
-| `n8n_execution_id`   | string   | ID de ejecución N8N (puede ser null)         |
-| `debtors_processed`  | int      | Cantidad de deudores procesados              |
-| `messages_email`     | int      | Emails enviados                              |
-| `messages_whatsapp`  | int      | WhatsApps enviados                           |
-| `messages_sms`       | int      | SMS enviados                                 |
-| `triggered_by`       | string   | `manual` o `scheduled`                       |
-| `error_message`      | string   | Mensaje de error (null si exitoso)           |
-| `created`            | datetime | Fecha de creación del registro               |
+| ------------------- | -------- | -------------------------------------------- |
+| `id`                | int      | ID de la corrida                             |
+| `uuid`              | string   | UUID único                                   |
+| `status`            | string   | `running`, `completed` o `failed`            |
+| `started_at`        | datetime | Inicio de la corrida                         |
+| `finished_at`       | datetime | Fin de la corrida (null si aún en ejecución) |
+| `n8n_execution_id`  | string   | ID de ejecución N8N (puede ser null)         |
+| `debtors_processed` | int      | Cantidad de deudores procesados              |
+| `messages_email`    | int      | Emails enviados                              |
+| `messages_whatsapp` | int      | WhatsApps enviados                           |
+| `messages_sms`      | int      | SMS enviados                                 |
+| `triggered_by`      | string   | `manual` o `scheduled`                       |
+| `error_message`     | string   | Mensaje de error (null si exitoso)           |
+| `created`           | datetime | Fecha de creación del registro               |
 
 ---
 
@@ -1481,54 +1485,54 @@ Content-Type: application/json
 ```
 
 | Campo               | Tipo     | Obligatorio | Notas                                              |
-| -------------------- | -------- | :---------: | -------------------------------------------------- |
-| `status`             | string   |     No      | `running`, `completed` o `failed`                  |
-| `finished_at`        | datetime |     No      | Se auto-asigna si status es `completed` o `failed` |
-| `n8n_execution_id`   | string   |     No      | ID de ejecución de N8N                             |
-| `debtors_processed`  | int      |     No      | Cantidad de deudores procesados                    |
-| `messages_email`     | int      |     No      | Emails enviados                                    |
-| `messages_whatsapp`  | int      |     No      | WhatsApps enviados                                 |
-| `messages_sms`       | int      |     No      | SMS enviados                                       |
-| `error_message`      | string   |     No      | Mensaje de error                                   |
+| ------------------- | -------- | :---------: | -------------------------------------------------- |
+| `status`            | string   |     No      | `running`, `completed` o `failed`                  |
+| `finished_at`       | datetime |     No      | Se auto-asigna si status es `completed` o `failed` |
+| `n8n_execution_id`  | string   |     No      | ID de ejecución de N8N                             |
+| `debtors_processed` | int      |     No      | Cantidad de deudores procesados                    |
+| `messages_email`    | int      |     No      | Emails enviados                                    |
+| `messages_whatsapp` | int      |     No      | WhatsApps enviados                                 |
+| `messages_sms`      | int      |     No      | SMS enviados                                       |
+| `error_message`     | string   |     No      | Mensaje de error                                   |
 
 **Response exitoso:** `200 OK` (retorna el objeto completo de la corrida con los mismos campos del listado)
 
 **Errores posibles:**
 
-| Código | error_code      | Descripción              |
-| ------ | --------------- | ------------------------ |
-| 404    | `RUN_NOT_FOUND` | Corrida no encontrada    |
+| Código | error_code      | Descripción           |
+| ------ | --------------- | --------------------- |
+| 404    | `RUN_NOT_FOUND` | Corrida no encontrada |
 
 ---
 
 ## Lista de Endpoints
 
-| #  | Método   | URL                                    | ViewSet                    | Permiso                      |
-| -- | -------- | -------------------------------------- | -------------------------- | ---------------------------- |
-| 1  | `POST`   | `/collection/auth/register/`           | `CobranzaAuthViewSet`      | Público (`AllowAny`)         |
-| 2  | `POST`   | `/collection/auth/login/`              | `CobranzaAuthViewSet`      | Público (`AllowAny`)         |
-| 3  | `GET`    | `/collection/users/me/`                | `CollectionUserViewSet`    | `CollectionJWTBasePermission`|
-| 4  | `GET`    | `/collection/sii/status/`              | `SiiCredentialsViewSet`    | `CollectionJWTPermission`    |
-| 5  | `POST`   | `/collection/sii/save/`                | `SiiCredentialsViewSet`    | `CollectionJWTPermission`    |
-| 6  | `DELETE` | `/collection/sii/delete/`              | `SiiCredentialsViewSet`    | `CollectionJWTPermission`    |
-| 7  | `POST`   | `/collection/sii/sync/`                | `SiiCredentialsViewSet`    | `CollectionJWTPermission`    |
-| 8  | `GET`    | `/collection/clients/`                 | `CollectionClientViewSet`  | `CollectionJWTPermission`    |
-| 9  | `GET`    | `/collection/invoices/`                | `CollectionInvoiceViewSet` | `CollectionJWTPermission`    |
-| 10 | `GET`    | `/collection/payments/`                | `CollectionPaymentViewSet` | `CollectionJWTPermission`    |
-| 11 | `GET`    | `/collection/contacts/`                | `CollectionContactViewSet`   | `CollectionJWTPermission`    |
-| 12 | `POST`   | `/collection/whatsapp/create-instance/`| `CollectionWhatsAppViewSet`  | `CollectionJWTPermission`    |
-| 13 | `GET`    | `/collection/whatsapp/status/`         | `CollectionWhatsAppViewSet`  | `CollectionJWTPermission`    |
-| 14 | `POST`   | `/collection/whatsapp/send-message/`   | `CollectionWhatsAppViewSet`  | `CollectionJWTPermission`    |
-| 15 | `DELETE` | `/collection/whatsapp/delete-instance/`| `CollectionWhatsAppViewSet`  | `CollectionJWTPermission`    |
-| 16 | `POST`   | `/collection/whatsapp/send-collection/`| `CollectionWhatsAppViewSet`  | `CollectionJWTPermission`    |
-| 17 | `POST`   | `/collection/whatsapp/webhook/`        | `CollectionWhatsAppViewSet`  | Público (`AllowAny`)         |
-| 18 | `POST`   | `/collection/sms/send-collection/`     | `CollectionSMSViewSet`       | `CollectionJWTPermission`    |
-| 19 | `POST`   | `/collection/sms/send/`                | `CollectionSMSViewSet`       | `CollectionJWTPermission`    |
-| 20 | `POST`   | `/collection/email/send-collection/`   | `CollectionEmailViewSet`     | `CollectionJWTPermission`    |
-| 21 | `POST`   | `/collection/email/send/`              | `CollectionEmailViewSet`     | `CollectionJWTPermission`    |
-| 22 | `POST`   | `/collection/runs/`                    | `CollectionRunViewSet`       | `CollectionJWTPermission`    |
-| 23 | `GET`    | `/collection/runs/`                    | `CollectionRunViewSet`       | `CollectionJWTPermission`    |
-| 24 | `PATCH`  | `/collection/runs/{id}/`               | `CollectionRunViewSet`       | `CollectionJWTPermission`    |
+| #   | Método   | URL                                     | ViewSet                     | Permiso                       |
+| --- | -------- | --------------------------------------- | --------------------------- | ----------------------------- |
+| 1   | `POST`   | `/collection/auth/register/`            | `CobranzaAuthViewSet`       | Público (`AllowAny`)          |
+| 2   | `POST`   | `/collection/auth/login/`               | `CobranzaAuthViewSet`       | Público (`AllowAny`)          |
+| 3   | `GET`    | `/collection/users/me/`                 | `CollectionUserViewSet`     | `CollectionJWTBasePermission` |
+| 4   | `GET`    | `/collection/sii/status/`               | `SiiCredentialsViewSet`     | `CollectionJWTPermission`     |
+| 5   | `POST`   | `/collection/sii/save/`                 | `SiiCredentialsViewSet`     | `CollectionJWTPermission`     |
+| 6   | `DELETE` | `/collection/sii/delete/`               | `SiiCredentialsViewSet`     | `CollectionJWTPermission`     |
+| 7   | `POST`   | `/collection/sii/sync/`                 | `SiiCredentialsViewSet`     | `CollectionJWTPermission`     |
+| 8   | `GET`    | `/collection/clients/`                  | `CollectionClientViewSet`   | `CollectionJWTPermission`     |
+| 9   | `GET`    | `/collection/invoices/`                 | `CollectionInvoiceViewSet`  | `CollectionJWTPermission`     |
+| 10  | `GET`    | `/collection/payments/`                 | `CollectionPaymentViewSet`  | `CollectionJWTPermission`     |
+| 11  | `GET`    | `/collection/contacts/`                 | `CollectionContactViewSet`  | `CollectionJWTPermission`     |
+| 12  | `POST`   | `/collection/whatsapp/create-instance/` | `CollectionWhatsAppViewSet` | `CollectionJWTPermission`     |
+| 13  | `GET`    | `/collection/whatsapp/status/`          | `CollectionWhatsAppViewSet` | `CollectionJWTPermission`     |
+| 14  | `POST`   | `/collection/whatsapp/send-message/`    | `CollectionWhatsAppViewSet` | `CollectionJWTPermission`     |
+| 15  | `DELETE` | `/collection/whatsapp/delete-instance/` | `CollectionWhatsAppViewSet` | `CollectionJWTPermission`     |
+| 16  | `POST`   | `/collection/whatsapp/send-collection/` | `CollectionWhatsAppViewSet` | `CollectionJWTPermission`     |
+| 17  | `POST`   | `/collection/whatsapp/webhook/`         | `CollectionWhatsAppViewSet` | Público (`AllowAny`)          |
+| 18  | `POST`   | `/collection/sms/send-collection/`      | `CollectionSMSViewSet`      | `CollectionJWTPermission`     |
+| 19  | `POST`   | `/collection/sms/send/`                 | `CollectionSMSViewSet`      | `CollectionJWTPermission`     |
+| 20  | `POST`   | `/collection/email/send-collection/`    | `CollectionEmailViewSet`    | `CollectionJWTPermission`     |
+| 21  | `POST`   | `/collection/email/send/`               | `CollectionEmailViewSet`    | `CollectionJWTPermission`     |
+| 22  | `POST`   | `/collection/runs/`                     | `CollectionRunViewSet`      | `CollectionJWTPermission`     |
+| 23  | `GET`    | `/collection/runs/`                     | `CollectionRunViewSet`      | `CollectionJWTPermission`     |
+| 24  | `PATCH`  | `/collection/runs/{id}/`                | `CollectionRunViewSet`      | `CollectionJWTPermission`     |
 
 > **Base URL:** `/api/v1/collection/`
 

@@ -1,28 +1,37 @@
-"use client";
+'use client'
 
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { useState, useRef, useEffect } from "react";
-import { SenaLogo } from "@/components/ui/SenaLogo";
-import { useModalStore } from "@/store/modalStore";
-import { SiiModalContent } from "@/components/integraciones/modals/SiiModalContent";
-import { useMe } from "@/lib/hooks/useMe";
-import { useAuthStore } from "@/store/authStore";
-import { useQueryClient } from "@tanstack/react-query";
-import type { Company } from "@/lib/api/types/auth";
+import Link from 'next/link'
+import { usePathname, useRouter } from 'next/navigation'
+import { useState, useRef, useEffect } from 'react'
+import { SenaLogo } from '@/components/ui/SenaLogo'
+import { useModalStore } from '@/store/modalStore'
+import { SiiModalContent } from '@/components/integraciones/modals/SiiModalContent'
+import { useMe } from '@/lib/hooks/useMe'
+import { useAuthStore } from '@/store/authStore'
+import { useQueryClient } from '@tanstack/react-query'
+import type { Company } from '@/lib/api/types/auth'
 
 type NavItem = {
-  label: string;
-  href: string;
-  icon: React.ReactNode;
-};
+  label: string
+  href: string
+  icon: React.ReactNode
+}
 
 const NAV_ITEMS: NavItem[] = [
   {
-    label: "Inicio",
-    href: "/inicio",
+    label: 'Inicio',
+    href: '/inicio',
     icon: (
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
         <rect x="3" y="3" width="7" height="7" rx="1.5" />
         <rect x="14" y="3" width="7" height="7" rx="1.5" />
         <rect x="3" y="14" width="7" height="7" rx="1.5" />
@@ -31,230 +40,435 @@ const NAV_ITEMS: NavItem[] = [
     ),
   },
   {
-    label: "Clientes",
-    href: "/clientes",
+    label: 'Clientes',
+    href: '/clientes',
     icon: (
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" />
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+        <circle cx="12" cy="7" r="4" />
       </svg>
     ),
   },
   {
-    label: "Documentos",
-    href: "/documentos",
+    label: 'Documentos',
+    href: '/documentos',
     icon: (
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
         <rect x="4" y="2" width="16" height="20" rx="2" />
-        <line x1="8" y1="9" x2="16" y2="9" /><line x1="8" y1="13" x2="16" y2="13" /><line x1="8" y1="17" x2="12" y2="17" />
+        <line x1="8" y1="9" x2="16" y2="9" />
+        <line x1="8" y1="13" x2="16" y2="13" />
+        <line x1="8" y1="17" x2="12" y2="17" />
       </svg>
     ),
   },
   {
-    label: "Contactos",
-    href: "/contactos",
+    label: 'Contactos',
+    href: '/contactos',
     icon: (
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" />
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+        <circle cx="12" cy="7" r="4" />
       </svg>
     ),
   },
   {
-    label: "Pagos",
-    href: "/pagos",
+    label: 'Pagos',
+    href: '/pagos',
     icon: (
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="3" y="6" width="18" height="13" rx="2" /><path d="M3 10h18" /><path d="M7 15h2" />
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <rect x="3" y="6" width="18" height="13" rx="2" />
+        <path d="M3 10h18" />
+        <path d="M7 15h2" />
       </svg>
     ),
   },
   {
-    label: "Plantillas",
-    href: "/plantillas",
+    label: 'Plantillas',
+    href: '/plantillas',
     icon: (
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="5" cy="12" r="2" /><circle cx="19" cy="5" r="2" /><circle cx="19" cy="19" r="2" />
-        <line x1="7" y1="11" x2="17" y2="6" /><line x1="7" y1="13" x2="17" y2="18" />
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <circle cx="5" cy="12" r="2" />
+        <circle cx="19" cy="5" r="2" />
+        <circle cx="19" cy="19" r="2" />
+        <line x1="7" y1="11" x2="17" y2="6" />
+        <line x1="7" y1="13" x2="17" y2="18" />
       </svg>
     ),
   },
   {
-    label: "Ejecuciones",
-    href: "/ejecuciones",
+    label: 'Ejecuciones',
+    href: '/ejecuciones',
     icon: (
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
         <path d="M5 3l14 9-14 9V3z" />
       </svg>
     ),
   },
   {
-    label: "Integraciones",
-    href: "/integraciones",
+    label: 'Integraciones',
+    href: '/integraciones',
     icon: (
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="5" cy="6" r="2" /><circle cx="19" cy="6" r="2" /><circle cx="12" cy="18" r="2" />
-        <line x1="7" y1="6" x2="17" y2="6" /><line x1="6" y1="8" x2="11" y2="16" /><line x1="18" y1="8" x2="13" y2="16" />
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <circle cx="5" cy="6" r="2" />
+        <circle cx="19" cy="6" r="2" />
+        <circle cx="12" cy="18" r="2" />
+        <line x1="7" y1="6" x2="17" y2="6" />
+        <line x1="6" y1="8" x2="11" y2="16" />
+        <line x1="18" y1="8" x2="13" y2="16" />
       </svg>
     ),
   },
-];
+]
 
 export function Sidebar({ onClose }: { onClose?: () => void } = {}) {
-  const pathname      = usePathname();
-  const router        = useRouter();
-  const { showModal } = useModalStore();
-  const { data: me }  = useMe();
-  const { clearSession, setSession, accessToken, refreshToken, activeCompany } = useAuthStore();
-  const queryClient   = useQueryClient();
+  const pathname = usePathname()
+  const router = useRouter()
+  const { showModal } = useModalStore()
+  const { data: me } = useMe()
+  const { clearSession, setSession, accessToken, refreshToken, activeCompany } = useAuthStore()
+  const queryClient = useQueryClient()
 
-  const [selectorOpen, setSelectorOpen] = useState(false);
-  const [collapsed,    setCollapsed]    = useState(false);
-  const [isDesktop,    setIsDesktop]    = useState(true);
-  const [search,       setSearch]       = useState("");
+  const [selectorOpen, setSelectorOpen] = useState(false)
+  const [collapsed, setCollapsed] = useState(false)
+  const [isDesktop, setIsDesktop] = useState(true)
+  const [search, setSearch] = useState('')
 
   // En mobile nunca colapsar — el sidebar es un drawer y siempre va expandido
   useEffect(() => {
-    const mq = window.matchMedia("(min-width: 1024px)");
-    setIsDesktop(mq.matches);
-    const handler = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
-    mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
-  }, []);
+    const mq = window.matchMedia('(min-width: 1024px)')
+    setIsDesktop(mq.matches)
+    const handler = (e: MediaQueryListEvent) => setIsDesktop(e.matches)
+    mq.addEventListener('change', handler)
+    return () => mq.removeEventListener('change', handler)
+  }, [])
 
-  const isCollapsed = isDesktop && collapsed;
+  const isCollapsed = isDesktop && collapsed
 
-  const selectorRef = useRef<HTMLDivElement>(null);
+  const selectorRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
-    if (!selectorOpen) return;
+    if (!selectorOpen) return
     function handleClickOutside(e: MouseEvent) {
       if (selectorRef.current && !selectorRef.current.contains(e.target as Node)) {
-        setSelectorOpen(false);
-        setSearch("");
+        setSelectorOpen(false)
+        setSearch('')
       }
     }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [selectorOpen]);
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [selectorOpen])
 
-  const companies: Company[] = me?.companies ?? [];
-  const empresaActiva = activeCompany ?? companies[0] ?? null;
-  const siiConnected  = empresaActiva?.has_sii_credentials ?? false;
+  const companies: Company[] = me?.companies ?? []
+  const empresaActiva = activeCompany ?? companies[0] ?? null
+  const siiConnected = empresaActiva?.has_sii_credentials ?? false
 
   const filtered = search
-    ? companies.filter(c =>
-        (c.company_name ?? "").toLowerCase().includes(search.toLowerCase()) ||
-        (c.comercial_name ?? "").toLowerCase().includes(search.toLowerCase())
+    ? companies.filter(
+        (c) =>
+          (c.company_name ?? '').toLowerCase().includes(search.toLowerCase()) ||
+          (c.comercial_name ?? '').toLowerCase().includes(search.toLowerCase())
       )
-    : companies;
+    : companies
 
   function selectEmpresa(company: Company) {
     if (accessToken && refreshToken) {
-      setSession({ access_token: accessToken, refresh_token: refreshToken, company_id: company.id });
+      setSession({ access_token: accessToken, refresh_token: refreshToken, company_id: company.id })
     }
-    setSelectorOpen(false);
-    setSearch("");
+    setSelectorOpen(false)
+    setSearch('')
   }
 
   function handleLogout() {
-    clearSession();
-    queryClient.clear();
-    router.push("/login");
+    clearSession()
+    queryClient.clear()
+    router.push('/login')
   }
 
   function abrirSII() {
     showModal({
-      title: "Integración SII",
+      title: 'Integración SII',
       content: <SiiModalContent />,
       closeOnOutsideClick: true,
-      width: "480px",
-      modalId: "sii-sync",
-    });
+      width: '480px',
+      modalId: 'sii-sync',
+    })
   }
 
   const initials = me
-    ? `${me.name?.[0] ?? ""}${me.lastname?.[0] ?? ""}`.toUpperCase() || me.email[0].toUpperCase()
-    : "…";
+    ? `${me.name?.[0] ?? ''}${me.lastname?.[0] ?? ''}`.toUpperCase() || me.email[0].toUpperCase()
+    : '…'
 
   return (
     <aside
       style={{
         width: isCollapsed ? 80 : 276,
         minWidth: isCollapsed ? 80 : 276,
-        transition: "width 0.2s, min-width 0.2s",
-        display: "flex",
-        flexDirection: "column",
-        height: "100vh",
-        userSelect: "none",
+        transition: 'width 0.2s, min-width 0.2s',
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100vh',
+        userSelect: 'none',
         flexShrink: 0,
-        padding: "8px 0 8px 8px",
-        background: "transparent",
-        position: "relative",
+        padding: '8px 0 8px 8px',
+        background: 'transparent',
+        position: 'relative',
       }}
     >
       {/* Botón colapso — solo desktop */}
       <button
-        onClick={() => setCollapsed(v => !v)}
-        title={isCollapsed ? "Expandir" : "Colapsar"}
+        onClick={() => setCollapsed((v) => !v)}
+        title={isCollapsed ? 'Expandir' : 'Colapsar'}
         className="hidden lg:flex"
         style={{
-          position: "absolute", top: 24, right: -12, zIndex: 20,
-          width: 24, height: 24, borderRadius: "50%",
-          background: "#fff", border: "1.5px solid #d1d5db",
-          boxShadow: "0 1px 6px rgba(0,0,0,0.15)",
-          alignItems: "center", justifyContent: "center",
-          color: "#3771D1", cursor: "pointer", transition: "background 0.15s, border-color 0.15s",
+          position: 'absolute',
+          top: 24,
+          right: -12,
+          zIndex: 20,
+          width: 24,
+          height: 24,
+          borderRadius: '50%',
+          background: '#fff',
+          border: '1.5px solid #d1d5db',
+          boxShadow: '0 1px 6px rgba(0,0,0,0.15)',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: '#3771D1',
+          cursor: 'pointer',
+          transition: 'background 0.15s, border-color 0.15s',
         }}
-        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "#3771D1"; (e.currentTarget as HTMLElement).style.color = "#fff"; (e.currentTarget as HTMLElement).style.borderColor = "#3771D1"; }}
-        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "#fff"; (e.currentTarget as HTMLElement).style.color = "#3771D1"; (e.currentTarget as HTMLElement).style.borderColor = "#d1d5db"; }}
+        onMouseEnter={(e) => {
+          ;(e.currentTarget as HTMLElement).style.background = '#3771D1'
+          ;(e.currentTarget as HTMLElement).style.color = '#fff'
+          ;(e.currentTarget as HTMLElement).style.borderColor = '#3771D1'
+        }}
+        onMouseLeave={(e) => {
+          ;(e.currentTarget as HTMLElement).style.background = '#fff'
+          ;(e.currentTarget as HTMLElement).style.color = '#3771D1'
+          ;(e.currentTarget as HTMLElement).style.borderColor = '#d1d5db'
+        }}
       >
-        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <svg
+          width="10"
+          height="10"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
           {isCollapsed ? <polyline points="9 18 15 12 9 6" /> : <polyline points="15 18 9 12 15 6" />}
         </svg>
       </button>
 
       {/* Contenedor flotante */}
-      <div style={{ background: "#3771D1", borderRadius: 16, display: "flex", flexDirection: "column", flex: 1, overflow: "hidden", boxShadow: "0 4px 24px rgba(55,113,209,0.25)" }}>
-
+      <div
+        style={{
+          background: '#3771D1',
+          borderRadius: 16,
+          display: 'flex',
+          flexDirection: 'column',
+          flex: 1,
+          overflow: 'hidden',
+          boxShadow: '0 4px 24px rgba(55,113,209,0.25)',
+        }}
+      >
         {/* Logo */}
-        <div style={{ padding: isCollapsed ? "16px 8px" : "16px 14px", borderBottom: "1px solid rgba(255,255,255,0.12)", display: "flex", alignItems: "center", justifyContent: isCollapsed ? "center" : "flex-start", minHeight: 60 }}>
-          {!isCollapsed
-            ? <SenaLogo variant="white" height={28} />
-            : <div style={{ width: 28, height: 28, borderRadius: 8, background: "rgba(255,255,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
-                </svg>
-              </div>
-          }
+        <div
+          style={{
+            padding: isCollapsed ? '16px 8px' : '16px 14px',
+            borderBottom: '1px solid rgba(255,255,255,0.12)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: isCollapsed ? 'center' : 'flex-start',
+            minHeight: 60,
+          }}
+        >
+          {!isCollapsed ? (
+            <SenaLogo variant="white" height={28} />
+          ) : (
+            <div
+              style={{
+                width: 28,
+                height: 28,
+                borderRadius: 8,
+                background: 'rgba(255,255,255,0.2)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="white"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+              </svg>
+            </div>
+          )}
         </div>
 
         {/* Workspace selector */}
-        <div ref={selectorRef} style={{ padding: isCollapsed ? "8px 6px" : "10px 10px", borderBottom: "1px solid rgba(255,255,255,0.12)", position: "relative" }}>
+        <div
+          ref={selectorRef}
+          style={{
+            padding: isCollapsed ? '8px 6px' : '10px 10px',
+            borderBottom: '1px solid rgba(255,255,255,0.12)',
+            position: 'relative',
+          }}
+        >
           <button
-            onClick={() => setSelectorOpen(v => !v)}
+            onClick={() => setSelectorOpen((v) => !v)}
             style={{
-              width: "100%", display: "flex", alignItems: "center",
-              justifyContent: isCollapsed ? "center" : "flex-start",
-              gap: 8, background: "rgba(255,255,255,0.15)", border: "none",
-              borderRadius: 8, padding: isCollapsed ? "7px 6px" : "8px 10px",
-              cursor: "pointer", color: "#fff", textAlign: "left", transition: "background 0.15s",
+              width: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: isCollapsed ? 'center' : 'flex-start',
+              gap: 8,
+              background: 'rgba(255,255,255,0.15)',
+              border: 'none',
+              borderRadius: 8,
+              padding: isCollapsed ? '7px 6px' : '8px 10px',
+              cursor: 'pointer',
+              color: '#fff',
+              textAlign: 'left',
+              transition: 'background 0.15s',
             }}
-            onMouseEnter={e => (e.currentTarget.style.background = "rgba(255,255,255,0.22)")}
-            onMouseLeave={e => (e.currentTarget.style.background = "rgba(255,255,255,0.15)")}
+            onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.22)')}
+            onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.15)')}
           >
-            <div style={{ width: 26, height: 26, borderRadius: 6, background: "rgba(255,255,255,0.25)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-              {empresaActiva?.photo
-                ? <img src={empresaActiva.photo} alt="" style={{ width: 20, height: 20, borderRadius: 4, objectFit: "cover" }} />
-                : <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="2" y="7" width="20" height="14" rx="2" /><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" />
-                  </svg>
-              }
+            <div
+              style={{
+                width: 26,
+                height: 26,
+                borderRadius: 6,
+                background: 'rgba(255,255,255,0.25)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+              }}
+            >
+              {empresaActiva?.photo ? (
+                <img
+                  src={empresaActiva.photo}
+                  alt=""
+                  style={{ width: 20, height: 20, borderRadius: 4, objectFit: 'cover' }}
+                />
+              ) : (
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="white"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <rect x="2" y="7" width="20" height="14" rx="2" />
+                  <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" />
+                </svg>
+              )}
             </div>
             {!isCollapsed && (
               <>
-                <span style={{ flex: 1, fontSize: 12, fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: "#fff" }}>
-                  {empresaActiva ? (empresaActiva.comercial_name || empresaActiva.company_name) : "Cargando…"}
+                <span
+                  style={{
+                    flex: 1,
+                    fontSize: 12,
+                    fontWeight: 500,
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                    color: '#fff',
+                  }}
+                >
+                  {empresaActiva ? empresaActiva.comercial_name || empresaActiva.company_name : 'Cargando…'}
                 </span>
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
-                  style={{ flexShrink: 0, transform: selectorOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s" }}>
+                <svg
+                  width="13"
+                  height="13"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="rgba(255,255,255,0.7)"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  style={{
+                    flexShrink: 0,
+                    transform: selectorOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                    transition: 'transform 0.2s',
+                  }}
+                >
                   <polyline points="6 9 12 15 18 9" />
                 </svg>
               </>
@@ -263,15 +477,37 @@ export function Sidebar({ onClose }: { onClose?: () => void } = {}) {
 
           {/* Dropdown empresas */}
           {selectorOpen && !isCollapsed && (
-            <div style={{ position: "absolute", left: 10, right: 10, top: "100%", marginTop: 4, zIndex: 50, background: "#fff", borderRadius: 12, boxShadow: "0 8px 24px rgba(0,0,0,0.18)", overflow: "hidden" }}>
+            <div
+              style={{
+                position: 'absolute',
+                left: 10,
+                right: 10,
+                top: '100%',
+                marginTop: 4,
+                zIndex: 50,
+                background: '#fff',
+                borderRadius: 12,
+                boxShadow: '0 8px 24px rgba(0,0,0,0.18)',
+                overflow: 'hidden',
+              }}
+            >
               {companies.length > 1 && (
-                <div style={{ padding: 8, borderBottom: "1px solid #f0f0f0" }}>
+                <div style={{ padding: 8, borderBottom: '1px solid #f0f0f0' }}>
                   <input
                     type="text"
                     placeholder="Buscar empresa…"
                     value={search}
-                    onChange={e => setSearch(e.target.value)}
-                    style={{ width: "100%", fontSize: 12, padding: "6px 10px", borderRadius: 7, border: "1px solid #e5e7eb", outline: "none", background: "#f9fafb", boxSizing: "border-box" }}
+                    onChange={(e) => setSearch(e.target.value)}
+                    style={{
+                      width: '100%',
+                      fontSize: 12,
+                      padding: '6px 10px',
+                      borderRadius: 7,
+                      border: '1px solid #e5e7eb',
+                      outline: 'none',
+                      background: '#f9fafb',
+                      boxSizing: 'border-box',
+                    }}
                   />
                 </div>
               )}
@@ -279,43 +515,92 @@ export function Sidebar({ onClose }: { onClose?: () => void } = {}) {
               {/* <button style={{ width: "100%", display: "flex", alignItems: "center", gap: 6, padding: "8px 12px", fontSize: 12, color: "#3771D1", fontWeight: 600, background: "transparent", border: "none", cursor: "pointer", textAlign: "left" }}>
                 <span style={{ fontSize: 16, lineHeight: 1 }}>+</span> Crear empresa
               </button> */}
-              <div style={{ maxHeight: 200, overflowY: "auto" }}>
+              <div style={{ maxHeight: 200, overflowY: 'auto' }}>
                 {filtered.length === 0 && (
-                  <p style={{ padding: "10px 12px", fontSize: 12, color: "#9ca3af", textAlign: "center" }}>Sin resultados</p>
+                  <p style={{ padding: '10px 12px', fontSize: 12, color: '#9ca3af', textAlign: 'center' }}>
+                    Sin resultados
+                  </p>
                 )}
-                {filtered.map(company => {
-                  const isActive = company.id === (empresaActiva?.id);
+                {filtered.map((company) => {
+                  const isActive = company.id === empresaActiva?.id
                   return (
-                    <button key={company.id}
+                    <button
+                      key={company.id}
                       onClick={() => selectEmpresa(company)}
                       style={{
-                        width: "100%", display: "flex", alignItems: "center", gap: 8,
-                        padding: "7px 12px", fontSize: 12, border: "none", cursor: "pointer", textAlign: "left",
-                        background: isActive ? "#eef3fc" : "transparent",
-                        color: isActive ? "#3771D1" : "#374151",
+                        width: '100%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 8,
+                        padding: '7px 12px',
+                        fontSize: 12,
+                        border: 'none',
+                        cursor: 'pointer',
+                        textAlign: 'left',
+                        background: isActive ? '#eef3fc' : 'transparent',
+                        color: isActive ? '#3771D1' : '#374151',
                         fontWeight: isActive ? 600 : 400,
-                      }}>
-                      <div style={{ width: 24, height: 24, borderRadius: 5, background: isActive ? "#3771D1" : "#e5e7eb", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, overflow: "hidden" }}>
-                        {company.photo
-                          ? <img src={company.photo} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                          : <span style={{ color: isActive ? "#fff" : "#6b7280", fontSize: 10, fontWeight: 700 }}>{company.company_name[0]}</span>
-                        }
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: 24,
+                          height: 24,
+                          borderRadius: 5,
+                          background: isActive ? '#3771D1' : '#e5e7eb',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          flexShrink: 0,
+                          overflow: 'hidden',
+                        }}
+                      >
+                        {company.photo ? (
+                          <img
+                            src={company.photo}
+                            alt=""
+                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                          />
+                        ) : (
+                          <span
+                            style={{ color: isActive ? '#fff' : '#6b7280', fontSize: 10, fontWeight: 700 }}
+                          >
+                            {company.company_name[0]}
+                          </span>
+                        )}
                       </div>
                       <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                        <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                           {company.comercial_name || company.company_name}
                         </div>
-                        <div style={{ fontSize: 10, color: "#9ca3af", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                        <div
+                          style={{
+                            fontSize: 10,
+                            color: '#9ca3af',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                          }}
+                        >
                           {company.ruc}
                         </div>
                       </div>
                       {isActive && (
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#3771D1" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <svg
+                          width="12"
+                          height="12"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="#3771D1"
+                          strokeWidth="2.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
                           <polyline points="20 6 9 17 4 12" />
                         </svg>
                       )}
                     </button>
-                  );
+                  )
                 })}
               </div>
             </div>
@@ -323,26 +608,40 @@ export function Sidebar({ onClose }: { onClose?: () => void } = {}) {
         </div>
 
         {/* Banner SII */}
-        <div style={{ padding: isCollapsed ? "8px 6px 0" : "8px 10px 0" }}>
+        <div style={{ padding: isCollapsed ? '8px 6px 0' : '8px 10px 0' }}>
           <button
             onClick={abrirSII}
-            title={siiConnected ? "SII conectado" : "Sincronizar SII"}
+            title={siiConnected ? 'SII conectado' : 'Sincronizar SII'}
             style={{
-              width: "100%", display: "flex", alignItems: "center",
-              justifyContent: isCollapsed ? "center" : "flex-start",
+              width: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: isCollapsed ? 'center' : 'flex-start',
               gap: isCollapsed ? 0 : 8,
-              background: siiConnected ? "#f0fdf4" : "#FFF8DD",
-              border: siiConnected ? "1px solid #bbf7d0" : "1px solid #f5e3a8",
+              background: siiConnected ? '#f0fdf4' : '#FFF8DD',
+              border: siiConnected ? '1px solid #bbf7d0' : '1px solid #f5e3a8',
               borderRadius: 8,
-              padding: isCollapsed ? "8px 6px" : "8px 12px",
-              cursor: "pointer", textAlign: "left", transition: "background 0.15s",
-              color: siiConnected ? "#16a34a" : "#F6B100",
+              padding: isCollapsed ? '8px 6px' : '8px 12px',
+              cursor: 'pointer',
+              textAlign: 'left',
+              transition: 'background 0.15s',
+              color: siiConnected ? '#16a34a' : '#F6B100',
             }}
-            onMouseEnter={e => (e.currentTarget.style.background = siiConnected ? "#dcfce7" : "#fef3c7")}
-            onMouseLeave={e => (e.currentTarget.style.background = siiConnected ? "#f0fdf4" : "#FFF8DD")}
+            onMouseEnter={(e) => (e.currentTarget.style.background = siiConnected ? '#dcfce7' : '#fef3c7')}
+            onMouseLeave={(e) => (e.currentTarget.style.background = siiConnected ? '#f0fdf4' : '#FFF8DD')}
           >
             {siiConnected ? (
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                style={{ flexShrink: 0 }}
+              >
                 <polyline points="20 6 9 17 4 12" />
               </svg>
             ) : (
@@ -352,8 +651,17 @@ export function Sidebar({ onClose }: { onClose?: () => void } = {}) {
             )}
             {!isCollapsed && (
               <>
-                <span style={{ flex: 1, fontSize: 12, fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                  {siiConnected ? "SII conectado" : "Sincronizar SII"}
+                <span
+                  style={{
+                    flex: 1,
+                    fontSize: 12,
+                    fontWeight: 600,
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {siiConnected ? 'SII conectado' : 'Sincronizar SII'}
                 </span>
                 <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" style={{ flexShrink: 0 }}>
                   <path d="M12.6667 12.6667H3.33333V3.33333H8V2H3.33333C2.59333 2 2 2.6 2 3.33333V12.6667C2 13.4 2.59333 14 3.33333 14H12.6667C13.4 14 14 13.4 14 12.6667V8H12.6667V12.6667ZM9.33333 2V3.33333H11.7267L5.17333 9.88667L6.11333 10.8267L12.6667 4.27333V6.66667H14V2H9.33333Z" />
@@ -365,74 +673,151 @@ export function Sidebar({ onClose }: { onClose?: () => void } = {}) {
 
         {/* Etiqueta sección */}
         {!isCollapsed && (
-          <div style={{ padding: "10px 14px 4px", fontSize: 10, fontWeight: 600, color: "rgba(255,255,255,0.45)", textTransform: "uppercase", letterSpacing: "0.07em" }}>
+          <div
+            style={{
+              padding: '10px 14px 4px',
+              fontSize: 10,
+              fontWeight: 600,
+              color: 'rgba(255,255,255,0.45)',
+              textTransform: 'uppercase',
+              letterSpacing: '0.07em',
+            }}
+          >
             Menú
           </div>
         )}
 
         {/* Nav */}
-        <nav style={{ flex: 1, padding: "4px 8px", overflowY: "auto", display: "flex", flexDirection: "column", gap: 1 }}>
-          {NAV_ITEMS.map(item => {
-            const active = pathname === item.href || pathname.startsWith(item.href + "/");
+        <nav
+          style={{
+            flex: 1,
+            padding: '4px 8px',
+            overflowY: 'auto',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 1,
+          }}
+        >
+          {NAV_ITEMS.map((item) => {
+            const active = pathname === item.href || pathname.startsWith(item.href + '/')
             return (
               <Link
                 key={item.href}
                 href={item.href}
                 onClick={onClose}
                 style={{
-                  display: "flex", alignItems: "center",
-                  justifyContent: isCollapsed ? "center" : "flex-start",
-                  gap: isCollapsed ? 0 : 10, padding: isCollapsed ? "10px 6px" : "9px 10px",
-                  borderRadius: 8, fontSize: 13,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: isCollapsed ? 'center' : 'flex-start',
+                  gap: isCollapsed ? 0 : 10,
+                  padding: isCollapsed ? '10px 6px' : '9px 10px',
+                  borderRadius: 8,
+                  fontSize: 13,
                   fontWeight: active ? 600 : 400,
-                  background: active ? "#ffffff" : "transparent",
-                  color: active ? "#3771D1" : "rgba(255,255,255,0.90)",
-                  textDecoration: "none", transition: "background 0.15s, color 0.15s",
+                  background: active ? '#ffffff' : 'transparent',
+                  color: active ? '#3771D1' : 'rgba(255,255,255,0.90)',
+                  textDecoration: 'none',
+                  transition: 'background 0.15s, color 0.15s',
                 }}
-                onMouseEnter={e => { if (!active) { (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.15)"; (e.currentTarget as HTMLElement).style.color = "#fff"; } }}
-                onMouseLeave={e => { if (!active) { (e.currentTarget as HTMLElement).style.background = "transparent"; (e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.90)"; } }}
+                onMouseEnter={(e) => {
+                  if (!active) {
+                    ;(e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.15)'
+                    ;(e.currentTarget as HTMLElement).style.color = '#fff'
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!active) {
+                    ;(e.currentTarget as HTMLElement).style.background = 'transparent'
+                    ;(e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.90)'
+                  }
+                }}
               >
-                <span style={{ flexShrink: 0, display: "flex", opacity: 1 }}>{item.icon}</span>
+                <span style={{ flexShrink: 0, display: 'flex', opacity: 1 }}>{item.icon}</span>
                 {!isCollapsed && (
-                  <span style={{ flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  <span
+                    style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                  >
                     {item.label}
                   </span>
                 )}
                 {active && !isCollapsed && (
-                  <span style={{ width: 5, height: 5, borderRadius: "50%", background: "#3771D1", flexShrink: 0, opacity: 0.7 }} />
+                  <span
+                    style={{
+                      width: 5,
+                      height: 5,
+                      borderRadius: '50%',
+                      background: '#3771D1',
+                      flexShrink: 0,
+                      opacity: 0.7,
+                    }}
+                  />
                 )}
               </Link>
-            );
+            )
           })}
         </nav>
 
         {/* Footer usuario */}
-        <div style={{ borderTop: "1px solid rgba(255,255,255,0.12)", padding: "8px" }}>
+        <div style={{ borderTop: '1px solid rgba(255,255,255,0.12)', padding: '8px' }}>
           <Link
             href="/cuenta"
             onClick={onClose}
             style={{
-              display: "flex", alignItems: "center",
-              justifyContent: isCollapsed ? "center" : "flex-start",
-              gap: 8, padding: "7px 8px", borderRadius: 8,
-              textDecoration: "none", transition: "background 0.15s",
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: isCollapsed ? 'center' : 'flex-start',
+              gap: 8,
+              padding: '7px 8px',
+              borderRadius: 8,
+              textDecoration: 'none',
+              transition: 'background 0.15s',
             }}
-            onMouseEnter={e => (e.currentTarget.style.background = "rgba(255,255,255,0.1)")}
-            onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
+            onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.1)')}
+            onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
           >
-            <div style={{ width: 28, height: 28, borderRadius: "50%", background: "rgba(255,255,255,0.25)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, overflow: "hidden" }}>
-              {me?.photo
-                ? <img src={me.photo} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                : <span style={{ color: "#fff", fontSize: 11, fontWeight: 700 }}>{initials}</span>
-              }
+            <div
+              style={{
+                width: 28,
+                height: 28,
+                borderRadius: '50%',
+                background: 'rgba(255,255,255,0.25)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+                overflow: 'hidden',
+              }}
+            >
+              {me?.photo ? (
+                <img src={me.photo} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              ) : (
+                <span style={{ color: '#fff', fontSize: 11, fontWeight: 700 }}>{initials}</span>
+              )}
             </div>
             {!isCollapsed && (
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ color: "#fff", fontSize: 11, fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                  {me ? [me.name, me.lastname].filter(Boolean).join(" ") || me.email : "…"}
+                <div
+                  style={{
+                    color: '#fff',
+                    fontSize: 11,
+                    fontWeight: 500,
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {me ? [me.name, me.lastname].filter(Boolean).join(' ') || me.email : '…'}
                 </div>
-                <div style={{ color: "rgba(255,255,255,0.5)", fontSize: 10, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                  {me?.email ?? ""}
+                <div
+                  style={{
+                    color: 'rgba(255,255,255,0.5)',
+                    fontSize: 10,
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {me?.email ?? ''}
                 </div>
               </div>
             )}
@@ -442,17 +827,40 @@ export function Sidebar({ onClose }: { onClose?: () => void } = {}) {
             onClick={handleLogout}
             title="Cerrar sesión"
             style={{
-              width: "100%", display: "flex", alignItems: "center",
-              justifyContent: isCollapsed ? "center" : "flex-start",
-              gap: isCollapsed ? 0 : 8, padding: isCollapsed ? "7px 6px" : "7px 10px",
-              borderRadius: 8, border: "none", background: "transparent",
-              color: "rgba(255,255,255,0.55)", fontSize: 12, cursor: "pointer",
-              transition: "background 0.15s, color 0.15s",
+              width: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: isCollapsed ? 'center' : 'flex-start',
+              gap: isCollapsed ? 0 : 8,
+              padding: isCollapsed ? '7px 6px' : '7px 10px',
+              borderRadius: 8,
+              border: 'none',
+              background: 'transparent',
+              color: 'rgba(255,255,255,0.55)',
+              fontSize: 12,
+              cursor: 'pointer',
+              transition: 'background 0.15s, color 0.15s',
             }}
-            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.12)"; (e.currentTarget as HTMLElement).style.color = "#fff"; }}
-            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "transparent"; (e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.55)"; }}
+            onMouseEnter={(e) => {
+              ;(e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.12)'
+              ;(e.currentTarget as HTMLElement).style.color = '#fff'
+            }}
+            onMouseLeave={(e) => {
+              ;(e.currentTarget as HTMLElement).style.background = 'transparent'
+              ;(e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.55)'
+            }}
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              style={{ flexShrink: 0 }}
+            >
               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
               <polyline points="16 17 21 12 16 7" />
               <line x1="21" y1="12" x2="9" y2="12" />
@@ -460,8 +868,8 @@ export function Sidebar({ onClose }: { onClose?: () => void } = {}) {
             {!isCollapsed && <span>Cerrar sesión</span>}
           </button>
         </div>
-
-      </div>{/* fin contenedor flotante */}
+      </div>
+      {/* fin contenedor flotante */}
     </aside>
-  );
+  )
 }

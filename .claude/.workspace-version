@@ -1,0 +1,39 @@
+{
+  "version": "1.1.2",
+  "skills": {
+    "init": "cc49506669f34febed7b245a88f8d4696029fe2ee19a5d76b09e30a4f1fbc723",
+    "plan": "5309f62339646041e022e8026c3ff84ece4f69bddd62a31437760076c3d51bb1",
+    "apply": "7f282d42c1c3014a3986c58a84b56159457fad54bc49b30b1fc1af1f16f2dd44",
+    "test": "697fca5ed8124039fafe2ab34ccaaaeeede2cd709b23173c861acf5bd9042ecd",
+    "build": "57d96201feaac14f6df8cf4e180f75d752b2e9c5c7e8596e96d98a67cb0a8ae9",
+    "review": "a6852f36796b81f846f9b7f04ffcc7f91f1431e2f5a0d64639750bde96bbf8a3",
+    "secure": "92065b6c592d80744f6b4d8089de5a082c982d16380f9b3f0cb10162ffa787a4",
+    "deploy": "264f4dae2a5af0bf6fad03bc428ae72b03bca2d45292164fa07a70cad0552579",
+    "branches": "b4d385b4b63224be3eb7662cdd2e95c5799d075fadc6d47c58f8534c1d8121a6",
+    "debug": "b574bd8cf83d64675cbd3a4a04216f682e1f90f9f89bd35e442ec04a788a25b2",
+    "audit": "ee0ad1f4309f6a8185c584dbb0ed6f103a68f9a130696711ad90ce0867d3082d",
+    "pentest": "f426592e94c21c6d9b4a0f5e6a82a50d6e3587f27d2658feb5a39f88cc0ab17e",
+    "sync": "1468b35b4716bd4a4eaf964c4431c84b07a4757e852c80fe1a6b51b5a4654b34",
+    "rollback": "121e1374e1a81adf6974f11120155f17af51cf72f62aa5adfafe961c8dff289c",
+    "design": "f9ab665ea7d6a7f9d729b382cdd3fd72f905d0e49dcebefac2a7b56704322335",
+    "triage": "8a72a168c75c10a76d000621f07505eb8ef8735367970813e477c669618b1611",
+    "cross": "77b3bc439350fb2f12be73738a58b15aadedc38276840c947bfb53b90ecc3d79",
+    "setup": "6ede68bbcb51500b0f216b5fbb99bcc1cf49959429c8ce59dc27926422f9a325"
+  },
+  "rules": {
+    "branching.md": "58311e7579acbb3da3f67d1b2b21f73209b1b261d774b5ec4226b02cc6fb5186",
+    "commits.md": "0a17cca22d9b48ae75dc85c3939d71fb85f16da1f898ad4989d868cfa6298fa0",
+    "tests.md": "c11197669d613142649c380f100842487dfe3f5bde543ddc33eed7d4f4593e13",
+    "typescript.md": "71d5ffa043d5ecbcfe1dfd7b64dea5daafbf9373167e0c72cc10bc618117da4c"
+  },
+  "scripts": {
+    "gh-isolated.sh": "17cf8cb32170563cf1a16ce8d1971210a11dba33a2a29a25787312818d60d64d",
+    "resolve-gh-creds.sh": "ed8308952637461fbe04d7abeb44aa1823a351ec1f6a77283ed9b90c608ce443"
+  },
+  "installedAt": "2026-04-29T13:15:42.476Z",
+  "githubProject": {
+    "number": 4,
+    "url": "https://github.com/orgs/flujopay/projects/4",
+    "owner": "flujopay"
+  }
+}
