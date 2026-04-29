@@ -18,20 +18,20 @@ Conventional Commits enforced por commitlint. **Cada commit corresponde a una ta
 
 ## Types válidos
 
-| Type | Cuándo usarlo |
-|---|---|
-| `feat` | Nueva funcionalidad |
-| `fix` | Corrección de bug |
-| `hotfix` | Fix urgente en producción |
-| `refactor` | Refactoring sin cambio de comportamiento |
-| `docs` | Cambios solo en documentación |
-| `test` | Agregar o corregir tests |
-| `chore` | Mantenimiento (deps, config, build) |
-| `perf` | Mejoras de rendimiento |
-| `ci` | Cambios en CI/CD |
-| `build` | Sistema de build, herramientas externas |
-| `style` | Formato, espacios, comas (sin cambio lógico) |
-| `revert` | Revertir un commit anterior |
+| Type       | Cuándo usarlo                                |
+| ---------- | -------------------------------------------- |
+| `feat`     | Nueva funcionalidad                          |
+| `fix`      | Corrección de bug                            |
+| `hotfix`   | Fix urgente en producción                    |
+| `refactor` | Refactoring sin cambio de comportamiento     |
+| `docs`     | Cambios solo en documentación                |
+| `test`     | Agregar o corregir tests                     |
+| `chore`    | Mantenimiento (deps, config, build)          |
+| `perf`     | Mejoras de rendimiento                       |
+| `ci`       | Cambios en CI/CD                             |
+| `build`    | Sistema de build, herramientas externas      |
+| `style`    | Formato, espacios, comas (sin cambio lógico) |
+| `revert`   | Revertir un commit anterior                  |
 
 ## Ejemplos correctos
 
@@ -47,6 +47,7 @@ chore(deps): bump next.js a 16.2.0 (#60) — chore #20
 ```
 
 Para hotfixes urgentes en producción (rama `hotfix/*`, sin work-item padre):
+
 ```
 hotfix(api): patch race condition en webhook #80
 ```

@@ -18,7 +18,7 @@ assignees: ''
 
 ## Criterios de aceptación
 
-- [ ] 
+- [ ]
 
 ## Repos afectados
 

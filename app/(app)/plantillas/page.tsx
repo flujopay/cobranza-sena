@@ -1,7 +1,7 @@
-import { PlantillasClient } from "@/components/plantillas/PlantillasClient";
+import { PlantillasClient } from '@/components/plantillas/PlantillasClient'
 
-export const metadata = { title: "Plantillas — Mini Sena" };
+export const metadata = { title: 'Plantillas — Mini Sena' }
 
 export default function PlantillasPage() {
-  return <PlantillasClient />;
+  return <PlantillasClient />
 }

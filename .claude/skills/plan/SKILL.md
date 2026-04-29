@@ -14,12 +14,12 @@ Cuando el dev quiere planificar trabajo. Puede invocarse explícitamente o por i
 
 ## Tipos de work-item
 
-| Tipo | Cuándo usarlo | Label | Prefijo de rama |
-|---|---|---|---|
-| **feature** | Funcionalidad nueva | `feature` | `feature/<N>-<slug>` |
-| **refactor** | Mejorar código sin cambiar comportamiento | `refactor` | `refactor/<N>-<slug>` |
-| **fix** | Corregir un bug o comportamiento incorrecto | `fix` | `fix/<N>-<slug>` |
-| **chore** | Mantenimiento técnico (deps, CI, tooling) | `chore` | `chore/<N>-<slug>` |
+| Tipo         | Cuándo usarlo                               | Label      | Prefijo de rama       |
+| ------------ | ------------------------------------------- | ---------- | --------------------- |
+| **feature**  | Funcionalidad nueva                         | `feature`  | `feature/<N>-<slug>`  |
+| **refactor** | Mejorar código sin cambiar comportamiento   | `refactor` | `refactor/<N>-<slug>` |
+| **fix**      | Corregir un bug o comportamiento incorrecto | `fix`      | `fix/<N>-<slug>`      |
+| **chore**    | Mantenimiento técnico (deps, CI, tooling)   | `chore`    | `chore/<N>-<slug>`    |
 
 Las **tasks** dentro de cualquier work-item pueden ser de tipos mixtos (feat, refactor, test, docs, fix) — el tipo de la task se refleja en su mensaje de commit (Conventional Commits).
 
@@ -49,10 +49,12 @@ source .claude/scripts/gh-isolated.sh || exit 1
 ### 1. Entender el scope y elegir tipo
 
 Preguntar al dev:
+
 - ¿Qué quiere hacer? (descripción libre)
 - ¿Qué repos afecta?
 
 Inferir el tipo del work-item del lenguaje del dev:
+
 - "agregar / crear / implementar / integrar" → **feature**
 - "mejorar / migrar / extraer / limpiar / reorganizar" → **refactor**
 - "corregir / arreglar / no funciona / falla / bug" → **fix**

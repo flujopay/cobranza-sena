@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react'
 
 export default function AuthLayout({ children }: { children: ReactNode }) {
   return (
@@ -9,12 +9,10 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
         aria-hidden="true"
         style={{
           background:
-            "radial-gradient(ellipse 80% 60% at 20% 40%, #1d4ed840 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 80% 70%, #2563eb30 0%, transparent 55%)",
+            'radial-gradient(ellipse 80% 60% at 20% 40%, #1d4ed840 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 80% 70%, #2563eb30 0%, transparent 55%)',
         }}
       />
-      <div className="relative z-10 w-full max-w-md px-4 py-12">
-        {children}
-      </div>
+      <div className="relative z-10 w-full max-w-md px-4 py-12">{children}</div>
     </main>
-  );
+  )
 }

@@ -22,6 +22,7 @@
 ## Qué testear
 
 Cada feature debe tener al menos:
+
 - **Happy path**: el caso principal funciona.
 - **Validation errors**: inputs inválidos devuelven errores claros.
 - **Auth errors**: usuario sin permiso → 401/403.
@@ -30,6 +31,7 @@ Cada feature debe tener al menos:
 ## Obligatorios para mutaciones
 
 Cualquier endpoint/hook que cambia estado requiere:
+
 - Test que el estado cambia correctamente.
 - Test que re-ejecutar es idempotente (si aplica) o conflict (409).
 - Test que el usuario sin permiso recibe 403.

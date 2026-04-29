@@ -1,18 +1,18 @@
-"use client";
+'use client'
 
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react'
 
 interface IntegrationCardProps {
-  logo: ReactNode;
-  nombre: string;
-  descripcion: string;
-  actionLabel: string;
-  connected: boolean;
-  connectedDetail?: string;
-  hideActionWhenConnected?: boolean;
-  onAction: () => void;
-  onDisconnect?: () => void;
-  isDisconnecting?: boolean;
+  logo: ReactNode
+  nombre: string
+  descripcion: string
+  actionLabel: string
+  connected: boolean
+  connectedDetail?: string
+  hideActionWhenConnected?: boolean
+  onAction: () => void
+  onDisconnect?: () => void
+  isDisconnecting?: boolean
 }
 
 export function IntegrationCard({
@@ -36,9 +36,13 @@ export function IntegrationCard({
           {logo}
           <div className="flex flex-col items-end gap-0.5">
             <div className="flex items-center gap-1.5">
-              <span className={["w-2 h-2 rounded-full", connected ? "bg-green-500" : "bg-gray-300"].join(" ")} />
-              <span className={["text-xs font-medium", connected ? "text-green-700" : "text-gray-400"].join(" ")}>
-                {connected ? "Conectado" : "Sin conectar"}
+              <span
+                className={['w-2 h-2 rounded-full', connected ? 'bg-green-500' : 'bg-gray-300'].join(' ')}
+              />
+              <span
+                className={['text-xs font-medium', connected ? 'text-green-700' : 'text-gray-400'].join(' ')}
+              >
+                {connected ? 'Conectado' : 'Sin conectar'}
               </span>
             </div>
             {connected && connectedDetail && (
@@ -57,13 +61,13 @@ export function IntegrationCard({
           <button
             onClick={onAction}
             className={[
-              "w-full rounded-xl py-2.5 text-sm font-semibold transition-all duration-150 cursor-pointer",
+              'w-full rounded-xl py-2.5 text-sm font-semibold transition-all duration-150 cursor-pointer',
               connected
-                ? "bg-green-50 text-green-700 hover:bg-green-100 border border-green-200"
-                : "bg-brand hover:bg-brand-hover active:scale-[0.98] text-white shadow-sm shadow-brand/20",
-            ].join(" ")}
+                ? 'bg-green-50 text-green-700 hover:bg-green-100 border border-green-200'
+                : 'bg-brand hover:bg-brand-hover active:scale-[0.98] text-white shadow-sm shadow-brand/20',
+            ].join(' ')}
           >
-            {connected ? "Administrar" : actionLabel}
+            {connected ? 'Administrar' : actionLabel}
           </button>
         )}
 
@@ -74,10 +78,10 @@ export function IntegrationCard({
             disabled={isDisconnecting}
             className="w-full rounded-xl py-2 text-xs font-medium text-red-400 hover:text-red-600 hover:bg-red-50 border border-transparent hover:border-red-100 transition-all duration-150 cursor-pointer disabled:opacity-50"
           >
-            {isDisconnecting ? "Desconectando…" : "Desconectar"}
+            {isDisconnecting ? 'Desconectando…' : 'Desconectar'}
           </button>
         )}
       </div>
     </div>
-  );
+  )
 }

@@ -1,14 +1,14 @@
-"use client";
+'use client'
 
-import { useForm } from "react-hook-form";
-import { InputField } from "@/components/ui/InputField";
-import { SubmitButton } from "@/components/ui/SubmitButton";
-import { useLogin, parseApiError } from "@/lib/hooks/useAuth";
+import { useForm } from 'react-hook-form'
+import { InputField } from '@/components/ui/InputField'
+import { SubmitButton } from '@/components/ui/SubmitButton'
+import { useLogin, parseApiError } from '@/lib/hooks/useAuth'
 
 type LoginFields = {
-  email: string;
-  password: string;
-};
+  email: string
+  password: string
+}
 
 export function LoginForm() {
   const {
@@ -16,18 +16,18 @@ export function LoginForm() {
     handleSubmit,
     setError,
     formState: { errors, isSubmitting },
-  } = useForm<LoginFields>({ mode: "onChange" });
+  } = useForm<LoginFields>({ mode: 'onChange' })
 
-  const loginMutation = useLogin();
+  const loginMutation = useLogin()
 
   async function onSubmit(data: LoginFields) {
     try {
-      await loginMutation.mutateAsync(data);
+      await loginMutation.mutateAsync(data)
     } catch (err) {
-      const fieldErrors = parseApiError(err);
+      const fieldErrors = parseApiError(err)
       Object.entries(fieldErrors).forEach(([field, msg]) => {
-        setError(field as keyof LoginFields | "root", { message: msg });
-      });
+        setError(field as keyof LoginFields | 'root', { message: msg })
+      })
     }
   }
 
@@ -39,11 +39,11 @@ export function LoginForm() {
         placeholder="nombre@empresa.com"
         autoComplete="email"
         error={errors.email?.message}
-        {...register("email", {
-          required: "El correo es obligatorio.",
+        {...register('email', {
+          required: 'El correo es obligatorio.',
           pattern: {
             value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-            message: "Ingresa un correo electrónico válido.",
+            message: 'Ingresa un correo electrónico válido.',
           },
         })}
       />
@@ -54,17 +54,14 @@ export function LoginForm() {
         placeholder="••••••••"
         autoComplete="current-password"
         error={errors.password?.message}
-        {...register("password", {
-          required: "La contraseña es obligatoria.",
-          minLength: { value: 6, message: "Mínimo 6 caracteres." },
+        {...register('password', {
+          required: 'La contraseña es obligatoria.',
+          minLength: { value: 6, message: 'Mínimo 6 caracteres.' },
         })}
       />
 
       <div className="flex justify-end -mt-1">
-        <button
-          type="button"
-          className="text-xs text-blue-600 hover:text-blue-500 transition-colors"
-        >
+        <button type="button" className="text-xs text-blue-600 hover:text-blue-500 transition-colors">
           ¿Olvidaste tu contraseña?
         </button>
       </div>
@@ -81,5 +78,5 @@ export function LoginForm() {
         isLoading={isSubmitting || loginMutation.isPending}
       />
     </form>
-  );
+  )
 }

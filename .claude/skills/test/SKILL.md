@@ -35,11 +35,13 @@ ls test/ 2>/dev/null
 ### 2. Correr el suite completo
 
 **Node / Next.js / React:**
+
 ```bash
 npm test -- --coverage --passWithNoTests 2>&1
 ```
 
 **Django:**
+
 ```bash
 uv run python manage.py test --verbosity=2 2>&1
 # o con pytest
@@ -47,16 +49,19 @@ uv run pytest --cov=. --cov-report=term-missing -q 2>&1
 ```
 
 **FastAPI:**
+
 ```bash
 uv run pytest --cov=. --cov-report=term-missing -q 2>&1
 ```
 
 **Go:**
+
 ```bash
 go test ./... -cover -count=1 2>&1
 ```
 
 **Flutter:**
+
 ```bash
 flutter test --coverage 2>&1
 ```
@@ -64,6 +69,7 @@ flutter test --coverage 2>&1
 ### 3. Analizar resultados
 
 Para cada test fallido:
+
 - Identificar si es un test roto por el código nuevo o un test preexistente roto
 - Si es por código nuevo → reportar al dev qué función está fallando
 - Si es preexistente → registrarlo como deuda técnica separada, no bloqueante

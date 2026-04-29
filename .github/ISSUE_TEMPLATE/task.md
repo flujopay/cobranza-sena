@@ -14,12 +14,12 @@ assignees: ''
 
 <!-- Las subtareas son detalle interno, no issues separados -->
 
-- [ ] 
-- [ ] 
+- [ ]
+- [ ]
 
 ## Criterios de aceptación
 
-- [ ] 
+- [ ]
 
 ## Tipo de cambio (Conventional Commits)
 

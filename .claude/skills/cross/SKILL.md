@@ -32,6 +32,7 @@ Plan and execute changes that span multiple repositories. Use when a feature req
 ## Output
 
 For each repo affected, produce:
+
 - Branch name
 - Files changed (with rationale)
 - PR title and body referencing the parent issue

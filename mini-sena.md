@@ -43,12 +43,12 @@ Sin al menos un canal de contacto (email o teléfono), el bot no puede gestionar
 
 Para cada deudor con facturas vencidas Y contacto, N8N calcula un score 0-100:
 
-| Señal | Peso | Qué mide |
-| --- | --- | --- |
-| Días de mora | 35% | Cuánto tiempo lleva sin pagar |
-| Tasa de respuesta | 25% | Si responde o ignora los mensajes |
-| Promesas incumplidas | 25% | Si prometió pagar y no cumplió |
-| Historial de pago | 15% | Proporción deuda vs. total facturado |
+| Señal                | Peso | Qué mide                             |
+| -------------------- | ---- | ------------------------------------ |
+| Días de mora         | 35%  | Cuánto tiempo lleva sin pagar        |
+| Tasa de respuesta    | 25%  | Si responde o ignora los mensajes    |
+| Promesas incumplidas | 25%  | Si prometió pagar y no cumplió       |
+| Historial de pago    | 15%  | Proporción deuda vs. total facturado |
 
 **Clasificación:**
 
@@ -62,12 +62,12 @@ Para cada deudor con facturas vencidas Y contacto, N8N calcula un score 0-100:
 - **Claude (IA)** genera un mensaje personalizado según el nivel de riesgo y el contexto del deudor
 - Se elige el canal según el nivel:
 
-| Nivel | Canales |
-| --- | --- |
-| Verde | Email |
-| Amarillo | Email + WhatsApp |
-| Naranja | Email + WhatsApp + SMS |
-| Rojo | Todos + Escalamiento |
+| Nivel    | Canales                |
+| -------- | ---------------------- |
+| Verde    | Email                  |
+| Amarillo | Email + WhatsApp       |
+| Naranja  | Email + WhatsApp + SMS |
+| Rojo     | Todos + Escalamiento   |
 
 ### Fase 6 — Envío con Portal de Pago (Automático vía N8N)
 
@@ -102,12 +102,12 @@ Cuando el score llega a rojo:
 
 ## Cómo Trabajan Juntos: Sena (Plataforma) + N8N
 
-| Responsable | Qué hace |
-| --- | --- |
-| **Sena (Plataforma)** | Login/cuenta, configuración SII, carga de contactos, Portal de Pago, detección de pagos, visualización de gestiones, suspensión de crédito |
+| Responsable           | Qué hace                                                                                                                                                           |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Sena (Plataforma)** | Login/cuenta, configuración SII, carga de contactos, Portal de Pago, detección de pagos, visualización de gestiones, suspensión de crédito                         |
 | **N8N (Orquestador)** | Extrae facturas del SII, calcula score, decide estrategia, genera mensajes con IA, envía por los canales (email/WA/SMS), registra gestiones, ejecuta escalamientos |
-| **Claude (IA)** | Genera mensajes personalizados de cobranza y reportes de escalamiento |
-| **Portal de Pago** | El deudor paga directamente desde el link que recibe — Sena escucha el evento de pago y concilia |
+| **Claude (IA)**       | Genera mensajes personalizados de cobranza y reportes de escalamiento                                                                                              |
+| **Portal de Pago**    | El deudor paga directamente desde el link que recibe — Sena escucha el evento de pago y concilia                                                                   |
 
 ---
 

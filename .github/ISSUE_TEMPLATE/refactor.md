@@ -19,7 +19,7 @@ assignees: ''
 ## Criterios de aceptación
 
 - [ ] El comportamiento observable no cambia (mismos tests siguen pasando)
-- [ ] 
+- [ ]
 
 ## Repos afectados
 

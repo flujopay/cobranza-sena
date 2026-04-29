@@ -1,22 +1,22 @@
-import { apiClient } from "./client";
+import { apiClient } from './client'
 import type {
   WhatsAppCreateResponse,
   WhatsAppStatusResponse,
   WhatsAppSendMessageRequest,
   WhatsAppSendMessageResponse,
   WhatsAppDeleteResponse,
-} from "./types/whatsapp";
+} from './types/whatsapp'
 
-const PREFIX = "/collection/whatsapp";
+const PREFIX = '/collection/whatsapp'
 
 export const createWhatsAppInstance = (): Promise<WhatsAppCreateResponse> =>
-  apiClient.post<WhatsAppCreateResponse>(`${PREFIX}/create-instance/`).then((r) => r.data);
+  apiClient.post<WhatsAppCreateResponse>(`${PREFIX}/create-instance/`).then((r) => r.data)
 
 export const getWhatsAppStatus = (): Promise<WhatsAppStatusResponse> =>
-  apiClient.get<WhatsAppStatusResponse>(`${PREFIX}/status/`).then((r) => r.data);
+  apiClient.get<WhatsAppStatusResponse>(`${PREFIX}/status/`).then((r) => r.data)
 
 export const sendWhatsAppMessage = (body: WhatsAppSendMessageRequest): Promise<WhatsAppSendMessageResponse> =>
-  apiClient.post<WhatsAppSendMessageResponse>(`${PREFIX}/send-message/`, body).then((r) => r.data);
+  apiClient.post<WhatsAppSendMessageResponse>(`${PREFIX}/send-message/`, body).then((r) => r.data)
 
 export const deleteWhatsAppInstance = (): Promise<WhatsAppDeleteResponse> =>
-  apiClient.delete<WhatsAppDeleteResponse>(`${PREFIX}/delete-instance/`).then((r) => r.data);
+  apiClient.delete<WhatsAppDeleteResponse>(`${PREFIX}/delete-instance/`).then((r) => r.data)

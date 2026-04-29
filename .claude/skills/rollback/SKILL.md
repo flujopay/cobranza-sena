@@ -64,12 +64,14 @@ npx @railway/cli status
 ### 4a. Rollback instantáneo en el proveedor (más rápido)
 
 **Vercel:**
+
 ```bash
 # Promover el deployment anterior a producción
 npx vercel rollback
 ```
 
 **Fly.io:**
+
 ```bash
 # Ver releases
 flyctl releases list
@@ -78,6 +80,7 @@ flyctl deploy --image <imagen-anterior>
 ```
 
 **Railway:**
+
 ```bash
 # Desde el dashboard o CLI
 npx @railway/cli rollback

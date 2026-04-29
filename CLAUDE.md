@@ -15,6 +15,7 @@ cobranza sena
 Ver `package.json` / `pyproject.toml` / equivalente para la lista completa.
 
 **Para levantar localmente:**
+
 ```bash
 # Instalar dependencias
 npm install   # o: pip install -r requirements.txt / poetry install
@@ -44,14 +45,15 @@ Types válidos: `feat`, `fix`, `hotfix`, `refactor`, `docs`, `test`, `chore`, `p
 
 Modelo **3 branches protegidas**:
 
-| Branch | Rol |
-|---|---|
-| `main` | Producción. Solo recibe merges desde `staging` y hotfixes. |
-| `staging` | Pre-producción / QA. Recibe merges desde `dev`. |
-| `dev` | Integración. Default para features y fixes. |
-| `feat/*`, `fix/*`, `hotfix/*` | Ramas de trabajo efímeras. |
+| Branch                        | Rol                                                        |
+| ----------------------------- | ---------------------------------------------------------- |
+| `main`                        | Producción. Solo recibe merges desde `staging` y hotfixes. |
+| `staging`                     | Pre-producción / QA. Recibe merges desde `dev`.            |
+| `dev`                         | Integración. Default para features y fixes.                |
+| `feat/*`, `fix/*`, `hotfix/*` | Ramas de trabajo efímeras.                                 |
 
 **Flujo estándar:**
+
 1. Crea branch desde `dev`: `git checkout -b feat/issue-{N}-descripcion`
 2. Commits conventional referenciando issue: `feat(scope): descripción #N`
 3. Abre PR contra `dev`. Body incluye `Closes #N`.
@@ -67,13 +69,13 @@ Modelo **3 branches protegidas**:
 
 Todo contexto de proyecto vive en GitHub.
 
-| Contexto | Dónde |
-|---|---|
-| Estado de una feature | Issue de GitHub (comments) |
-| Plan de un work-item | Body del issue padre + sub-issues (tasks) |
-| Progreso de sesión | Comment en el issue activo |
-| Convenciones | Este `CLAUDE.md` + `.claude/rules/` |
-| Preferencias personales | `CLAUDE.local.md` (no commitear) |
+| Contexto                | Dónde                                     |
+| ----------------------- | ----------------------------------------- |
+| Estado de una feature   | Issue de GitHub (comments)                |
+| Plan de un work-item    | Body del issue padre + sub-issues (tasks) |
+| Progreso de sesión      | Comment en el issue activo                |
+| Convenciones            | Este `CLAUDE.md` + `.claude/rules/`       |
+| Preferencias personales | `CLAUDE.local.md` (no commitear)          |
 
 ## Flujo estándar de trabajo
 

@@ -57,14 +57,14 @@ Si no puede instalarse ahora, continúa con las capacidades base de este skill. 
 
 ## Style quick-reference
 
-| Style | Key characteristics |
-|---|---|
-| Minimalism | Lots of whitespace, 1-2 colors, clean type |
+| Style         | Key characteristics                                    |
+| ------------- | ------------------------------------------------------ |
+| Minimalism    | Lots of whitespace, 1-2 colors, clean type             |
 | Glassmorphism | Frosted glass `backdrop-blur`, semi-transparent panels |
-| Bento grid | Card-based asymmetric grid layout |
-| Dark mode | `bg-zinc-900`, muted text, accent color |
-| Brutalism | Bold borders, high contrast, raw type |
-| Neumorphism | Soft shadows on same-color background |
+| Bento grid    | Card-based asymmetric grid layout                      |
+| Dark mode     | `bg-zinc-900`, muted text, accent color                |
+| Brutalism     | Bold borders, high contrast, raw type                  |
+| Neumorphism   | Soft shadows on same-color background                  |
 
 ## Output
 

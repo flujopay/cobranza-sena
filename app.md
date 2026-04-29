@@ -58,13 +58,13 @@ Todas las entidades principales de Sena (Clientes, Proveedores, Documentos, Cont
 
 Permiten comunicarse directamente con los contactos del cliente o proveedor. La comunicación siempre se dirige a los contactos asociados a la entidad (relación en cascada: entidad → cliente/proveedor → contactos).
 
-| Canal | Descripción |
-|-------|-------------|
+| Canal    | Descripción                   |
+| -------- | ----------------------------- |
 | SenaChat | Chat interno de la plataforma |
-| Email | Envío de correos electrónicos |
-| SMS | Mensajes de texto |
-| Llamada | Llamadas telefónicas |
-| WhatsApp | Mensajería por WhatsApp |
+| Email    | Envío de correos electrónicos |
+| SMS      | Mensajes de texto             |
+| Llamada  | Llamadas telefónicas          |
+| WhatsApp | Mensajería por WhatsApp       |
 
 ### Notas
 
@@ -93,10 +93,10 @@ Panel general con resumen de la información más relevante del negocio. Se divi
 
 ### 1.1 KPIs principales (Cuentas por cobrar)
 
-| KPI | Descripción |
-|-----|-------------|
-| Cuentas por cobrar | Monto total pendiente (S/ y USD) |
-| Ventas periodo | Monto total de ventas del periodo |
+| KPI                          | Descripción                                              |
+| ---------------------------- | -------------------------------------------------------- |
+| Cuentas por cobrar           | Monto total pendiente (S/ y USD)                         |
+| Ventas periodo               | Monto total de ventas del periodo                        |
 | DSO (Days Sales Outstanding) | Días promedio de cobro, con comparativa vs. mes anterior |
 
 ### 1.2 Secciones del Dashboard
@@ -143,10 +143,10 @@ Los clientes se pueden crear de tres formas:
 
 **Validación de identificador tributario al crear cliente manualmente:**
 
-| País | Identificador | Validación |
-|------|---------------|------------|
-| Perú | RUC | Se consulta una API externa para validar que el RUC existe y obtener la razón social |
-| Chile | RUT | Se consulta una API interna de servicio (a través de API Gateway) para validar que el RUT existe y obtener la razón social |
+| País  | Identificador | Validación                                                                                                                 |
+| ----- | ------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| Perú  | RUC           | Se consulta una API externa para validar que el RUC existe y obtener la razón social                                       |
+| Chile | RUT           | Se consulta una API interna de servicio (a través de API Gateway) para validar que el RUT existe y obtener la razón social |
 
 **Fallback**: Si las APIs externas fallan (por límites de uso, caídas, etc.), el sistema cuenta con **tablas de respaldo en base de datos** que almacenan RUCs/RUTs previamente cargados junto con su razón social. Estas tablas sirven como segunda fuente de validación.
 
@@ -157,6 +157,7 @@ Tabs de filtro: **General**, **Sin contactos**, **Pendientes**, **Activos**, **F
 Tabla con columnas: RUC, Razón Social, Alias, Último cambio, Total deuda, Total facturado, Total vigente, Total vencido, Total pagado, Etapa cliente (Vigente / En Mora), Estado cliente.
 
 **Selector de moneda** (varía según país):
+
 - **Perú**: Todos, PEN, USD (el sistema maneja las dos monedas, todos los montos se muestran en ambas)
 - **Chile**: Solo CLP (sin selector)
 
@@ -169,6 +170,7 @@ Incluye filtros, ordenamiento, búsqueda, selección masiva ("Seleccionar todo")
 Panel lateral/modal que muestra toda la información del cliente:
 
 **Cabecera:**
+
 - Nombre comercial (alias)
 - Razón social
 - RUC
@@ -177,6 +179,7 @@ Panel lateral/modal que muestra toda la información del cliente:
 - Link "Ir al cliente" (abre vista completa)
 
 **Acciones rápidas:**
+
 - Crear Nota
 - SenaChat
 - Enviar Email
@@ -185,6 +188,7 @@ Panel lateral/modal que muestra toda la información del cliente:
 - Más (opciones adicionales, incluye WhatsApp)
 
 **Cuenta del cliente:**
+
 - Estado actual (Vencido, etc.) con monto total
 - Selector de moneda: Todos, PEN, USD (en Perú) / solo CLP (en Chile)
 - Documentos Pendientes:
@@ -197,54 +201,64 @@ Panel lateral/modal que muestra toda la información del cliente:
   - Saldo (monto + cantidad)
 
 **Panel de Notas (lateral derecho):**
+
 - Tabs: Historial, Documentos
 - Sección CRM
 - Permite dejar anotaciones internas o adjuntar archivos
 - Campo de texto con botón de envío y opción de adjuntar archivos
 
 **Datos del cliente:**
+
 - Gestión: Última actualización de sub-estado, Estado, Monto vigente, Sub etapa
 - Identificación: RUC, Alias, Nombre legal, Dirección
 - Botón "Editar" para modificar datos
 
 **Cuentas bancarias:**
+
 - Cuentas de cobro del cliente (para recibir pagos)
 - Botón "Agregar cuenta de cobro"
 
 **Campos personalizables:**
+
 - Campos no estándar definidos por cada empresa en la configuración de empresa
 - Cada empresa puede insertar sus propios campos custom
 - Botón "Nuevo campo"
 - Ejemplo: campo tipo "file", campo tipo "variable"
 
 **Documentos relacionados:**
+
 - Tabs: General, Revisión, Cobranza, Conciliación, Completadas
 - Tabla con: Folio, Razón social, Receptor, RUC, Estado, Sub Estado, Emisión, Origen, Creación
 - Filtros, ordenamiento, búsqueda y paginación
 
 **Contactos relacionados:**
+
 - Tabla con: Estado, Nombre, Apellido, Cargo, Área, Compañía, Emails, Teléfonos, Última gestión
 - Los contactos sirven para comunicarse con el cliente a través de los canales disponibles
 - Botón "Agregar Contacto" (con opciones adicionales)
 - Filtros, ordenamiento, búsqueda y paginación
 
 **Pagos relacionados:**
+
 - Tabs: General, No Informado, Informado, Comprometido, Conciliado, Completado
 - Botón "Crear Pago"
 - Filtros, ordenamiento, búsqueda y paginación
 
 **Conciliaciones relacionadas:**
+
 - Tabs: Todas, Pendientes, Aprobadas, Rechazadas, Anuladas
 - Botón "Crear conciliación"
 - Tabla con: ID, Creado por, Razón social emisor, RUC Emisor, Fecha de creación, Monto pagos, Monto documentos, Responsable, Supervisor
 - Filtros, ordenamiento, búsqueda y paginación
 
 **Compromisos relacionados:**
+
 - Botón "Crear compromiso de pago"
 - Tabla con: Fecha de creación, Número de cuenta, Monto, Fecha, Empresa, Banco, Tipo, Glosa, Fecha pago estimada
 - Filtros, ordenamiento, búsqueda y paginación
 
 **Evaluación de riesgo crediticio (Sheriff):**
+
 - Visible únicamente para empresas chilenas
 - Muestra la última evaluación disponible (sin costo): nivel de riesgo, score, protestas y casos judiciales activos
 - Si el cliente nunca fue evaluado, muestra estado vacío con botón "Evaluar"
@@ -274,13 +288,13 @@ Integración con Sheriff, plataforma chilena de evaluación de riesgo crediticio
 
 #### Niveles de riesgo
 
-| Nivel | Descripción |
-|-------|-------------|
-| Sin riesgo | Sin indicadores de riesgo detectados |
-| Bajo | Perfil financiero sólido |
-| Medio | Indicadores de riesgo moderado |
-| Alto | Indicadores de riesgo significativos |
-| Crítico | Riesgo crítico, máxima precaución |
+| Nivel       | Descripción                                               |
+| ----------- | --------------------------------------------------------- |
+| Sin riesgo  | Sin indicadores de riesgo detectados                      |
+| Bajo        | Perfil financiero sólido                                  |
+| Medio       | Indicadores de riesgo moderado                            |
+| Alto        | Indicadores de riesgo significativos                      |
+| Crítico     | Riesgo crítico, máxima precaución                         |
 | Desconocido | Sin datos suficientes (RUT no encontrado o sin historial) |
 
 > "Desconocido" no equivale a riesgo alto — puede ser una empresa sin historial en plataformas de riesgo.
@@ -290,6 +304,7 @@ Integración con Sheriff, plataforma chilena de evaluación de riesgo crediticio
 Accesible desde el historial. Modal con 5 tabs:
 
 **Resumen**
+
 - Score Sheriff: número / máximo + badge de nivel de riesgo
 - Desglose de sub-scores: Finanzas, Boletín Comercial, Judicial, Cobranza Laboral (barras con puntaje / máximo)
 - Compliance: PEP Chile, Listas internacionales, Penal (cantidad de resultados por categoría)
@@ -297,25 +312,30 @@ Accesible desde el historial. Modal con 5 tabs:
 - Bienes: vehículos y propiedades (cantidad y tasación)
 
 **Finanzas**
+
 - Deuda directa: comercial, morosa, vigente, vencida, castigada, hipotecaria
 - Deuda indirecta: vigente, vencida, castigada
 - Leasing y línea de crédito
 - Score financiero
 
 **Boletin**
+
 - Protestas Infocom, BolCom y Dicom: cantidad de casos y montos
 - Score boletín
 
 **Judicial**
+
 - Casos activos, archivados, concluidos, total, quiebra, boletín concursal
 - Casos civiles, cobranzas y laborales activos
 - Score judicial
 
 **Cobranza Laboral**
+
 - Mora previsional, multas laborales, boletín laboral
 - Score cobranza laboral
 
 **Cabecera del reporte:**
+
 - Score en formato `N / máximo` + nivel de riesgo separado
 - Banner de alertas críticas cuando existen etiquetas activas (fraude, bloqueado, etc.)
 - Chips de resumen: riesgo global y estado de compliance
@@ -325,11 +345,11 @@ Accesible desde el historial. Modal con 5 tabs:
 
 Sheriff cobra por RUT cargado por primera vez a nivel de plataforma. Si el mismo RUT ya fue evaluado por cualquier otra empresa dentro de Sena, no hay costo adicional para esa consulta.
 
-| Escenario | Costo para Sena |
-|-----------|-----------------|
+| Escenario                                          | Costo para Sena     |
+| -------------------------------------------------- | ------------------- |
 | Primera evaluación de un RUT en toda la plataforma | Sena paga a Sheriff |
-| Mismo RUT evaluado por otra empresa previamente | Sin costo |
-| Re-evaluación del mismo RUT | Sin costo |
+| Mismo RUT evaluado por otra empresa previamente    | Sin costo           |
+| Re-evaluación del mismo RUT                        | Sin costo           |
 
 Esto significa que Sena puede tener margen positivo en consultas a RUTs ya conocidos en la plataforma.
 
@@ -370,6 +390,7 @@ Tabs de filtro por estado: **General**, **Revisión**, **Cobranza**, **Conciliac
 Tabla con columnas: Folio, Razón social, Receptor, RUC, Estado, Sub Estado, Emisión, Origen, Creación, Modificación, Número cuota, Etapa, Sub Etapa, Vencimiento, Monto facturado, Moneda.
 
 **Funcionalidades de la lista:**
+
 - Filtros avanzados, ordenamiento, búsqueda y paginación
 - Selección individual y masiva de documentos ("Seleccionar todo")
 - Acciones masivas sobre documentos seleccionados:
@@ -385,6 +406,7 @@ Tabla con columnas: Folio, Razón social, Receptor, RUC, Estado, Sub Estado, Emi
 Funcionalidad clave que permite notificar a los clientes sobre sus deudas pendientes. Se accede seleccionando uno o más documentos desde la lista.
 
 **Flujo:**
+
 1. Se seleccionan documentos (pueden ser de distintos clientes)
 2. Se abre modal "Enviar estado de deuda" con:
    - **Vista previa**: Tabla con los documentos seleccionados (Folio, Razón social, Receptor, RUC, Estado, Sub Estado, Emisión, Origen, Creación). Botón "Personalizar columnas" para ajustar qué columnas se muestran.
@@ -407,6 +429,7 @@ Funcionalidad clave que permite notificar a los clientes sobre sus deudas pendie
 Panel/modal que muestra toda la información de un documento específico:
 
 **Cabecera:**
+
 - Número de documento (ej: F003-00008055)
 - Nombre receptor + identificador tributario
 - Indicadores financieros:
@@ -419,6 +442,7 @@ Panel/modal que muestra toda la información de un documento específico:
 - Link "Ir al documento" (abre vista completa)
 
 **Acciones rápidas (cascada al cliente):**
+
 - Crear Nota
 - SenaChat
 - Enviar Email
@@ -429,6 +453,7 @@ Panel/modal que muestra toda la información de un documento específico:
 Estas acciones se comunican con el cliente dueño del documento, es una relación en cascada documento → cliente → contactos.
 
 **Identificación:**
+
 - ID Documento
 - Periodo Contable
 - Nombre Receptor
@@ -444,59 +469,63 @@ Estas acciones se comunican con el cliente dueño del documento, es una relació
 - "+ Visualizar nuevo campo"
 
 **Panel de Notas (lateral derecho):**
+
 - Tabs: Historial, Documentos
 - Sección CRM
 - Historial del sistema: registra automáticamente cambios de campos, estados, etc. con fecha, hora y usuario responsable
 - Campo de texto para agregar notas manuales con opción de adjuntar archivos
 
 **Campos personalizables:**
+
 - Igual que en clientes, campos no estándar definidos por cada empresa
 - Botón "Nuevo campo"
 - Ejemplos de campos custom: avla, fono, email, fecha, t.doc, total, f.pago, moneda, nombre, cliente, cobrado, num doc, contacto, division, vendedor, dias pago, direccion, fecha ven, num unico, porcobrar, fecha venc, forma pago, codtipopago, credito 10%, desc. banco, num interno, razon social, detraccion %, moneda credito, monto credito, fecha recepcion, totalpercepcion, entre otros.
 
 **Pagos conciliados relacionados:**
+
 - Tabla con: ID Conciliación, Estado de Conciliación, ID Pago, Estado del pago, Monto total
 - Filtros, ordenamiento, búsqueda y paginación
 
 **Conciliaciones relacionadas:**
+
 - Tabla con: ID, Creado por, Razón social Emisor, RUT Emisor, Fecha de creación, Monto pagos, Monto documentos, Responsable, Supervisor
 - Filtros, ordenamiento, búsqueda y paginación
 
-**Sección Caracterización:** *(colapsable, pendiente de más detalle)*
+**Sección Caracterización:** _(colapsable, pendiente de más detalle)_
 
-**Sección Gestión:** *(colapsable, pendiente de más detalle)*
+**Sección Gestión:** _(colapsable, pendiente de más detalle)_
 
 #### Estados del documento
 
 Los documentos siguen un flujo de estados que representa en qué etapa de gestión se encuentra:
 
-| Estado | Sub Estados |
-|--------|-------------|
-| **Revisión** | Pendiente |
-| **Cobranza** | Pausada, Gestión, Derivada, Observada, En compromiso |
-| **Conciliación** | En pago |
-| **Completada** | Pagada, Archivada, Rechazada |
+| Estado           | Sub Estados                                          |
+| ---------------- | ---------------------------------------------------- |
+| **Revisión**     | Pendiente                                            |
+| **Cobranza**     | Pausada, Gestión, Derivada, Observada, En compromiso |
+| **Conciliación** | En pago                                              |
+| **Completada**   | Pagada, Archivada, Rechazada                         |
 
 #### Etapas del documento
 
 Las etapas representan el estado temporal/financiero del documento, independiente del estado de gestión:
 
-| Etapa | Sub Etapas | Detalle |
-|-------|------------|---------|
-| **Vigente** | Emitida, Por vencer, Vence | Documento dentro de plazo |
-| **Vencida** | Mora Temprana, Mora Media, Mora Avanzada, Mora Castigada, Mora Dura | Documento fuera de plazo |
-| **Pagada** | Pagada | Documento cancelado |
-| **Inactiva** | Archivada, Rechazada | Documento fuera de gestión |
+| Etapa        | Sub Etapas                                                          | Detalle                    |
+| ------------ | ------------------------------------------------------------------- | -------------------------- |
+| **Vigente**  | Emitida, Por vencer, Vence                                          | Documento dentro de plazo  |
+| **Vencida**  | Mora Temprana, Mora Media, Mora Avanzada, Mora Castigada, Mora Dura | Documento fuera de plazo   |
+| **Pagada**   | Pagada                                                              | Documento cancelado        |
+| **Inactiva** | Archivada, Rechazada                                                | Documento fuera de gestión |
 
 **Detalle de moras (sub-etapas de Vencida):**
 
-| Sub Etapa | Días vencidos |
-|-----------|---------------|
-| Mora Temprana | 1 - 30 días |
-| Mora Media | 31 - 60 días |
-| Mora Avanzada | 61 - 90 días |
+| Sub Etapa      | Días vencidos |
+| -------------- | ------------- |
+| Mora Temprana  | 1 - 30 días   |
+| Mora Media     | 31 - 60 días  |
+| Mora Avanzada  | 61 - 90 días  |
 | Mora Castigada | 91 - 120 días |
-| Mora Dura | 120+ días |
+| Mora Dura      | 120+ días     |
 
 ### 2.3 Campañas
 
@@ -515,14 +544,14 @@ Muestra las campañas creadas con dos vistas:
 
 Existen 6 tipos predefinidos que determinan el propósito de la comunicación:
 
-| Tipo | Descripción |
-|------|-------------|
-| **Invitación del portal de facturas** | Invita a los contactos a acceder al portal de pagos donde pueden consultar y pagar sus facturas |
-| **Notificación de recepción de factura** | Informa al contacto que una nueva factura ha sido registrada |
-| **Recordatorios Preventivos (Pre Vencimiento)** | Envía recordatorios antes de la fecha de vencimiento del documento |
-| **Cobranza Temprana** | Gestión de cobro para documentos vencidos con menos de 180 días |
-| **Cobranza Avanzada** | Gestión de cobro para documentos vencidos con más de 180 días |
-| **Campaña Genérica** | Comunicación libre sin tipo específico de cobranza |
+| Tipo                                            | Descripción                                                                                     |
+| ----------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| **Invitación del portal de facturas**           | Invita a los contactos a acceder al portal de pagos donde pueden consultar y pagar sus facturas |
+| **Notificación de recepción de factura**        | Informa al contacto que una nueva factura ha sido registrada                                    |
+| **Recordatorios Preventivos (Pre Vencimiento)** | Envía recordatorios antes de la fecha de vencimiento del documento                              |
+| **Cobranza Temprana**                           | Gestión de cobro para documentos vencidos con menos de 180 días                                 |
+| **Cobranza Avanzada**                           | Gestión de cobro para documentos vencidos con más de 180 días                                   |
+| **Campaña Genérica**                            | Comunicación libre sin tipo específico de cobranza                                              |
 
 #### Canales de envío
 
@@ -613,12 +642,14 @@ Incluye filtros, ordenamiento, búsqueda, paginación y botón "+ Agregar Contac
 Panel/modal con toda la información del contacto:
 
 **Cabecera:**
+
 - Nombre completo del contacto
 - Compañía (nombre de la empresa cliente)
 - RUC/RUT de la empresa
 - Link "Ir al contacto" (abre vista completa)
 
 **Acciones rápidas (CRM):**
+
 - Crear Nota
 - SenaChat
 - Enviar Email
@@ -627,6 +658,7 @@ Panel/modal con toda la información del contacto:
 - Más (WhatsApp, etc.)
 
 **Información del contacto:**
+
 - Nombre
 - Apellido
 - Cargo
@@ -641,14 +673,16 @@ Panel/modal con toda la información del contacto:
 
 **Panel de Notas (lateral derecho):** Notas + CRM (patrón transversal, ver sección [Patrones Transversales](#patrones-transversales))
 
-**Campos personalizables:** *(colapsable)* - Campos custom definidos por empresa en configuración.
+**Campos personalizables:** _(colapsable)_ - Campos custom definidos por empresa en configuración.
 
 **Emails relacionados:**
+
 - Un contacto puede tener múltiples correos electrónicos
 - Tabla con: Nombre empresa, ID empresa, Email, Última gestión, Respuesta última gestión
 - Acciones: editar, eliminar
 
 **Números relacionados:**
+
 - Un contacto puede tener múltiples números telefónicos
 - Tabla con: Nombre empresa, ID empresa, Número (con código país), Última gestión, Respuesta última gestión
 - Acciones: editar, eliminar
@@ -674,6 +708,7 @@ Incluye filtros, ordenamiento, búsqueda, selección masiva, paginación y botó
 Wizard de 3 pasos mediante modal:
 
 **Paso 1 de 3: Selección de cliente y documentos**
+
 - "Elige al cliente y los documentos que deseas pagar. Verifica los montos y asegúrate de seleccionar todos los documentos necesarios."
 - **Selector de cliente**: Dropdown con búsqueda. Muestra razón social, RUC y estado de deuda ("Con deuda"). Solo se puede seleccionar un cliente por compromiso.
 - **Documentos del cliente**: Una vez seleccionado el cliente, se muestran sus documentos en tabs: General, Revisión, Cobranza, Conciliación, Completadas.
@@ -684,6 +719,7 @@ Wizard de 3 pasos mediante modal:
 - Navegación: Volver / Continuar
 
 **Paso 2 de 3: Método de pago**
+
 - "Selecciona la fecha en la que se realizará el pago."
 - **Fecha de Transferencia**: Selector de calendario para elegir cuándo se efectuará el pago.
 - **Aviso de procesamiento**: "Ten en cuenta que la transferencia se deberá efectuar en la fecha seleccionada durante el horario bancario (9:00 AM - 5:00 PM)"
@@ -691,6 +727,7 @@ Wizard de 3 pasos mediante modal:
 - Navegación: Volver / Continuar
 
 **Paso 3 de 3: Confirmación**
+
 - "Revisa los datos de tu intención de pago antes de confirmarla. Asegúrate de que toda la información sea correcta para evitar inconvenientes."
 - **Resumen del acuerdo**: "Revisa y confirma tu acuerdo de pago. Para completar el pago, realiza la transferencia utilizando los datos proporcionados."
 - **Resumen de documentos** (colapsable): Lista de cada documento con su monto individual.
@@ -699,6 +736,7 @@ Wizard de 3 pasos mediante modal:
 - Botón: **"Confirmar y Crear intención de pago"**
 
 **Resultado exitoso:**
+
 - Modal de confirmación: "¡Intención de pago creada con éxito!"
 - Muestra: Cuenta de destino, Fecha estimada de pago, Total a pagar
 - **Código de Glosa generado**: Se genera un código numérico único (ej: 88371060) que el deudor debe incluir en el asunto de la transferencia bancaria para facilitar el procesamiento y la conciliación del pago.
@@ -709,13 +747,15 @@ Wizard de 3 pasos mediante modal:
 Modal/panel que muestra toda la información del compromiso:
 
 **Cabecera:**
+
 - ID del compromiso (ej: "Compromiso de pago #565")
 - Estado del compromiso (badge: Pendiente, etc.)
 - KPIs destacados:
   - Total a pagar (monto)
   - Fecha estimada de pago
 
-**Datos del compromiso de transferencia:** *(editables)*
+**Datos del compromiso de transferencia:** _(editables)_
+
 - Fecha estimada de pago
 - Banco (ej: Banco de Crédito del Perú BCP)
 - Número de cuenta
@@ -727,10 +767,12 @@ Modal/panel que muestra toda la información del compromiso:
 - Estado del compromiso (badge)
 
 **Código de Glosa** (alerta destacada en amarillo):
+
 - "Asegúrate de incluir el número de Glosa XXXXX en el asunto de la transferencia para facilitar el procesamiento de tu pago."
 - Es un identificador clave para vincular la transferencia bancaria con el compromiso en el sistema.
 
 **Detalles del método de pago:**
+
 - Método de pago (ej: Transferencia bancaria)
 - Banco
 - Número de cuenta
@@ -739,10 +781,12 @@ Modal/panel que muestra toda la información del compromiso:
 - Fecha estimada de pago
 
 **Detalle de Documentos:**
+
 - Tabla con: Folio, Razón social, Receptor, RUC, Estado, Sub Estado, Emisión, Origen, Creación
 - Total de documentos (cantidad) con monto total
 
 **Pagos realizados:**
+
 - Tabla con: ID, Emisor, Receptor, Origen, Folio, Sociedad, Monto Total, Monto Disponible, Monto No Disponible
 - Puede estar vacía si aún no se han registrado pagos asociados
 
@@ -791,21 +835,23 @@ Incluye filtros, ordenamiento, búsqueda, selección masiva ("Seleccionar todo")
 
 #### Estados del pago
 
-| Estado | Descripción |
-|--------|-------------|
+| Estado           | Descripción                                                              |
+| ---------------- | ------------------------------------------------------------------------ |
 | **No Informado** | El pago no está asociado a ningún cliente. No se sabe a quién pertenece. |
-| **Informado** | Ya se identificó a qué cliente pertenece el pago. |
-| **Comprometido** | El pago se pasa manualmente a este estado (compromiso de pago). |
-| **Conciliado** | El pago está incluido en una conciliación. |
-| **Archivado** | El pago no es válido o no aplica, se archiva. |
-| **Completado** | El pago se confirma como correcto y se da por finalizado. |
+| **Informado**    | Ya se identificó a qué cliente pertenece el pago.                        |
+| **Comprometido** | El pago se pasa manualmente a este estado (compromiso de pago).          |
+| **Conciliado**   | El pago está incluido en una conciliación.                               |
+| **Archivado**    | El pago no es válido o no aplica, se archiva.                            |
+| **Completado**   | El pago se confirma como correcto y se da por finalizado.                |
 
 #### Detalle del pago
 
 **Cabecera:**
+
 - Monto a pagar (monto principal destacado)
 
 **Datos del compromiso de transferencia:**
+
 - Emisor (quien paga, editable)
 - Receptor (quien recibe)
 - Monto
@@ -818,14 +864,16 @@ Incluye filtros, ordenamiento, búsqueda, selección masiva ("Seleccionar todo")
 - Estado (badge con el estado actual)
 
 **Detalle de Productos/Servicios:**
+
 - Tabla con: Cantidad, Descripción, Precio Unitario (moneda), Total (moneda)
 - Subtotal
 - IGV (18% para Perú)
 - Total a pagar
 
-**Campos personalizables:** *(colapsable)* - Campos custom definidos por empresa en configuración.
+**Campos personalizables:** _(colapsable)_ - Campos custom definidos por empresa en configuración.
 
 **Conciliaciones relacionadas:**
+
 - Tabs: Todas, Pendientes, Aprobadas, Rechazadas, Anuladas
 - Tabla con: ID, Creado por, Razón social Emisor, RUC Emisor, Fecha de creación, Monto pagos, Monto documentos, Responsable, Supervisor, Estado, Modo
 - Botón "Crear conciliación"
@@ -853,12 +901,12 @@ Módulo espejo de "Por Cobrar" orientado a la gestión de cuentas por pagar. Mie
 
 - **Proveedores** — Equivalente a Clientes
 - **Documentos recibidos** — Equivalente a Documentos emitidos
-- **Aprobaciones** — *Exclusivo de Por Pagar* (no existe en Por Cobrar)
+- **Aprobaciones** — _Exclusivo de Por Pagar_ (no existe en Por Cobrar)
 - **Contactos** — Equivalente a Contactos (de proveedores)
 - **Compromisos de pago** — Equivalente a Compromisos de pago
 - **Pagos realizados** — Equivalente a Pagos recibidos
-- **Nóminas** — *Exclusivo de Por Pagar*
-- **Anticipos** — *Exclusivo de Por Pagar*
+- **Nóminas** — _Exclusivo de Por Pagar_
+- **Anticipos** — _Exclusivo de Por Pagar_
 
 ---
 
@@ -893,6 +941,7 @@ Modal **"Nuevo proveedor"** con:
 - Botones: **Cancelar** | **Crear**.
 
 Otras formas de crear proveedores:
+
 - **Importación masiva**: A través de Herramientas → Importaciones y Exportaciones.
 - **Integración por API**: Algunas empresas proporcionan su propia API de proveedores para consumo e importación directa (integraciones personalizadas).
 - **Sincronización tributaria**: Al sincronizar con SUNAT/SII, los proveedores pueden crearse automáticamente a partir de los documentos recibidos.
@@ -902,23 +951,27 @@ Otras formas de crear proveedores:
 Panel modal que muestra toda la información del proveedor. Estructura análoga al detalle de cliente con las siguientes secciones:
 
 **Cabecera:**
+
 - Identificador (RUT/RUC).
 - Botón **"Ver análisis de deuda"**.
 - Botón **"Pagar Facturas"** (exclusivo de proveedores — en clientes no existe).
 - Link **"Ir al proveedor"** (abre vista completa).
 
 **Acciones rápidas (CRM):**
+
 - Crear Nota, SenaChat, Enviar Email, Enviar SMS, Llamar, Más (WhatsApp).
 
 **Panel de Notas y CRM (lateral derecho):** Notas + CRM (patrón transversal, ver sección [Patrones Transversales](#patrones-transversales)).
 
 **Cuenta del proveedor:**
+
 - Estado actual (Vencido, etc.) con monto total.
 - Selector de moneda: Todos, CLP, UF (varía según país).
 - **Documentos Pendientes**: Vencido (monto + cantidad), Vigente (monto + cantidad), Deuda (monto + cantidad).
 - **Movimientos de caja**: Pagado (monto + cantidad), Conciliado (monto + cantidad), Saldo (monto + cantidad).
 
 **Caracterización de Proveedor:**
+
 - Proporción B2B (editable).
 - Tamaño empresa (editable).
 - Estructura propietaria (editable).
@@ -928,20 +981,25 @@ Panel modal que muestra toda la información del proveedor. Estructura análoga 
 > **Diferencia con Clientes**: Los proveedores incluyen el campo "Sector industrial" dentro de Caracterización, que no aparece en clientes.
 
 **Identificación** (con botón "Editar"):
+
 - RUT/RUC, Razón social, Grupo, Alias, Dirección empresa, Descripción, Slogan, Teléfono, Email, Última actualización.
 
 **Personalizables:**
+
 - Campos custom definidos en Configuración → Propiedades Personalizables para el objeto "Proveedor".
 - Botón **"Nuevo campo"** para agregar campos directamente.
 
 **Cuentas bancarias:**
+
 - Cuentas destinadas a recibir pagos del proveedor.
 - Botón **"+ Agregar cuenta"** / **"Agregar cuenta de cobro"**.
 
 **Gestión:**
+
 - Última actualización de sub estado, Estado, Monto vigente, Sub etapa, Cantidad pagada.
 
 **Documentos relacionados:**
+
 - Tabs: **General**, **Revisión**, **Aprobación**, **Conciliación**, **Completadas**.
 - Tabla con: Folio, Origen, Estado, Sub estado, Emisión, Etapa, Sub Etapa, Vencimiento, Monto facturado.
 - Botón **"Crear documento"**.
@@ -950,11 +1008,13 @@ Panel modal que muestra toda la información del proveedor. Estructura análoga 
 > **Diferencia con Clientes**: Los documentos de proveedores usan el tab "Aprobación" en lugar de "Cobranza", reflejando el flujo de aprobación de facturas recibidas.
 
 **Contactos relacionados:**
+
 - Tabla con: Estado, Nombre, Apellido, Cargo, Área, Compañía, Email, Teléfono, Última gestión.
 - Acciones: **Sincronizar emails**, **Exportar**, **+ Importar**, **Agregar contacto**.
 - Filtros, ordenamiento, búsqueda y paginación.
 
-**Anticipos relacionados** *(exclusivo de proveedores)*:
+**Anticipos relacionados** _(exclusivo de proveedores)_:
+
 - Tabs: **Pendientes**, **Aprobadas**, **Archivadas**, **Pagadas**, **Reconciliadas**.
 - Tabla con: ID, Tipo, Estado, Identificador, Empresa, Responsable, Email, Descripción, Fecha estimada de pago.
 - Botón **"Crear anticipo"**.
@@ -976,10 +1036,10 @@ Los documentos se pueden crear de dos formas:
 
 1. **Manualmente**: Modal "Crear documento recibido" con campos:
    - Tipo de documento (selector): Factura, Boleta, Recibo por honorarios, Factura electrónica, entre otros. Los tipos disponibles varían según el país.
-   - *Número de documento (obligatorio).
-   - *RUT del emisor (selector de proveedor, obligatorio).
-   - *Moneda (CLP, UF, PEN, USD, etc. — depende del país).
-   - *Monto total (obligatorio).
+   - \*Número de documento (obligatorio).
+   - \*RUT del emisor (selector de proveedor, obligatorio).
+   - \*Moneda (CLP, UF, PEN, USD, etc. — depende del país).
+   - \*Monto total (obligatorio).
    - Fecha de vencimiento.
    - Notas (opcional): Campo de texto con opción de adjuntar archivos.
    - Botones: **Cancelar** | **Guardar**.
@@ -995,6 +1055,7 @@ Tabs de filtro por estado: **General**, **Revisión**, **Aprobación**, **Concil
 Tabla con columnas: Folio, Origen, Estado, Sub estado, Emisión, Etapa, Sub Etapa, Vencimiento, Monto facturado, Monto deuda, Monto pagado, Tipo de documento, Estado SII.
 
 **Funcionalidades de la lista:**
+
 - Filtrar, Ordenar, Buscar, paginación (configurable: 15 por página).
 - Selección individual y masiva.
 - Indicador de última actualización.
@@ -1003,12 +1064,12 @@ Tabla con columnas: Folio, Origen, Estado, Sub estado, Emisión, Etapa, Sub Etap
 
 #### Estados del documento recibido
 
-| Estado | Sub Estados |
-|--------|-------------|
-| **Revisión** | Pendiente |
-| **Aprobación** | Pausada, Gestión, Derivada, Observada, En compromiso |
-| **Conciliación** | En pago |
-| **Completada** | Pagada, Archivada, Rechazada |
+| Estado           | Sub Estados                                          |
+| ---------------- | ---------------------------------------------------- |
+| **Revisión**     | Pendiente                                            |
+| **Aprobación**   | Pausada, Gestión, Derivada, Observada, En compromiso |
+| **Conciliación** | En pago                                              |
+| **Completada**   | Pagada, Archivada, Rechazada                         |
 
 > **Diferencia con Documentos emitidos**: El segundo estado es **"Aprobación"** en vez de "Cobranza". Los sub-estados dentro de Aprobación son los mismos que en Cobranza.
 
@@ -1016,28 +1077,29 @@ Tabla con columnas: Folio, Origen, Estado, Sub estado, Emisión, Etapa, Sub Etap
 
 Las etapas y sub-etapas son idénticas a las de Documentos emitidos:
 
-| Etapa | Sub Etapas | Detalle |
-|-------|------------|---------|
-| **Vigente** | Emitida, Por vencer, Vence | Documento dentro de plazo |
-| **Vencida** | Mora Temprana, Mora Media, Mora Avanzada, Mora Castigada, Mora Dura | Documento fuera de plazo |
-| **Pagada** | Pagada | Documento cancelado |
-| **Inactiva** | Archivada, Rechazada | Documento fuera de gestión |
+| Etapa        | Sub Etapas                                                          | Detalle                    |
+| ------------ | ------------------------------------------------------------------- | -------------------------- |
+| **Vigente**  | Emitida, Por vencer, Vence                                          | Documento dentro de plazo  |
+| **Vencida**  | Mora Temprana, Mora Media, Mora Avanzada, Mora Castigada, Mora Dura | Documento fuera de plazo   |
+| **Pagada**   | Pagada                                                              | Documento cancelado        |
+| **Inactiva** | Archivada, Rechazada                                                | Documento fuera de gestión |
 
 **Detalle de moras (sub-etapas de Vencida):**
 
-| Sub Etapa | Días vencidos |
-|-----------|---------------|
-| Mora Temprana | 1 - 30 días |
-| Mora Media | 31 - 60 días |
-| Mora Avanzada | 61 - 90 días |
+| Sub Etapa      | Días vencidos |
+| -------------- | ------------- |
+| Mora Temprana  | 1 - 30 días   |
+| Mora Media     | 31 - 60 días  |
+| Mora Avanzada  | 61 - 90 días  |
 | Mora Castigada | 91 - 120 días |
-| Mora Dura | 120+ días |
+| Mora Dura      | 120+ días     |
 
 #### Detalle del documento recibido
 
 Panel modal que muestra toda la información de un documento recibido. Estructura análoga al detalle de documentos emitidos.
 
 **Cabecera:**
+
 - Título: "Documento recibido" con link **"Ir al documento"**.
 - Tipo y número de documento (ej. "Factura 2342").
 - Identificador del proveedor (RUT/RUC).
@@ -1050,23 +1112,29 @@ Panel modal que muestra toda la información de un documento recibido. Estructur
 - Botones: **"Ver documento"** (visualizar PDF) | **"Descargar documento"**.
 
 **Acciones rápidas (CRM):**
+
 - Crear Nota, SenaChat, Enviar Email, Enviar SMS, Llamar, Más (WhatsApp).
 - Las acciones se comunican con el proveedor dueño del documento (cascada: documento → proveedor → contactos).
 
 **Panel de Notas y CRM (lateral derecho):** Notas + CRM (patrón transversal, ver sección [Patrones Transversales](#patrones-transversales)).
+
 - Historial del sistema registra automáticamente cambios (ej. "Factura creada con éxito").
 
 **Identificación** (con botón "Editar"):
+
 - ID Documento, Periodo Contable, Nombre Receptor (empresa usuaria), Nombre Emisor (proveedor), ID Receptor, ID Emisor, Dirección Receptor, Dirección Emisor, País Emisión, Fecha Actualización, Tipo de documento.
 
 **Personalizables:**
+
 - Campos custom definidos en Configuración → Propiedades Personalizables para el objeto "Documento recibido".
 - Botón **"Nuevo campo"**.
 
 **Sección Caracterización** (colapsable):
+
 - Campos de categorización del documento.
 
 **Sección Gestión** (colapsable):
+
 - Campos de seguimiento de gestión del documento.
 
 ### 3.3 Aprobaciones
@@ -1092,6 +1160,7 @@ Tabla con columnas: ID, Fecha de Creación, Tipo de Documento (badge: "Anticipo"
 Modal que muestra el anticipo en proceso de aprobación:
 
 **Cabecera:**
+
 - Tipo: "Anticipo" con badge identificador.
 - Título del anticipo (ej. "Anticipo #111").
 - Empresa proveedora y RUT.
@@ -1101,6 +1170,7 @@ Modal que muestra el anticipo en proceso de aprobación:
 - Glosa.
 
 **Flujo de aprobación (panel izquierdo):**
+
 - Visualización vertical del progreso del flujo paso a paso:
   - **Inicio** (check verde cuando completado).
   - **Etapas numeradas**: Cada etapa muestra su nombre, responsable(s) asignado(s) y estado:
@@ -1110,21 +1180,25 @@ Modal que muestra el anticipo en proceso de aprobación:
   - **Fin** (check verde cuando todo completado).
 
 **Panel derecho:**
+
 - Campos contables:
   - Unidad de negocio (selector).
   - Cuenta contable (selector).
   - Centro de costos (selector).
 
 **Información de pago:**
+
 - Lista de cuentas bancarias del proveedor con selección por radio button.
 - Botón **"+ Agregar cuenta"**.
 - Cuenta favorita marcada con estrella.
 
 **Panel de Notas y CRM**: Notas + CRM (patrón transversal, ver sección [Patrones Transversales](#patrones-transversales)).
+
 - Historial con eventos del sistema (ej. "Datos de transferencia de Anticipo modificada por @Alejandro a cuenta bancaria...").
 - Notas manuales con opción de Editar y Eliminar.
 
 **Acciones (barra inferior):**
+
 - Botón **"Rechazar"** (rojo): Rechaza la aprobación. El elemento vuelve al inicio del flujo.
 - Botón **"Aprobar"** (verde): Aprueba la etapa actual y avanza a la siguiente etapa del flujo.
 
@@ -1133,6 +1207,7 @@ Modal que muestra el anticipo en proceso de aprobación:
 Modal similar al de anticipo pero para documentos recibidos (facturas):
 
 **Cabecera:**
+
 - Tipo: "Documento Electrónico" con badge (ej. "Factura electrónica").
 - Título del documento (ej. "Factura electrónica #987987").
 - Empresa proveedora y RUT.
@@ -1140,21 +1215,26 @@ Modal similar al de anticipo pero para documentos recibidos (facturas):
 - **Vista previa del PDF**: Miniatura del documento con botón "PDF generado" para descargar.
 
 **Flujo de aprobación (panel izquierdo):**
+
 - Mismo formato que anticipos: Inicio → Etapas → Fin, con checks verdes para aprobadas.
 
 **Panel derecho:**
+
 - Unidad de negocio, Cuenta contable, Centro de costos (selectores).
 
 **Detalle de Productos/Servicios:**
+
 - Tabla con: Cantidad, Descripción, Precio Unitario, Total.
 - Subtotal, IVA (19%), **Total a pagar**.
 
 **Información de pago:**
+
 - Cuentas bancarias del proveedor con selección.
 
 **Panel de Notas y CRM**: Historial del sistema registra cada evento (ej. "Factura electrónica aprobada por @Alejandro", "Factura electrónica enviada a pago por @Alejandro").
 
 **Acciones:**
+
 - **"Rechazar"**: Rechaza y reinicia el flujo.
 - **"Aprobar"**: Aprueba y avanza a la siguiente etapa. Si es la última etapa, el documento/anticipo queda aprobado y puede ser enviado a pago.
 
@@ -1181,6 +1261,7 @@ Tabla con columnas: Estado, Nombre, Apellido, Cargo, Área, Compañía, Emails, 
 **Funcionalidades**: Filtrar, Ordenar, Buscar, paginación (15 por página), selección individual/masiva.
 
 **Acciones**:
+
 - **Importar**: Carga masiva de contactos de proveedores (vía Importaciones y Exportaciones).
 - **+ Agregar Contacto**: Creación manual.
 
@@ -1188,12 +1269,12 @@ Tabla con columnas: Estado, Nombre, Apellido, Cargo, Área, Compañía, Emails, 
 
 Modal **"Agregar Contacto"** con campos:
 
-- ***Proveedor** (selector, obligatorio): Selecciona a qué proveedor pertenece este contacto.
-- ***Nombre** (obligatorio).
-- ***Apellido** (obligatorio).
+- **\*Proveedor** (selector, obligatorio): Selecciona a qué proveedor pertenece este contacto.
+- **\*Nombre** (obligatorio).
+- **\*Apellido** (obligatorio).
 - Cargo (opcional).
 - Área (opcional).
-- ***Email** (obligatorio).
+- **\*Email** (obligatorio).
 - Celular (opcional): Selector de código de país (ej. +56) + número de teléfono.
 - Botones: **Cancelar** | **Agregar contacto**.
 
@@ -1202,26 +1283,32 @@ Modal **"Agregar Contacto"** con campos:
 Panel modal con link **"Ir al contacto"** para vista completa.
 
 **Cabecera:**
+
 - Nombre completo del contacto.
 - Empresa asociada (nombre o "null" si no se ha completado) con identificador del proveedor (RUT/RUC).
 
 **Acciones rápidas (CRM):**
+
 - Crear Nota, SenaChat, Enviar Email, Enviar SMS, Llamar, Más (WhatsApp).
 
 **Panel de Notas y CRM (lateral derecho):** Notas + CRM (patrón transversal, ver sección [Patrones Transversales](#patrones-transversales)).
 
 **Información del contacto** (con botón "Editar"):
+
 - Nombre, Apellido, Cargo, Área, Empresa, Emails, Teléfonos, Última gestión, Respuesta última gestión.
 
 **Personalizables** (colapsable):
+
 - Campos custom definidos en Configuración → Propiedades Personalizables para el objeto "Contacto".
 
 **Emails:**
+
 - Tabla con: Nombre empresa, ID empresa, Email, Última gestión, Respuesta última gestión.
 - Botón **"+ Nuevo email"** para agregar emails adicionales.
 - Filtrar, Ordenar, Buscar, paginación.
 
 **Teléfonos:**
+
 - Tabla con: Nombre empresa, ID empresa, Número, Última gestión, Respuesta última gestión.
 - Filtrar, Ordenar, Buscar, paginación.
 
@@ -1229,7 +1316,7 @@ Panel modal con link **"Ir al contacto"** para vista completa.
 
 ### 3.5 Compromisos de pago
 
-*(Pendiente de detalle — equivalente a Compromisos de pago de Por Cobrar)*
+_(Pendiente de detalle — equivalente a Compromisos de pago de Por Cobrar)_
 
 ### 3.6 Pagos realizados
 
@@ -1257,34 +1344,36 @@ Modal **"Crear Pago"** con campos:
 
 - **Tipo de Pago** (selector): Ej. TRANS. BANCARIA.
 - **Estado** (selector): Ej. Informado.
-- ***Emisor** (selector, obligatorio): Empresa que emite el pago (la empresa usuaria, preseleccionada).
-- ***Receptor** (selector, obligatorio): Proveedor que recibe el pago.
-- ***Identificador** (obligatorio): Número o código identificador del pago.
-- ***Fecha de Pago** (obligatorio).
-- ***Moneda** (selector): CLP, UF, PEN, USD, etc. según país.
-- ***Monto** (obligatorio).
-- ***Glosa** (obligatorio): Descripción del pago.
+- **\*Emisor** (selector, obligatorio): Empresa que emite el pago (la empresa usuaria, preseleccionada).
+- **\*Receptor** (selector, obligatorio): Proveedor que recibe el pago.
+- **\*Identificador** (obligatorio): Número o código identificador del pago.
+- **\*Fecha de Pago** (obligatorio).
+- **\*Moneda** (selector): CLP, UF, PEN, USD, etc. según país.
+- **\*Monto** (obligatorio).
+- **\*Glosa** (obligatorio): Descripción del pago.
 - **Notas** (opcional): Campo de texto con opción de adjuntar archivos.
 - Botones: **Cancelar** | **Guardar**.
 
 #### Estados del pago realizado
 
-| Estado | Descripción |
-|--------|-------------|
-| **Pendiente** | Pago registrado pero aún no procesado |
-| **Nominado** | Pago asignado/nominado para su procesamiento |
-| **Rechazado** | Pago rechazado en el proceso de validación |
+| Estado         | Descripción                                      |
+| -------------- | ------------------------------------------------ |
+| **Pendiente**  | Pago registrado pero aún no procesado            |
+| **Nominado**   | Pago asignado/nominado para su procesamiento     |
+| **Rechazado**  | Pago rechazado en el proceso de validación       |
 | **Conciliado** | Pago incluido en una conciliación con documentos |
-| **Completado** | Pago confirmado como correcto y finalizado |
+| **Completado** | Pago confirmado como correcto y finalizado       |
 
 #### Detalle del pago realizado
 
 Vista completa (página dedicada) con breadcrumb: Por Pagar > Pagos > Pago #[número].
 
 **Cabecera:**
+
 - **Monto a pagar**: Monto total destacado.
 
 **Datos del compromiso de transferencia:**
+
 - Emisor (quien paga, editable con icono de lápiz).
 - Receptor (quien recibe).
 - Monto.
@@ -1297,15 +1386,18 @@ Vista completa (página dedicada) con breadcrumb: Por Pagar > Pagos > Pago #[nú
 - Estado (badge de color, ej. "Informado").
 
 **Detalle de Productos/Servicios:**
+
 - Tabla con: Cantidad, Descripción, Precio Unitario (moneda), Total (moneda).
 - Subtotal.
 - IVA (19% para Chile, 18% IGV para Perú).
 - **Total a pagar**.
 
 **Personalizables** (colapsable):
+
 - Campos custom definidos en Configuración → Propiedades Personalizables para el objeto "Pagos realizados".
 
 **Información de pago:**
+
 - Lista de cuentas bancarias del proveedor (receptor).
 - Cada cuenta muestra: Nombre titular, tipo de cuenta (ej. "CUENTA CORRIENTE SIMPLE"), número de cuenta.
 - Radio button para seleccionar la cuenta destino del pago.
@@ -1313,12 +1405,14 @@ Vista completa (página dedicada) con breadcrumb: Por Pagar > Pagos > Pago #[nú
 - Botón **"+ Agregar cuenta"**.
 
 **Conciliaciones relacionadas:**
+
 - Tabs: **Todas**, **Pendientes**, **Aprobadas**, **Rechazadas**, **Anuladas**.
 - Tabla con: ID, Creado por, Razón social Emisor, RUT Emisor, Fecha de creación, Monto pagos, Monto documentos, Responsable, Supervisor, Estado.
 - Botón **"Crear conciliación"**.
 - Filtros, ordenamiento, búsqueda y paginación.
 
 **Panel de Notas y CRM (lateral derecho):** Notas + CRM (patrón transversal, ver sección [Patrones Transversales](#patrones-transversales)).
+
 - Historial registra cambios de campos, actualizaciones y acciones del sistema con usuario responsable (ej. "Campo 'test' actualizado de: 'Sin datos previos' a '222' por @Alejandro").
 
 #### Relaciones del pago realizado
@@ -1348,23 +1442,25 @@ Tabla con columnas: Nº Nómina (ej. NOM-106), Estado (badge: Creada, Completada
 
 #### Estados de la nómina
 
-| Estado | Descripción |
-|--------|-------------|
-| **Creada** | Nómina generada con los pagos agrupados, pendiente de envío al banco |
-| **En banco** | Nómina enviada al banco para su procesamiento |
-| **Completada** | Banco confirmó que los pagos fueron ejecutados |
+| Estado         | Descripción                                                          |
+| -------------- | -------------------------------------------------------------------- |
+| **Creada**     | Nómina generada con los pagos agrupados, pendiente de envío al banco |
+| **En banco**   | Nómina enviada al banco para su procesamiento                        |
+| **Completada** | Banco confirmó que los pagos fueron ejecutados                       |
 
 #### Detalle de la nómina
 
 Modal con link **"Ir a la nómina"** para vista completa.
 
 **Cabecera:**
+
 - Número de nómina (ej. "NOM-106") con badge de estado (ej. "Creada").
 - Botón **"Descargar (.txt)"**: Genera y descarga el archivo TXT con los códigos de pago para entregar al banco.
 
 **Monto a pagar**: Monto total destacado (suma de todos los pagos agrupados).
 
 **Información General:**
+
 - ID de la nómina.
 - Creado por (usuario que generó la nómina).
 - Fecha de creación.
@@ -1372,15 +1468,18 @@ Modal con link **"Ir a la nómina"** para vista completa.
 - Estado (badge de color).
 
 **Panel de Notas y CRM (lateral derecho):** Notas + CRM (patrón transversal, ver sección [Patrones Transversales](#patrones-transversales)).
+
 - Tabs: **Historial** | **Documentos**.
 - Historial del sistema registra automáticamente eventos.
 
 **Pagos asociados:**
+
 - Tabla con los pagos que componen la nómina.
 - Columnas: ID, Estado (badge: Nominado), Emisor, Receptor, Origen (badge: Factura, Anticipo, Pago), Folio, Monto Total, Nómina (número), Monto.
 - Filtrar, Ordenar, Buscar, paginación (15 por página), selección individual.
 
 **Aprobaciones relacionadas:**
+
 - Tabla con las aprobaciones vinculadas a los pagos de la nómina.
 - Columnas: ID, Fecha de Creación, Tipo de Documento (badge: Documento, Anticipo), Documento (número), Razón social.
 - Filtrar, Ordenar, Buscar, paginación (15 por página).
@@ -1418,11 +1517,11 @@ Botón **"Crear anticipo"**.
 
 Modal **"Crear anticipo"** con campos:
 
-- ***RUT del proveedor** (selector, obligatorio): Selecciona a qué proveedor corresponde el anticipo.
-- ***Monto** (obligatorio).
-- ***Moneda** (selector, obligatorio): CLP, UF, PEN, USD, etc. según país.
-- ***Número** (obligatorio): Número identificador del anticipo.
-- ***Tipo** (selector, obligatorio): Tipo de anticipo (ej. "Anticipo").
+- **\*RUT del proveedor** (selector, obligatorio): Selecciona a qué proveedor corresponde el anticipo.
+- **\*Monto** (obligatorio).
+- **\*Moneda** (selector, obligatorio): CLP, UF, PEN, USD, etc. según país.
+- **\*Número** (obligatorio): Número identificador del anticipo.
+- **\*Tipo** (selector, obligatorio): Tipo de anticipo (ej. "Anticipo").
 - **Fecha** (selector "Fecha límite"): Fecha estimada de pago.
 - **Descripción** (opcional): Texto libre.
 - **Notas** (opcional): Campo de texto con opción de adjuntar archivos.
@@ -1433,10 +1532,12 @@ Modal **"Crear anticipo"** con campos:
 Vista completa (página dedicada, no modal) con breadcrumb: Por Pagar > Anticipos > Anticipo #[número].
 
 **Cabecera:**
+
 - Título: "Anticipo #[número]" con badge de estado (ej. "Pendiente").
 - **Monto a pagar**: Monto total del anticipo.
 
 **Información General:**
+
 - ID del anticipo.
 - Identificador (RUT/RUC del proveedor).
 - Proveedor (nombre).
@@ -1446,6 +1547,7 @@ Vista completa (página dedicada, no modal) con breadcrumb: Por Pagar > Anticipo
 - Estado (badge de color).
 
 **Panel de Notas y CRM (lateral derecho):** Notas + CRM (patrón transversal, ver sección [Patrones Transversales](#patrones-transversales)).
+
 - Historial del sistema registra automáticamente eventos (ej. "Anticipo creada con éxito").
 
 > **Nota**: Actualmente los anticipos no soportan campos personalizables (Propiedades Personalizables). Esta funcionalidad podría implementarse a futuro.
@@ -1462,7 +1564,7 @@ Módulo principal que agrupa herramientas complementarias para la gestión de co
 - **Portal de Pagos**
 - **Conciliaciones**
 - **Gestión de Tareas**
-- **Registros de Integración** *(pendiente de detalle)*
+- **Registros de Integración** _(pendiente de detalle)_
 - **Plantillas**
 
 ---
@@ -1485,14 +1587,14 @@ Centro de comunicaciones unificado que agrupa todos los canales de contacto con 
 
 Al seleccionar un contacto, el panel derecho muestra las siguientes pestañas:
 
-| Canal | Descripción | Acciones principales |
-|-------|-------------|---------------------|
-| **Todos** | Vista consolidada de todos los mensajes y gestiones del contacto, sin importar el canal | Lectura del historial unificado |
-| **SenaChat** | Chat interno de la plataforma | Mensajería interna |
-| **Mail** | Correo electrónico | **Redactar Correo** + **Nueva Gestión** |
-| **SMS** | Mensajes de texto | Envío de SMS con input de texto + **Generar con IA** |
-| **Llamada** | Llamadas telefónicas | **Iniciar Llamada** + **Nueva Gestión** |
-| **WhatsApp** | Mensajería WhatsApp en tiempo real | Chat en tiempo real + **Generar con IA** |
+| Canal        | Descripción                                                                             | Acciones principales                                 |
+| ------------ | --------------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| **Todos**    | Vista consolidada de todos los mensajes y gestiones del contacto, sin importar el canal | Lectura del historial unificado                      |
+| **SenaChat** | Chat interno de la plataforma                                                           | Mensajería interna                                   |
+| **Mail**     | Correo electrónico                                                                      | **Redactar Correo** + **Nueva Gestión**              |
+| **SMS**      | Mensajes de texto                                                                       | Envío de SMS con input de texto + **Generar con IA** |
+| **Llamada**  | Llamadas telefónicas                                                                    | **Iniciar Llamada** + **Nueva Gestión**              |
+| **WhatsApp** | Mensajería WhatsApp en tiempo real                                                      | Chat en tiempo real + **Generar con IA**             |
 
 #### Canal Mail — Detalle
 
@@ -1682,16 +1784,16 @@ Vista de lista con todas las importaciones realizadas.
 
 **Tabla con columnas:**
 
-| Columna | Descripción |
-|---------|-------------|
-| ID | Identificador único de la importación |
-| Tipo | Tipo de importación (badge de color, ej. "Pago bbva descuento", "Pago scotiabank descuento") |
-| Usuario | Usuario que ejecutó la importación |
-| Fecha Inicio | Fecha y hora de inicio del proceso |
-| Fecha Fin | Fecha y hora de finalización del proceso |
-| Estado | Estado del proceso (ej. "Completo") |
-| Observaciones | Resultado del análisis (ej. "Análisis completado: Se analizaron 20 registros.") |
-| Resultado | URL del archivo de resultado generado (descargable) |
+| Columna       | Descripción                                                                                  |
+| ------------- | -------------------------------------------------------------------------------------------- |
+| ID            | Identificador único de la importación                                                        |
+| Tipo          | Tipo de importación (badge de color, ej. "Pago bbva descuento", "Pago scotiabank descuento") |
+| Usuario       | Usuario que ejecutó la importación                                                           |
+| Fecha Inicio  | Fecha y hora de inicio del proceso                                                           |
+| Fecha Fin     | Fecha y hora de finalización del proceso                                                     |
+| Estado        | Estado del proceso (ej. "Completo")                                                          |
+| Observaciones | Resultado del análisis (ej. "Análisis completado: Se analizaron 20 registros.")              |
+| Resultado     | URL del archivo de resultado generado (descargable)                                          |
 
 **Funcionalidades**: Filtrar, Ordenar, Buscar, paginación (configurable: 15 por página), icono de descarga por fila.
 
@@ -1721,18 +1823,18 @@ Vista de lista que registra todas las exportaciones realizadas desde cualquier p
 
 **Tabla con columnas:**
 
-| Columna | Descripción |
-|---------|-------------|
-| ID | Identificador único de la exportación |
-| HASH | Identificador hash único del proceso |
-| Usuario | Usuario que solicitó la exportación |
-| Fecha Inicio | Fecha y hora de inicio del proceso |
-| Fecha Fin | Fecha y hora de finalización del proceso |
-| Tipo | Tipo de exportación (ej. "sisqeco") |
-| Filtros aplicados | Filtros que se usaron al momento de exportar |
-| Estado | Estado del proceso (ej. "Completado") |
-| Resultado | Cantidad de registros exportados (ej. "3 registros exportados") |
-| Nombre Archivo | Nombre del archivo generado (ej. "pagos_20260219165511.xlsx", "facturas_20260128193221.xlsx") |
+| Columna           | Descripción                                                                                   |
+| ----------------- | --------------------------------------------------------------------------------------------- |
+| ID                | Identificador único de la exportación                                                         |
+| HASH              | Identificador hash único del proceso                                                          |
+| Usuario           | Usuario que solicitó la exportación                                                           |
+| Fecha Inicio      | Fecha y hora de inicio del proceso                                                            |
+| Fecha Fin         | Fecha y hora de finalización del proceso                                                      |
+| Tipo              | Tipo de exportación (ej. "sisqeco")                                                           |
+| Filtros aplicados | Filtros que se usaron al momento de exportar                                                  |
+| Estado            | Estado del proceso (ej. "Completado")                                                         |
+| Resultado         | Cantidad de registros exportados (ej. "3 registros exportados")                               |
+| Nombre Archivo    | Nombre del archivo generado (ej. "pagos_20260219165511.xlsx", "facturas_20260128193221.xlsx") |
 
 **Funcionalidades**: Filtrar, Ordenar, Buscar, paginación (configurable: 15 por página), icono de descarga por fila para descargar el archivo exportado.
 
@@ -1767,8 +1869,8 @@ El Portal de Pagos se activa a partir del flujo de cobro entre empresas dentro d
 
 #### Pasarela de pago
 
-| Pasarela | Estado | Descripción |
-|----------|--------|-------------|
+| Pasarela  | Estado     | Descripción                                                                                                                                           |
+| --------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Khipu** | Disponible | Pasarela de pago que permite realizar transferencias electrónicas directamente desde el banco del pagador. Es el método de pago principal del portal. |
 
 > **Requisito**: El proveedor (empresa que recibe el pago) debe tener su cuenta Khipu configurada y activa en Configuración → Integraciones. Si el proveedor no tiene Khipu configurado, la opción de pago aparece deshabilitada con el mensaje: _"Esta empresa aún no tiene Khipu configurado como método de cobro."_
@@ -1777,13 +1879,14 @@ El Portal de Pagos se activa a partir del flujo de cobro entre empresas dentro d
 
 El portal utiliza un **modelo de proyección** para manejar los estados de las facturas en ambos lados de la relación comercial. Los estados difieren intencionalmente entre pagador y receptor hasta que Khipu confirma la transacción:
 
-| Momento | Estado en cuenta del **pagador** (Empresa B) | Estado en cuenta del **receptor** (Empresa A) |
-|---------|----------------------------------------------|-----------------------------------------------|
-| Después de ejecutar el pago | Factura marcada como **pagada** de inmediato | Factura permanece en estado **pendiente/revisión** |
-| Khipu confirma el pago (callback `OK`) | Sigue como **pagada** | Factura se actualiza a **pagada** |
-| Khipu rechaza el pago (callback `ERROR`) | Factura **regresa al estado anterior** (pendiente) | Sin cambios (nunca se actualizó) |
+| Momento                                  | Estado en cuenta del **pagador** (Empresa B)       | Estado en cuenta del **receptor** (Empresa A)      |
+| ---------------------------------------- | -------------------------------------------------- | -------------------------------------------------- |
+| Después de ejecutar el pago              | Factura marcada como **pagada** de inmediato       | Factura permanece en estado **pendiente/revisión** |
+| Khipu confirma el pago (callback `OK`)   | Sigue como **pagada**                              | Factura se actualiza a **pagada**                  |
+| Khipu rechaza el pago (callback `ERROR`) | Factura **regresa al estado anterior** (pendiente) | Sin cambios (nunca se actualizó)                   |
 
 **Resumen del comportamiento:**
+
 - El pagador (Empresa B) ve sus facturas como pagadas de inmediato tras ejecutar el pago.
 - La empresa cobradora (Empresa A) las ve pendientes mientras espera la confirmación de Khipu.
 - Cuando Khipu confirma: la Empresa A también las ve como pagadas.
@@ -1798,6 +1901,7 @@ El portal utiliza un **modelo de proyección** para manejar los estados de las f
 "Elige al proveedor y los documentos que deseas pagar. Verifica los montos y asegúrate de seleccionar todos los documentos necesarios."
 
 **Selector de Proveedor/Cliente** (dropdown desplegable con búsqueda infinita):
+
 - Lista de proveedores/clientes con: Razón social, RUT e indicador de deuda activa.
 - Restricción: solo se pueden seleccionar documentos de **una misma moneda** por pago. Si el proveedor tiene facturas en distintas monedas, el botón "Seleccionar todo" queda deshabilitado con el mensaje: _"Tiene diferentes tipos de monedas"_.
 
@@ -1809,6 +1913,7 @@ Tabla con columnas: Folio, Origen (Manual, SII), Estado, Sub Estado, Emisión (f
 - Filtrar, Ordenar, Buscar, paginación.
 
 **Panel lateral "Resumen a Pagar"** (derecha, persistente en todos los pasos):
+
 - Lista de documentos seleccionados con su monto individual.
 - **Total de documentos [moneda] (N)**: Suma total a pagar.
 - Texto por defecto cuando no hay selección: "Seleccione un documento o convenio para visualizar el monto total a pagar."
@@ -1818,11 +1923,13 @@ Tabla con columnas: Folio, Origen (Manual, SII), Estado, Sub Estado, Emisión (f
 "Selecciona el método de pago para completar la operación."
 
 **Método de pago disponible: Khipu**
+
 - Habilitado únicamente si el proveedor tiene Khipu configurado y activo.
 - Al seleccionarlo se muestra: _"Al continuar, se abrirá una ventana segura de Khipu donde podrás completar el pago directamente desde tu banco."_
 - Botón de acción: **"Pagar con Khipu"**.
 
 **Flujo de ejecución al hacer clic en "Pagar con Khipu":**
+
 1. Se crea la transacción en Khipu con el monto total y la referencia de los documentos seleccionados.
 2. Se abre el **modal embebido de Khipu** dentro de la plataforma (sin redirecciones externas).
 3. El usuario completa el pago directamente desde su banco dentro del modal.
@@ -1848,10 +1955,10 @@ Breadcrumb: Herramientas > Conciliaciones
 
 Dos tarjetas que separan los dos ámbitos de conciliación:
 
-| Tipo | Descripción |
-|------|-------------|
-| **Conciliaciones de Proveedores** | Administra documentos y pagos de proveedores. Concilia documentos recibidos con pagos realizados (Por Pagar). |
-| **Conciliaciones de Clientes** | Administra documentos y cobros de clientes. Concilia documentos emitidos (facturas) con pagos recibidos (Por Cobrar). |
+| Tipo                              | Descripción                                                                                                           |
+| --------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| **Conciliaciones de Proveedores** | Administra documentos y pagos de proveedores. Concilia documentos recibidos con pagos realizados (Por Pagar).         |
+| **Conciliaciones de Clientes**    | Administra documentos y cobros de clientes. Concilia documentos emitidos (facturas) con pagos recibidos (Por Cobrar). |
 
 Al seleccionar un tipo, se accede a la lista de conciliaciones correspondiente.
 
@@ -1870,6 +1977,7 @@ Botón **"Crear conciliación"**. Link **"¿Cómo crear una conciliación?"** (a
 Banner superior que aparece cuando el sistema detecta matches automáticos: **"Tienes N sugerencias de conciliación"** — "Generadas automáticamente según tus reglas. Revisalas y aprueba en 1 clic."
 
 **Acciones del banner:**
+
 - **"Volver a generar"**: Recalcula las sugerencias.
 - **"Descartar por hoy"**: Oculta las sugerencias por el día.
 - **"Revisar"**: Abre la vista de revisión de sugerencias para aprobarlas.
@@ -1878,11 +1986,11 @@ Banner superior que aparece cuando el sistema detecta matches automáticos: **"T
 
 #### Tipos de conciliación (por saldo resultante)
 
-| Tipo | Descripción |
-|------|-------------|
-| **Equilibrado** | La suma de documentos seleccionados es igual a la suma de pagos seleccionados. Saldo = $0. |
+| Tipo                | Descripción                                                                                              |
+| ------------------- | -------------------------------------------------------------------------------------------------------- |
+| **Equilibrado**     | La suma de documentos seleccionados es igual a la suma de pagos seleccionados. Saldo = $0.               |
 | **Saldo Pendiente** | La suma de documentos es mayor a la de pagos. Queda un saldo pendiente por cubrir con pagos adicionales. |
-| **Sobrepago** | La suma de pagos es mayor a la de documentos. El pago excede lo facturado. |
+| **Sobrepago**       | La suma de pagos es mayor a la de documentos. El pago excede lo facturado.                               |
 
 #### Creación de conciliación (Conciliador)
 
@@ -1905,17 +2013,20 @@ Tabla con columnas: RUT, Razón Social, Facturado pendiente, Saldo, Pagado, Conc
 Vista dividida en dos paneles lado a lado:
 
 **Panel izquierdo — Documentos:**
+
 - Tabs: **Documentos** | **Compromisos de pago**
 - Tabla con columnas: Folio, RUT Receptor, Monto, Fecha de vencimiento.
 - Selección individual/masiva con checkboxes. Link **"Seleccionar todo (N)"**.
 - Filtrar, Ordenar, Buscar, paginación (15 por página).
 
 **Panel derecho — Pagos Sin Conciliar:**
+
 - Tabla con columnas: ID, Emisor, Receptor, Origen (badge: Pago, Factura, Anticipo).
 - Selección individual/masiva con checkboxes. Link **"Seleccionar todo (N)"**.
 - Filtrar, Ordenar, Buscar, paginación (15 por página).
 
 **Barra de resumen (inferior fija):**
+
 - **Documentos Seleccionados**: Monto total y cantidad (ej. "$1.234 — Documentos Seleccionados (1)").
 - **Pagos Seleccionadas**: Monto total y cantidad (ej. "$555 — Pagos Seleccionadas (1)"). Se resalta en rojo/verde según diferencia.
 - **Saldo Pendiente**: Diferencia entre documentos y pagos (ej. "$679 — Saldo Pendiente"). Muestra icono de advertencia si no es equilibrado.
@@ -1936,28 +2047,31 @@ Al presionar "Conciliar Elementos Seleccionados", se abre un modal de confirmaci
 
 #### Estados de la conciliación
 
-| Estado | Descripción |
-|--------|-------------|
-| **Pendiente** | Conciliación creada, pendiente de revisión y aprobación |
-| **Aprobada** | Conciliación revisada y aprobada como correcta |
-| **Rechazada** | Conciliación revisada y rechazada (con comentario del motivo) |
-| **Anulada** | Conciliación previamente aprobada que fue anulada posteriormente |
+| Estado        | Descripción                                                      |
+| ------------- | ---------------------------------------------------------------- |
+| **Pendiente** | Conciliación creada, pendiente de revisión y aprobación          |
+| **Aprobada**  | Conciliación revisada y aprobada como correcta                   |
+| **Rechazada** | Conciliación revisada y rechazada (con comentario del motivo)    |
+| **Anulada**   | Conciliación previamente aprobada que fue anulada posteriormente |
 
 #### Detalle de la conciliación
 
 Vista completa (página dedicada) con breadcrumb: Herramientas > Conciliaciones > Cliente/Proveedor > Conciliación #[número].
 
 **Cabecera:**
+
 - Título: "Conciliación #[número]" con badge de estado (ej. "Rechazado").
 - RUT del cliente/proveedor.
 - Icono de descarga.
 
 **KPIs (tarjetas):**
+
 - **Monto Documentos (N)**: Total de los documentos incluidos.
 - **Monto Pagado (N)**: Total de los pagos incluidos.
 - **Saldo Equilibrado / Saldo Pendiente / Sobrepago**: Diferencia resultante. Muestra "$0" si es equilibrado, o el monto pendiente/excedente con indicador.
 
 **Información General:**
+
 - ID.
 - RUT Cliente/Proveedor.
 - Creado por (usuario).
@@ -1968,14 +2082,17 @@ Vista completa (página dedicada) con breadcrumb: Herramientas > Conciliaciones 
 - Estado de conciliación (badge de color).
 
 **Detalle de Documentos:**
+
 - Tabla con: FA, N° Documento, Origen, Monto a Pagar.
 - Total de documentos (suma).
 
 **Detalle de Pagos:**
+
 - Tabla con: ID, Documento SAP, Cta Cte, Sociedad, Monto, Fecha contable.
 - Total de pagos (suma).
 
 **Panel de Notas y CRM (lateral derecho):** Notas + CRM (patrón transversal, ver sección [Patrones Transversales](#patrones-transversales)).
+
 - Tabs: **Historial** | **Documentos**.
 - Historial del sistema registra automáticamente eventos (ej. "Conciliación creado con éxito", "Conciliación rechazada por @Alejandro con el comentario: [texto]").
 
@@ -2015,23 +2132,23 @@ Modal **"Crear tarea"** con campos:
 
 - **Objeto relacionado** (selector con búsqueda): Define a qué entidad de la plataforma se vincula la tarea. Opciones disponibles:
 
-| Objeto relacionado | Descripción |
-|--------------------|-------------|
-| Gestión de tareas | Tarea independiente, sin vínculo a otro objeto (por defecto) |
-| Cliente | Vinculada a un cliente específico |
-| Proveedor | Vinculada a un proveedor específico |
-| Documento emitido | Vinculada a una factura emitida |
-| Documento recibido | Vinculada a una factura recibida |
-| Contacto del cliente | Vinculada a un contacto de cliente |
-| Contacto del proveedor | Vinculada a un contacto de proveedor |
-| Pago del cliente | Vinculada a un pago recibido |
-| Pago del proveedor | Vinculada a un pago realizado |
-| Compromiso de pago del cliente | Vinculada a un compromiso de pago (Por Cobrar) |
-| Compromiso de pago del proveedor | Vinculada a un compromiso de pago (Por Pagar) |
-| Conciliación del cliente | Vinculada a una conciliación de cliente |
-| Conciliación del proveedor | Vinculada a una conciliación de proveedor |
-| Anticipo | Vinculada a un anticipo |
-| Nómina | Vinculada a una nómina |
+| Objeto relacionado               | Descripción                                                  |
+| -------------------------------- | ------------------------------------------------------------ |
+| Gestión de tareas                | Tarea independiente, sin vínculo a otro objeto (por defecto) |
+| Cliente                          | Vinculada a un cliente específico                            |
+| Proveedor                        | Vinculada a un proveedor específico                          |
+| Documento emitido                | Vinculada a una factura emitida                              |
+| Documento recibido               | Vinculada a una factura recibida                             |
+| Contacto del cliente             | Vinculada a un contacto de cliente                           |
+| Contacto del proveedor           | Vinculada a un contacto de proveedor                         |
+| Pago del cliente                 | Vinculada a un pago recibido                                 |
+| Pago del proveedor               | Vinculada a un pago realizado                                |
+| Compromiso de pago del cliente   | Vinculada a un compromiso de pago (Por Cobrar)               |
+| Compromiso de pago del proveedor | Vinculada a un compromiso de pago (Por Pagar)                |
+| Conciliación del cliente         | Vinculada a una conciliación de cliente                      |
+| Conciliación del proveedor       | Vinculada a una conciliación de proveedor                    |
+| Anticipo                         | Vinculada a un anticipo                                      |
+| Nómina                           | Vinculada a una nómina                                       |
 
 - **Registro específico** (selector con búsqueda, aparece al elegir un objeto distinto a "Gestión de tareas"): Permite seleccionar el registro particular al que se vincula la tarea (ej. "Conciliación #258", "Factura #1515").
 - **Título** (campo de texto): Nombre descriptivo de la tarea.
@@ -2040,14 +2157,14 @@ Modal **"Crear tarea"** con campos:
 - **Prioridad** (selector): Nivel de prioridad de la tarea.
 - **Recordatorio** (selector): Programación de recordatorio previo a la fecha límite. Opciones:
 
-| Opción | Descripción |
-|--------|-------------|
-| Sin recordatorio | No se envía recordatorio |
+| Opción              | Descripción                                                 |
+| ------------------- | ----------------------------------------------------------- |
+| Sin recordatorio    | No se envía recordatorio                                    |
 | Fecha personalizada | Permite elegir fecha y hora específica para el recordatorio |
-| 30 minutos antes | Recordatorio 30 min antes de la fecha límite |
-| 1 hora antes | Recordatorio 1 hora antes |
-| 1 día antes | Recordatorio 1 día antes |
-| 1 semana antes | Recordatorio 1 semana antes |
+| 30 minutos antes    | Recordatorio 30 min antes de la fecha límite                |
+| 1 hora antes        | Recordatorio 1 hora antes                                   |
+| 1 día antes         | Recordatorio 1 día antes                                    |
+| 1 semana antes      | Recordatorio 1 semana antes                                 |
 
 - **Descripción de la tarea** (campo de texto): Detalle o instrucciones de la tarea.
 - Botones: **"Cancelar"** | **"Crear tarea"**.
@@ -2058,7 +2175,7 @@ Modal **"Crear tarea"** con campos:
 
 ### 4.7 Registros de Integración (pendiente de detalle)
 
-*(Sección pendiente de documentación detallada.)*
+_(Sección pendiente de documentación detallada.)_
 
 ---
 
@@ -2073,6 +2190,7 @@ Breadcrumb: Herramientas > Plantillas
 #### Lista de plantillas
 
 **Tabs:**
+
 - Todas
 - Plantillas de WhatsApp
 
@@ -2087,6 +2205,7 @@ Página dedicada (no modal) para crear plantillas siguiendo los lineamientos de 
 Breadcrumb: Herramientas > Plantillas > Crear plantilla
 
 **Campos:**
+
 - **Nombre de la plantilla** (campo de texto, ej: "plantilla_de_bienvenida")
 - **Header** (toggle on/off) - Encabezado opcional del mensaje
 - **Cuerpo del Mensaje** (obligatorio) - Texto principal del mensaje
@@ -2096,16 +2215,19 @@ Breadcrumb: Herramientas > Plantillas > Crear plantilla
 - **Botones** (toggle on/off) - Botones de acción opcionales en el mensaje
 
 **Vista previa del mensaje** (panel lateral derecho):
+
 - Simulación estilo burbuja de WhatsApp que muestra cómo se verá el mensaje al destinatario.
 - Se actualiza en tiempo real conforme se edita la plantilla.
 
 **Acciones:**
+
 - "Descartar" - Cancelar sin guardar
 - **"Enviar a Aprobación de Meta"** - Envía la plantilla a Meta (WhatsApp Business API) para su revisión y aprobación. Una vez aprobada por Meta, la plantilla queda disponible para su uso en campañas y comunicaciones.
 
 #### Sincronización con Meta
 
 Las plantillas pueden gestionarse de dos formas:
+
 1. **Crear en Sena y enviar a Meta**: Se diseña la plantilla en Sena y se envía a aprobación de Meta.
 2. **Sincronizar desde Meta**: Si ya existen plantillas aprobadas en Meta, se pueden sincronizar e importar a Sena para su uso dentro de la plataforma.
 
@@ -2127,6 +2249,7 @@ Breadcrumb: Configuración > [sub-sección]
 Gestión del perfil personal del usuario autenticado.
 
 **Información Personal:**
+
 - Foto de Perfil (formatos permitidos: PNG, JPG)
 - Nombre
 - Apellido
@@ -2139,6 +2262,7 @@ Gestión del perfil personal del usuario autenticado.
 - Botón "Guardar Cambios"
 
 **Configuración cuenta:**
+
 - Empresa (solo lectura - muestra la empresa asociada al usuario)
 - Gerente
 - Correo Electrónico
@@ -2151,6 +2275,7 @@ Gestión del perfil personal del usuario autenticado.
 - Botón "Guardar Cambios"
 
 **Eliminar Cuenta:**
+
 - Advertencia: "Borrar tu cuenta es una acción permanente. No se puede deshacer."
 - Checkbox de confirmación: "Confirmar eliminación de la cuenta"
 - Botón "Eliminar cuenta" (acción destructiva)
@@ -2183,13 +2308,13 @@ Gestión de la información y configuración de la empresa. Se divide en varias 
 
 Permite activar o desactivar los módulos principales de la plataforma mediante toggles. Los módulos disponibles son:
 
-| Módulo | Descripción | Desactivable |
-|--------|-------------|--------------|
-| Dashboard | Panel general con KPIs y resúmenes | Sí |
-| Por Cobrar | Gestión de cuentas por cobrar | Sí |
-| Por Pagar | Gestión de cuentas por pagar | Sí |
-| Herramientas | Herramientas adicionales (incluye Portal de pagos, entre otros) | Sí |
-| Configuración | Administración y parametrización del sistema | **No** (siempre visible) |
+| Módulo        | Descripción                                                     | Desactivable             |
+| ------------- | --------------------------------------------------------------- | ------------------------ |
+| Dashboard     | Panel general con KPIs y resúmenes                              | Sí                       |
+| Por Cobrar    | Gestión de cuentas por cobrar                                   | Sí                       |
+| Por Pagar     | Gestión de cuentas por pagar                                    | Sí                       |
+| Herramientas  | Herramientas adicionales (incluye Portal de pagos, entre otros) | Sí                       |
+| Configuración | Administración y parametrización del sistema                    | **No** (siempre visible) |
 
 > **Nota**: Al desactivar un módulo, este deja de ser visible en la navegación lateral para los usuarios de la empresa.
 
@@ -2228,46 +2353,46 @@ Muestra el plan contratado con badge "Plan actual", su descripción y los límit
 
 Barras de progreso que muestran el uso vs. el límite del plan. Se resaltan en rojo cuando se excede el límite:
 
-| Métrica | Ejemplo |
-|---------|---------|
-| Documentos emitidos | 5838 de 50 Documentos emitidos |
-| Usuarios | 3 de 20 usados |
-| Clientes gestionados | 642 de 10 gestionados |
-| Gestiones SMS | 0 de 20 enviadas |
-| Gestiones llamadas | 0 de 60 minutos |
-| Gestiones emails | 0 enviadas |
+| Métrica              | Ejemplo                        |
+| -------------------- | ------------------------------ |
+| Documentos emitidos  | 5838 de 50 Documentos emitidos |
+| Usuarios             | 3 de 20 usados                 |
+| Clientes gestionados | 642 de 10 gestionados          |
+| Gestiones SMS        | 0 de 20 enviadas               |
+| Gestiones llamadas   | 0 de 60 minutos                |
+| Gestiones emails     | 0 enviadas                     |
 
 #### Planes disponibles
 
-| Plan | Precio | Público objetivo | Contratación |
-|------|--------|------------------|--------------|
-| **Starter** | S/ 130.90 /mes | Para pequeñas empresas y primeros volúmenes | Autoservicio (Mercado Pago) |
-| **Growth** | S/ 1,171.30 /mes | Para empresa en expansión | Contactar ventas |
-| **Enterprise** | S/ 2,681.50 /mes | Para alto volumen y operaciones críticas | Contactar ventas |
+| Plan           | Precio           | Público objetivo                            | Contratación                |
+| -------------- | ---------------- | ------------------------------------------- | --------------------------- |
+| **Starter**    | S/ 130.90 /mes   | Para pequeñas empresas y primeros volúmenes | Autoservicio (Mercado Pago) |
+| **Growth**     | S/ 1,171.30 /mes | Para empresa en expansión                   | Contactar ventas            |
+| **Enterprise** | S/ 2,681.50 /mes | Para alto volumen y operaciones críticas    | Contactar ventas            |
 
 **Características por plan:**
 
-| Característica | Starter | Growth | Enterprise |
-|----------------|---------|--------|------------|
-| CRM básico de cobranza | Si | - | - |
-| Automatización de recordatorios | Si | - | - |
-| Conciliación manual | Si | - | - |
-| Reportes básicos | Si | - | - |
-| Soporte por email | Si | - | - |
-| Segmentación inteligente | - | Si | - |
-| Conciliación automática | - | Si | - |
-| Portal de cliente | - | Si | - |
-| Campañas automatizadas | - | Si | - |
-| Reportería avanzada | - | Si | - |
-| Soporte prioritario | - | Si | - |
-| CRM avanzado multicanal | - | Si | - |
-| Volumen ilimitado | - | - | Si |
-| API completa | - | - | Si |
-| Integración con Recsa | - | - | Si |
-| Gestión humana especializada | - | - | Si |
-| Multi-tenant y white label | - | - | Si |
-| SLA garantizado | - | - | Si |
-| Account Manager dedicado | - | - | Si |
+| Característica                  | Starter | Growth | Enterprise |
+| ------------------------------- | ------- | ------ | ---------- |
+| CRM básico de cobranza          | Si      | -      | -          |
+| Automatización de recordatorios | Si      | -      | -          |
+| Conciliación manual             | Si      | -      | -          |
+| Reportes básicos                | Si      | -      | -          |
+| Soporte por email               | Si      | -      | -          |
+| Segmentación inteligente        | -       | Si     | -          |
+| Conciliación automática         | -       | Si     | -          |
+| Portal de cliente               | -       | Si     | -          |
+| Campañas automatizadas          | -       | Si     | -          |
+| Reportería avanzada             | -       | Si     | -          |
+| Soporte prioritario             | -       | Si     | -          |
+| CRM avanzado multicanal         | -       | Si     | -          |
+| Volumen ilimitado               | -       | -      | Si         |
+| API completa                    | -       | -      | Si         |
+| Integración con Recsa           | -       | -      | Si         |
+| Gestión humana especializada    | -       | -      | Si         |
+| Multi-tenant y white label      | -       | -      | Si         |
+| SLA garantizado                 | -       | -      | Si         |
+| Account Manager dedicado        | -       | -      | Si         |
 
 > **Nota**: Las características son acumulativas. Growth incluye todo lo de Starter, y Enterprise incluye todo lo de Growth.
 
@@ -2276,12 +2401,14 @@ Barras de progreso que muestran el uso vs. el límite del plan. Se resaltan en r
 Wizard de 2 pasos mediante modal:
 
 **Paso 1 de 2: Selección del plan**
+
 - "Confirma que la selección del plan sea la adecuada para tus necesidades."
 - Muestra el plan seleccionado con nombre, descripción y precio.
 - Panel "Resumen" con selector de plan y total a pagar mensual.
 - Navegación: Cancelar / Continuar al pago
 
 **Paso 2 de 2: Método de pago**
+
 - "Revisa la información de pago para empezar la suscripción."
 - Método disponible: **Mercado Pago** ("Paga con tu tarjeta de crédito o débito con Mercado Pago")
 - Panel "Resumen" se mantiene visible con total a pagar.
@@ -2300,6 +2427,7 @@ Incluye link a "Guía de Ayuda".
 Tabla con columnas: ID, Nombre, Cargo, Responsable de grupo, Rol/es, Estado de invitación, Email, Identificador, Última gestión, Estado de actividad, Última conexión, Mejor respuesta.
 
 **Estados de actividad:**
+
 - **Activo**: Usuario conectado y usando la plataforma
 - **Inactivo**: Usuario registrado pero sin actividad reciente
 - **Desconectado**: Usuario sin conexión
@@ -2308,11 +2436,11 @@ Incluye filtros, ordenamiento, búsqueda, paginación y botón "Agregar Usuario"
 
 #### Roles de usuario
 
-| Rol | Descripción | Restricciones |
-|-----|-------------|---------------|
-| **Administrador** | Acceso completo a la webapp y gestión de usuarios | Sin restricciones. Ve todos los clientes, documentos, pagos, contactos, etc. |
-| **Usuario** | Acceso completo a clientes, reportes y asignación de carteras | Solo ve los clientes y datos relacionados (documentos, pagos, contactos) que le han sido asignados. La visibilidad es en cascada: cliente → documentos → pagos → contactos. |
-| **Invitado** | Acceso de solo lectura a ciertos clientes, informes y notas | Solo lectura. Igual que Usuario, solo ve lo que se le asigna. |
+| Rol               | Descripción                                                   | Restricciones                                                                                                                                                               |
+| ----------------- | ------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Administrador** | Acceso completo a la webapp y gestión de usuarios             | Sin restricciones. Ve todos los clientes, documentos, pagos, contactos, etc.                                                                                                |
+| **Usuario**       | Acceso completo a clientes, reportes y asignación de carteras | Solo ve los clientes y datos relacionados (documentos, pagos, contactos) que le han sido asignados. La visibilidad es en cascada: cliente → documentos → pagos → contactos. |
+| **Invitado**      | Acceso de solo lectura a ciertos clientes, informes y notas   | Solo lectura. Igual que Usuario, solo ve lo que se le asigna.                                                                                                               |
 
 > **Nota**: Para usuarios con rol "Usuario" o "Invitado", es necesario asignarles clientes específicos. Al asignar un cliente, el usuario hereda visibilidad en cascada sobre todos los documentos, pagos, contactos y conciliaciones relacionados con ese cliente.
 
@@ -2320,13 +2448,13 @@ Incluye filtros, ordenamiento, búsqueda, paginación y botón "Agregar Usuario"
 
 Los permisos se configuran por módulo y son granulares. Cada módulo tiene un conjunto de permisos individuales:
 
-| Módulo | Permisos disponibles (ejemplo) |
-|--------|-------------------------------|
-| Dashboard | 12 permisos |
-| Configuración | 28 permisos |
-| XCobrar (Por Cobrar) | 20 permisos |
-| XPagar (Por Pagar) | 20 permisos |
-| Herramientas | 8 permisos |
+| Módulo               | Permisos disponibles (ejemplo) |
+| -------------------- | ------------------------------ |
+| Dashboard            | 12 permisos                    |
+| Configuración        | 28 permisos                    |
+| XCobrar (Por Cobrar) | 20 permisos                    |
+| XPagar (Por Pagar)   | 20 permisos                    |
+| Herramientas         | 8 permisos                     |
 
 Los permisos se pueden expandir/colapsar por módulo y se seleccionan individualmente. Al seleccionar un rol, se precargan los permisos predeterminados de ese rol, pero se pueden ajustar manualmente.
 
@@ -2335,25 +2463,29 @@ Los permisos se pueden expandir/colapsar por módulo y se seleccionan individual
 Wizard de 4 pasos mediante modal "Agregar usuario":
 
 **Paso 1 de 4: Carga de datos**
+
 - "Agrega los datos del nuevo usuario."
 - Campos:
-  - *Nombre (obligatorio)
-  - *Apellido (obligatorio)
+  - \*Nombre (obligatorio)
+  - \*Apellido (obligatorio)
   - Identificador (opcional)
-  - *Email (obligatorio)
+  - \*Email (obligatorio)
   - Cargo (opcional)
   - Descripción (opcional)
 
 **Paso 2 de 4: Selección de rol**
+
 - "Elige la categoría que más se adapta al nuevo usuario."
 - Selección entre: Administrador, Usuario, Invitado (tarjetas con descripción de cada rol).
 
 **Paso 3 de 4: Selección de permisos**
+
 - "Selecciona los permisos que tendrá el usuario."
 - Lista de permisos agrupados por módulo (Dashboard, Configuración, XCobrar, XPagar, Herramientas).
 - Cada grupo es colapsable y muestra la cantidad de permisos seleccionados.
 
 **Paso 4 de 4: Confirmación de datos**
+
 - Revisión final de toda la información ingresada antes de crear el usuario.
 
 #### Flujo de invitación
@@ -2371,6 +2503,7 @@ Wizard de 4 pasos mediante modal "Agregar usuario":
 Panel/modal que muestra toda la información de un usuario:
 
 **Cabecera:**
+
 - Nombre completo
 - Empresa
 - Rol (badge, ej: Administrador)
@@ -2378,6 +2511,7 @@ Panel/modal que muestra toda la información de un usuario:
 - Estado (badge: Activo, Inactivo, Desconectado)
 
 **Información del usuario:**
+
 - Nombre
 - Apellido
 - Email
@@ -2389,6 +2523,7 @@ Panel/modal que muestra toda la información de un usuario:
 - Estado (badge)
 
 **Permisos:**
+
 - Selector de rol (badge editable)
 - Lista de permisos por módulo (igual que en creación)
 - Botón "Guardar Cambios"
@@ -2404,6 +2539,7 @@ Breadcrumb: Configuración > Propiedades Personalizables
 Incluye link "¿Cómo funciona?" con ayuda contextual.
 
 **Filtro por tabs:**
+
 - Todas
 - Cuentas por cobrar
 - Cuentas por pagar
@@ -2411,35 +2547,36 @@ Incluye link "¿Cómo funciona?" con ayuda contextual.
 
 **Entidades (objetos) disponibles para campos personalizables:**
 
-| Entidad | Descripción |
-|---------|-------------|
-| Clientes | Campos custom en registros de clientes (Por Cobrar) |
-| Proveedores | Campos custom en registros de proveedores (Por Pagar) |
-| Documentos emitidos | Campos custom en facturas/documentos emitidos |
-| Documentos recibidos | Campos custom en facturas/documentos recibidos |
-| Pagos recibidos | Campos custom en pagos de clientes |
-| Pagos realizados | Campos custom en pagos a proveedores |
-| Conciliaciones de clientes | Campos custom en conciliaciones de cobro |
-| Conciliaciones de proveedores | Campos custom en conciliaciones de pago |
+| Entidad                       | Descripción                                           |
+| ----------------------------- | ----------------------------------------------------- |
+| Clientes                      | Campos custom en registros de clientes (Por Cobrar)   |
+| Proveedores                   | Campos custom en registros de proveedores (Por Pagar) |
+| Documentos emitidos           | Campos custom en facturas/documentos emitidos         |
+| Documentos recibidos          | Campos custom en facturas/documentos recibidos        |
+| Pagos recibidos               | Campos custom en pagos de clientes                    |
+| Pagos realizados              | Campos custom en pagos a proveedores                  |
+| Conciliaciones de clientes    | Campos custom en conciliaciones de cobro              |
+| Conciliaciones de proveedores | Campos custom en conciliaciones de pago               |
 
 Cada entidad muestra la cantidad de propiedades configuradas (ej: "Documentos emitidos - 32 Propiedades") y se puede expandir/colapsar para ver el detalle.
 
 Incluye búsqueda y botón "Crear propiedad".
 
 **Creación de campo personalizable** (modal "Nueva propiedad"):
+
 - "Las propiedades te permiten personalizar la información que registras en tus gestiones, como el tipo de contacto, motivo de no pago o responsable asignado."
 - **Objeto destino** (selector): Cliente, Proveedor, Documentos emitidos, Documentos recibidos, Pagos recibidos, Pagos realizados. "Selecciona dónde se usará esta propiedad. Esto determina dónde aparecerá y qué validaciones aplican."
 - **Nombre**: Nombre del campo personalizable
 - **Tipo** (selector):
 
-| Tipo | Descripción |
-|------|-------------|
-| Texto | Campo de texto libre |
-| Listado | Selector con opciones predefinidas |
-| Árbol de opciones (JSON) | Estructura jerárquica de opciones |
-| Numérico | Campo numérico |
-| Moneda | Campo de monto con moneda |
-| Fecha | Selector de fecha |
+| Tipo                     | Descripción                        |
+| ------------------------ | ---------------------------------- |
+| Texto                    | Campo de texto libre               |
+| Listado                  | Selector con opciones predefinidas |
+| Árbol de opciones (JSON) | Estructura jerárquica de opciones  |
+| Numérico                 | Campo numérico                     |
+| Moneda                   | Campo de monto con moneda          |
+| Fecha                    | Selector de fecha                  |
 
 - Botones: Cancelar / "Crear propiedad"
 
@@ -2461,11 +2598,11 @@ Permite conectar un proveedor de correo electrónico para que Sena envíe correo
 
 **Proveedores disponibles:**
 
-| Proveedor | Descripción |
-|-----------|-------------|
+| Proveedor   | Descripción                              |
+| ----------- | ---------------------------------------- |
 | **Outlook** | Gestiona tu Outlook directamente en Sena |
-| **Gmail** | Gestiona tu Gmail directamente en Sena |
-| **Zoho** | Gestiona tu Zoho directamente en Sena |
+| **Gmail**   | Gestiona tu Gmail directamente en Sena   |
+| **Zoho**    | Gestiona tu Zoho directamente en Sena    |
 
 - Modal "Integrar Email": "Conecta tu correo de Gmail, Outlook y Zoho. Autoriza a Sena a gestionar envíos y notificaciones desde tu cuenta de manera segura y centralizada, para tener toda tu comunicación en un solo lugar."
 - Aviso: "El correo sincronizado se utilizará en el CRM; todos los correos que envíes desde Sena saldrán desde esta cuenta."
@@ -2477,9 +2614,9 @@ Permite conectar un proveedor de correo electrónico para que Sena envíe correo
 
 Sena ofrece dos modalidades de WhatsApp según el caso de uso:
 
-| Modalidad | Descripción | Tecnología subyacente | Caso de uso |
-|-----------|-------------|----------------------|-------------|
-| **WhatsApp (con QR)** | Conecta tu WhatsApp o WhatsApp Business App mediante QR para chatear 1 a 1 con tus clientes | Evolution API | Comunicación individual (1 a 1) a través del CRM |
+| Modalidad                      | Descripción                                                                                     | Tecnología subyacente    | Caso de uso                                                           |
+| ------------------------------ | ----------------------------------------------------------------------------------------------- | ------------------------ | --------------------------------------------------------------------- |
+| **WhatsApp (con QR)**          | Conecta tu WhatsApp o WhatsApp Business App mediante QR para chatear 1 a 1 con tus clientes     | Evolution API            | Comunicación individual (1 a 1) a través del CRM                      |
 | **WhatsApp Business Platform** | Conecta WhatsApp a Meta para envíos masivos automatizados desde una cuenta comercial verificada | Capso (conecta con Meta) | Envíos masivos, campañas automatizadas, plantillas aprobadas por Meta |
 
 - **WhatsApp (con QR)**: Se escanea un código QR desde el celular para vincular la sesión. Ideal para chat directo con contactos individuales.
@@ -2489,11 +2626,11 @@ Sena ofrece dos modalidades de WhatsApp según el caso de uso:
 
 Permite sincronizar con entidades tributarias del país para importar documentos (facturas, boletas, etc.) de forma automática. La disponibilidad depende del país:
 
-| País | Servicio | Descripción |
-|------|----------|-------------|
-| **Perú** | SUNAT | Automatiza la gestión de tus obligaciones tributarias y el envío de comprobantes. Permite extraer documentos emitidos/recibidos directamente de SUNAT. |
-| **Chile** | SII (Servicio de Impuestos Internos) | Sincronización con el servicio tributario interno de Chile. |
-| **Colombia, Ecuador, México y otros** | No disponible | Actualmente no implementado. Sin integración con servicios tributarios. |
+| País                                  | Servicio                             | Descripción                                                                                                                                            |
+| ------------------------------------- | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Perú**                              | SUNAT                                | Automatiza la gestión de tus obligaciones tributarias y el envío de comprobantes. Permite extraer documentos emitidos/recibidos directamente de SUNAT. |
+| **Chile**                             | SII (Servicio de Impuestos Internos) | Sincronización con el servicio tributario interno de Chile.                                                                                            |
+| **Colombia, Ecuador, México y otros** | No disponible                        | Actualmente no implementado. Sin integración con servicios tributarios.                                                                                |
 
 Cada integración tributaria incluye botón "Sincronizar" y link "Ver Historial" para consultar el registro de sincronizaciones previas.
 
@@ -2516,6 +2653,7 @@ Botón: "+ Crear segmento"
 Wizard de 2 pasos mediante modal "Crear segmento":
 
 **Paso 1 de 2: Segmenta los clientes**
+
 - "Nombra el segmento y utiliza los filtros para segmentar los clientes."
 - **Nombre del segmento** (campo de texto, ej: "Segmento de clientes")
 - **Tabla de clientes**: Muestra todos los clientes disponibles para seleccionar.
@@ -2525,6 +2663,7 @@ Wizard de 2 pasos mediante modal "Crear segmento":
 - Navegación: Volver / Siguiente
 
 **Paso 2 de 2: Selecciona los contactos**
+
 - "Agregar o elimina los contactos asignados a cada cliente según lo necesites."
 - Muestra los contactos de los clientes seleccionados en el paso anterior.
 - Permite elegir qué contactos específicos de cada cliente serán parte del segmento.

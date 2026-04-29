@@ -22,6 +22,7 @@ source .claude/scripts/gh-isolated.sh || exit 1
 ```
 
 Esto:
+
 - Carga `.claude-credentials` (prioridad máxima sobre el keyring del SO).
 - Aísla `gh` con `GH_CONFIG_DIR` efímero, así `gh` ignora cualquier sesión del keyring que tenga otra cuenta.
 - Valida el token contra el repo con UN solo `curl`. Si falla → para de inmediato.
@@ -153,6 +154,7 @@ Si hay ramas con drift, mostrarlas al dev y ofrecer sincronizar:
 ```
 
 Si el dev confirma:
+
 - **Default: rebase** (`git rebase origin/dev` en cada rama elegida).
 - Si la rama tiene commits ya pusheados que comparte con otro dev → preferir `git merge origin/dev`.
 - Tras un rebase exitoso: `git push --force-with-lease origin <rama>` (nunca `--force` puro).
@@ -197,6 +199,7 @@ gh api -X GET search/issues \
 ```
 
 Partir el resultado en dos grupos en una sola pasada local:
+
 - `in_progress: true` → "Work-items en progreso".
 - `in_progress: false` → "Work-items asignados sin empezar".
 

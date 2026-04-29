@@ -1,4 +1,4 @@
-import { IntegracionesGrid } from "@/components/integraciones/IntegracionesGrid";
+import { IntegracionesGrid } from '@/components/integraciones/IntegracionesGrid'
 
 export default function IntegracionesPage() {
   return (
@@ -17,5 +17,5 @@ export default function IntegracionesPage() {
 
       <IntegracionesGrid />
     </div>
-  );
+  )
 }

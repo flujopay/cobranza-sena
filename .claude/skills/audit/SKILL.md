@@ -70,18 +70,18 @@ grep -rnE "(system|exec|popen|eval)\s*\(" --include="*.py" --include="*.ts" .
 
 ### 4. OWASP Top 10
 
-| ID | Categoría | Check específico |
-|---|---|---|
-| A01 | Broken Access Control | Cubierto en paso 2 |
-| A02 | Cryptographic Failures | Passwords con bcrypt/argon2; PII cifrado en reposo; TLS en todos los endpoints externos |
-| A03 | Injection | Cubierto en paso 3 |
-| A04 | Insecure Design | Lógica de negocio valida estado antes de actuar (no solo permisos) |
-| A05 | Security Misconfiguration | `DEBUG=False`, CORS restrictivo, headers de seguridad (CSP, HSTS) |
-| A06 | Vulnerable Components | Cubierto por `/secure` |
-| A07 | Auth Failures | Sesiones se invalidan en logout; IDs no predecibles (UUID v4, no incremental) |
-| A08 | Software/Data Integrity | Verificar firmas de dependencias críticas; no usar `npm install` sin lock |
-| A09 | Logging Failures | No loguear passwords, tokens, PII; loguear intentos fallidos de auth |
-| A10 | SSRF | URLs provistas por usuario se validan contra allowlist |
+| ID  | Categoría                 | Check específico                                                                        |
+| --- | ------------------------- | --------------------------------------------------------------------------------------- |
+| A01 | Broken Access Control     | Cubierto en paso 2                                                                      |
+| A02 | Cryptographic Failures    | Passwords con bcrypt/argon2; PII cifrado en reposo; TLS en todos los endpoints externos |
+| A03 | Injection                 | Cubierto en paso 3                                                                      |
+| A04 | Insecure Design           | Lógica de negocio valida estado antes de actuar (no solo permisos)                      |
+| A05 | Security Misconfiguration | `DEBUG=False`, CORS restrictivo, headers de seguridad (CSP, HSTS)                       |
+| A06 | Vulnerable Components     | Cubierto por `/secure`                                                                  |
+| A07 | Auth Failures             | Sesiones se invalidan en logout; IDs no predecibles (UUID v4, no incremental)           |
+| A08 | Software/Data Integrity   | Verificar firmas de dependencias críticas; no usar `npm install` sin lock               |
+| A09 | Logging Failures          | No loguear passwords, tokens, PII; loguear intentos fallidos de auth                    |
+| A10 | SSRF                      | URLs provistas por usuario se validan contra allowlist                                  |
 
 ### 5. Lógica de negocio sensible
 

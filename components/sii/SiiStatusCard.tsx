@@ -1,6 +1,6 @@
 // Mock — sin conexión activa todavía
 export function SiiStatusCard() {
-  const connected = false; // TODO: leer desde contexto/sesión real
+  const connected = false // TODO: leer desde contexto/sesión real
 
   return (
     <div className="rounded-xl border border-gray-200 bg-white p-5 flex items-center justify-between gap-4">
@@ -10,9 +10,7 @@ export function SiiStatusCard() {
           <span className="text-white text-sm font-bold tracking-tight">SII</span>
         </div>
         <div>
-          <p className="font-semibold text-gray-900 text-sm">
-            Servicio de Impuestos Internos
-          </p>
+          <p className="font-semibold text-gray-900 text-sm">Servicio de Impuestos Internos</p>
           <p className="text-xs text-gray-500 mt-0.5">sii.cl — Chile</p>
         </div>
       </div>
@@ -32,5 +30,5 @@ export function SiiStatusCard() {
         )}
       </div>
     </div>
-  );
+  )
 }

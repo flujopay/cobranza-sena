@@ -23,12 +23,12 @@ ya existentes, usar `/branches`.
 
 ## Modelo: 3 branches protegidas (GitFlow-light)
 
-| Branch | Rol | Protección |
-|---|---|---|
-| `main` | **Producción.** Solo recibe merges desde `staging` (y hotfixes). Tags de release. | 1 approval, status checks, no force-push, no deletion |
-| `staging` | **Pre-producción / QA.** Recibe merges desde `dev` al cerrar un release. | status checks, no force-push, no deletion |
-| `dev` | **Integración.** Default para work-items. | status checks, no force-push, no deletion |
-| `feature/*`, `refactor/*`, `fix/*`, `chore/*`, `hotfix/*` | Ramas de trabajo efímeras (una por work-item). | sin protección |
+| Branch                                                    | Rol                                                                               | Protección                                            |
+| --------------------------------------------------------- | --------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| `main`                                                    | **Producción.** Solo recibe merges desde `staging` (y hotfixes). Tags de release. | 1 approval, status checks, no force-push, no deletion |
+| `staging`                                                 | **Pre-producción / QA.** Recibe merges desde `dev` al cerrar un release.          | status checks, no force-push, no deletion             |
+| `dev`                                                     | **Integración.** Default para work-items.                                         | status checks, no force-push, no deletion             |
+| `feature/*`, `refactor/*`, `fix/*`, `chore/*`, `hotfix/*` | Ramas de trabajo efímeras (una por work-item).                                    | sin protección                                        |
 
 ## Flujo estándar (work-item + tasks)
 

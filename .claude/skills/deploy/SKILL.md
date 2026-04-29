@@ -88,16 +88,17 @@ git log --oneline -5
 
 **Tabla de recomendación por stack (si elige opción 2):**
 
-| Stack | Recomendado | Alternativas | Cuándo elegirlo |
-|---|---|---|---|
-| Next.js / React | **Vercel** | Railway, Fly.io, Netlify | SSR fácil, preview por PR, plan free generoso |
-| Django / FastAPI | **Railway** | Fly.io, Render, Cloud Run | DB Postgres incluida, deploy por git push |
-| Go | **Fly.io** | Railway, Cloud Run | Binario compacto, edge deploy global |
-| Flutter (web) | **Firebase Hosting** | Vercel, Netlify | Hosting estático + Firebase stack |
-| Flutter (móvil) | **Play Store / App Store** | Firebase App Distribution (beta) | Distribución oficial |
-| Cualquiera con DB | **Railway + Fly.io** | Render | DB gestionada + app separadas |
+| Stack             | Recomendado                | Alternativas                     | Cuándo elegirlo                               |
+| ----------------- | -------------------------- | -------------------------------- | --------------------------------------------- |
+| Next.js / React   | **Vercel**                 | Railway, Fly.io, Netlify         | SSR fácil, preview por PR, plan free generoso |
+| Django / FastAPI  | **Railway**                | Fly.io, Render, Cloud Run        | DB Postgres incluida, deploy por git push     |
+| Go                | **Fly.io**                 | Railway, Cloud Run               | Binario compacto, edge deploy global          |
+| Flutter (web)     | **Firebase Hosting**       | Vercel, Netlify                  | Hosting estático + Firebase stack             |
+| Flutter (móvil)   | **Play Store / App Store** | Firebase App Distribution (beta) | Distribución oficial                          |
+| Cualquiera con DB | **Railway + Fly.io**       | Render                           | DB gestionada + app separadas                 |
 
 **Criterios de decisión:**
+
 - **¿Presupuesto $0?** → Vercel (Next.js), Fly.io free tier
 - **¿Necesitas DB gestionada?** → Railway, Render
 - **¿Tráfico global?** → Fly.io, Cloud Run
@@ -116,6 +117,7 @@ git log --oneline -5
 Según el stack, generar un `Dockerfile` optimizado para producción:
 
 **Next.js / React:**
+
 ```dockerfile
 FROM node:22-alpine AS builder
 WORKDIR /app
@@ -135,6 +137,7 @@ CMD ["node", "server.js"]
 ```
 
 **Django:**
+
 ```dockerfile
 FROM python:3.12-slim
 WORKDIR /app
@@ -148,6 +151,7 @@ CMD ["uv", "run", "gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000
 ```
 
 **FastAPI:**
+
 ```dockerfile
 FROM python:3.12-slim
 WORKDIR /app
@@ -160,6 +164,7 @@ CMD ["uv", "run", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
 ```
 
 **Go:**
+
 ```dockerfile
 FROM golang:1.22-alpine AS builder
 WORKDIR /app
@@ -179,6 +184,7 @@ CMD ["/server"]
 Crear `.github/workflows/deploy.yml` según el proveedor:
 
 **Vercel (Next.js):**
+
 ```yaml
 name: Deploy to Vercel
 on:
@@ -207,6 +213,7 @@ jobs:
 ```
 
 **Railway (Django / FastAPI / Go):**
+
 ```yaml
 name: Deploy to Railway
 on:
@@ -225,6 +232,7 @@ jobs:
 ```
 
 **Fly.io (cualquier stack con Docker):**
+
 ```yaml
 name: Deploy to Fly.io
 on:
@@ -243,6 +251,7 @@ jobs:
 ```
 
 **CI genérico (tests + build, sin deploy):**
+
 ```yaml
 name: CI
 on:

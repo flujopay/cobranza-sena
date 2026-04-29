@@ -43,14 +43,14 @@ python manage.py runserver 2>&1 | tail -50
 
 ### 2. Clasificar el error
 
-| Tipo | Señales | Estrategia |
-|---|---|---|
-| **Error de lógica** | AssertionError, valores incorrectos | Leer el código + tests |
-| **Error de integración** | ConnectionError, timeout, 404/500 | Verificar credenciales, URLs, contratos de API |
-| **Error de entorno** | ModuleNotFoundError, missing env var | Verificar .env, deps instaladas |
-| **Error de tipos** | TypeError, undefined is not a function | Revisar interfaces y contratos |
-| **Error de concurrencia** | Race condition, deadlock | Revisar locks, transacciones |
-| **Error de build/CI** | Exit code 1 en workflow | Leer el paso fallido exacto |
+| Tipo                      | Señales                                | Estrategia                                     |
+| ------------------------- | -------------------------------------- | ---------------------------------------------- |
+| **Error de lógica**       | AssertionError, valores incorrectos    | Leer el código + tests                         |
+| **Error de integración**  | ConnectionError, timeout, 404/500      | Verificar credenciales, URLs, contratos de API |
+| **Error de entorno**      | ModuleNotFoundError, missing env var   | Verificar .env, deps instaladas                |
+| **Error de tipos**        | TypeError, undefined is not a function | Revisar interfaces y contratos                 |
+| **Error de concurrencia** | Race condition, deadlock               | Revisar locks, transacciones                   |
+| **Error de build/CI**     | Exit code 1 en workflow                | Leer el paso fallido exacto                    |
 
 ### 3. Localizar la causa raíz
 

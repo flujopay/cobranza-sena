@@ -30,6 +30,7 @@ Después de `/plan`, cuando hay un work-item con tasks listas para implementar. 
 5. **Si el repo es desconocido:** pedir al dev que señale los archivos clave en lugar de explorar
 
 Reglas:
+
 - **Antes de cada Read, preguntarse:** ¿este archivo es necesario para el cambio específico que voy a hacer?
 - **Tasks cerradas = no leer.** Si el work-item tiene 10 tasks y 3 están cerradas, solo cargo el body del padre + las 7 abiertas. El historial de las cerradas vive en `git log`, no en mi contexto.
 
@@ -69,6 +70,7 @@ Si no hay work-item en progreso → preguntar al dev qué work-item trabajar, o 
 ### 2. Leer el plan de la task
 
 Extraer del body de la task:
+
 - **Subtareas pendientes** (checkboxes)
 - **Criterios de aceptación**
 - **Tipo de cambio** (feat, fix, refactor, test, docs, chore, perf)
@@ -136,17 +138,20 @@ Si elige merge: `git merge origin/dev` + `git push`.
 Si el dev ya hizo este chequeo en esta sesión hace menos de 10 minutos (`_DRIFT_LAST_CHECK_AT`), saltar este paso silenciosamente. Tras un chequeo, actualizar el timestamp.
 
 **Excepciones:**
+
 - **Hotfix urgente** → rama `hotfix/<N>-<slug>` desde `main`. Confirmar con el dev.
 - **Task suelta sin work-item padre** → preguntar al dev si crear un work-item que la agrupe (incluso con una sola task). El patrón se mantiene uniforme.
 
 ### 4. Leer SOLO el contexto necesario
 
 **Sí leer:**
+
 - Archivos que el plan menciona explícitamente modificar
 - Tests existentes del módulo que vas a tocar (si existen)
 - La interfaz/tipo exacto que vas a usar (buscar por nombre, no leer el archivo completo)
 
 **No leer:**
+
 - Directorios completos sin motivo
 - Archivos de dependencias (`node_modules/`, `vendor/`, `.venv/`)
 - Builds o artefactos (`dist/`, `build/`, `__pycache__/`)
@@ -162,6 +167,7 @@ Si después de esto aún no tienes claridad: **pregúntale al dev qué archivo t
 ### 5. Implementar
 
 Ejecutar las subtareas de la task en orden:
+
 - Una subtarea a la vez
 - Verificar que el código nuevo no rompe importaciones existentes
 - Seguir las convenciones del stack (ver `.claude/rules/`)
@@ -185,6 +191,7 @@ flutter test
 ```
 
 Si los tests fallan:
+
 - Analizar el error
 - Corregir el código (no modificar los tests para que pasen)
 - Volver a correr
@@ -193,6 +200,7 @@ Si los tests fallan:
 ### 7. Verificar cobertura mínima
 
 El código nuevo debe tener al menos:
+
 - Happy path cubierto
 - Un caso de error cubierto
 - Sin tests vacíos (sin asserts)
@@ -239,6 +247,7 @@ Pasos:
 ### 10. Preparar para /build
 
 Verificar que todo está listo para commitear:
+
 ```bash
 git diff --stat
 git status

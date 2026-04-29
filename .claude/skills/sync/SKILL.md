@@ -63,14 +63,14 @@ grep -rn "<keyword-del-issue>" --include="*.py" --include="*.ts" --include="*.go
 
 ### 4. Clasificar cada issue
 
-| Estado detectado | Acción |
-|---|---|
-| **Resuelto en código, issue abierto** | Cerrar el issue con referencia al commit |
-| **Parcialmente resuelto** | Actualizar el body con lo que falta, agregar comment |
-| **Duplicado de otro issue** | Cerrar como duplicado, referenciar el original |
-| **Bloqueado por otro** | Agregar label `blocked`, referenciar el bloqueante |
-| **Plan desactualizado** | Actualizar el body del issue con el estado real |
-| **Asignado pero sin actividad > 5 días** | Comentar para verificar si sigue activo |
+| Estado detectado                         | Acción                                               |
+| ---------------------------------------- | ---------------------------------------------------- |
+| **Resuelto en código, issue abierto**    | Cerrar el issue con referencia al commit             |
+| **Parcialmente resuelto**                | Actualizar el body con lo que falta, agregar comment |
+| **Duplicado de otro issue**              | Cerrar como duplicado, referenciar el original       |
+| **Bloqueado por otro**                   | Agregar label `blocked`, referenciar el bloqueante   |
+| **Plan desactualizado**                  | Actualizar el body del issue con el estado real      |
+| **Asignado pero sin actividad > 5 días** | Comentar para verificar si sigue activo              |
 
 ### 5. Ejecutar acciones de reconciliación
 

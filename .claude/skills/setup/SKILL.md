@@ -37,6 +37,7 @@ git remote get-url origin 2>/dev/null
 ### 2. Identificar el stack exacto
 
 Detectar:
+
 - **Lenguaje y versión** (Node 22, Python 3.12, Go 1.22, Dart 3.x)
 - **Framework** (Next.js, Django, FastAPI, Gin, Flutter)
 - **Test runner** (Jest, pytest, go test, flutter test)
@@ -53,9 +54,11 @@ El archivo debe permitir que Claude empiece a trabajar sin hacer ninguna pregunt
 # CLAUDE.md
 
 ## Qué es este repo
+
 <1 párrafo: qué hace, para quién, cuál es su rol en el sistema>
 
 ## Stack
+
 - Lenguaje: <versión exacta>
 - Framework: <nombre y versión>
 - DB: <motor>
@@ -63,25 +66,31 @@ El archivo debe permitir que Claude empiece a trabajar sin hacer ninguna pregunt
 - Linter: <herramienta>
 
 ## Levantar localmente
+
 \`\`\`bash
 <comandos exactos para instalar deps y correr el servidor>
 \`\`\`
 
 ## Correr tests
+
 \`\`\`bash
 <comando exacto>
 \`\`\`
 
 ## Estructura clave
+
 <árbol de los directorios más importantes con una línea de descripción cada uno>
 
 ## Decisiones arquitectónicas importantes
+
 <patrones que se siguen, anti-patrones que se evitan, gotchas>
 
 ## Comunicación con otros servicios
+
 <qué endpoints consume, qué headers propaga, qué eventos emite>
 
 ## Convenciones
+
 <naming, estructura de archivos, estilo de imports>
 ```
 
@@ -89,13 +98,13 @@ El archivo debe permitir que Claude empiece a trabajar sin hacer ninguna pregunt
 
 Copiar las rules correspondientes al stack detectado:
 
-| Stack | Rules a incluir |
-|---|---|
-| Next.js / React | `commits.md`, `branching.md`, `tests.md`, `typescript.md` |
-| Django | `commits.md`, `branching.md`, `tests.md`, `python-django.md` |
-| FastAPI | `commits.md`, `branching.md`, `tests.md`, `python-fastapi.md` |
-| Go | `commits.md`, `branching.md`, `tests.md`, `go.md` |
-| Flutter | `commits.md`, `branching.md`, `tests.md`, `flutter.md` |
+| Stack           | Rules a incluir                                               |
+| --------------- | ------------------------------------------------------------- |
+| Next.js / React | `commits.md`, `branching.md`, `tests.md`, `typescript.md`     |
+| Django          | `commits.md`, `branching.md`, `tests.md`, `python-django.md`  |
+| FastAPI         | `commits.md`, `branching.md`, `tests.md`, `python-fastapi.md` |
+| Go              | `commits.md`, `branching.md`, `tests.md`, `go.md`             |
+| Flutter         | `commits.md`, `branching.md`, `tests.md`, `flutter.md`        |
 
 ### 5. Generar `.claude/skills/`
 

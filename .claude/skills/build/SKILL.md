@@ -31,6 +31,7 @@ git diff --stat
 ### 2. Confirmar commit con el dev (SIEMPRE, sin excepciones)
 
 **Nunca commitear sin preguntar.** Esto aplica a **cada** commit, sin excepciones:
+
 - Aunque sea el segundo, tercero o décimo commit de la sesión: preguntar.
 - Aunque la sesión anterior haya autorizado commits: preguntar de nuevo.
 - Aunque el dev haya dicho "vamos rápido": preguntar.
@@ -59,6 +60,7 @@ git commit -m "<tipo>(<scope>): descripción de la task (#<TASK_N>) — <tipo-pa
 ```
 
 **Reglas del mensaje (Conventional Commits):**
+
 - `<tipo>` = tipo de la task (`feat`, `fix`, `refactor`, `test`, `docs`, `chore`, `perf`).
 - `<scope>` = módulo afectado (ej: `payments`, `auth`, `api`).
 - `<tipo-padre>` = tipo del work-item (`feature`, `refactor`, `fix`, `chore`).
@@ -90,6 +92,7 @@ git push origin <work-branch>
 ```
 
 Si la rama no tiene upstream:
+
 ```bash
 git push -u origin <work-branch>
 ```
@@ -121,11 +124,13 @@ query($owner: String!, $repo: String!, $number: Int!) {
 ```
 
 **Si quedan tasks abiertas:**
+
 - No abrir PR todavía. El work-item sigue en progreso.
 - Preguntar al dev: "¿Continuamos con la siguiente task #N?"
 - Si confirma, marcar la siguiente task con label `in-progress` y volver a `/apply`.
 
 **Si todas las tasks están cerradas (work-item completo):**
+
 - Pasar al paso 6.
 
 ### 6. Cerrar el work-item y abrir el PR (con confirmación)
@@ -270,6 +275,7 @@ echo "¿Borrar la rama local y remota '$WORK_BRANCH'? [S/n]"
 ```
 
 **Reglas:**
+
 - Cierre del work-item padre y de tasks colgantes: **automático, sin preguntar.** El merge ya fue la decisión.
 - Borrado de rama local/remota: **sí se pregunta** — destructivo y no revertible sin trabajo.
 - **Nada queda en `in-progress` si el work-item ya está cerrado.** Si Claude detecta esa inconsistencia en una próxima `/init`, debe limpiar.

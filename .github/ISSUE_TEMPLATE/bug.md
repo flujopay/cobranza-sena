@@ -12,9 +12,9 @@ assignees: ''
 
 ## Pasos para reproducir
 
-1. 
-2. 
-3. 
+1.
+2.
+3.
 
 ## Comportamiento esperado
 
@@ -47,8 +47,8 @@ assignees: ''
 
 ## Entorno
 
-- Rama: 
-- Versión: 
+- Rama:
+- Versión:
 
 ## Rama de trabajo
 

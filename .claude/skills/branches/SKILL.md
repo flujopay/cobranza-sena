@@ -10,6 +10,7 @@ Audita el modelo de branches del repo actual y lo alinea con la regla del worksp
 para flujos con QA previo.
 
 Invocala cuando:
+
 - Incorporaste un repo nuevo y no corriste el normalizador del setup.
 - Un repo solo tiene `master` y quieres migrarlo a `main`.
 - Tu repo no tiene `dev` y quieres crearla sin configurarla a mano.
@@ -25,11 +26,11 @@ Detecta la cuenta con acceso al repo y exporta `GH_TOKEN` y `GITHUB_USER`.
 
 ## Modelo objetivo
 
-| Rama | Rol | ¿Obligatoria? |
-|---|---|---|
-| `main` | Producción — solo recibe merges desde `staging` o hotfixes. | Sí (puede llamarse `master` legacy) |
-| `dev` | Integración — base de todas las ramas de work-items (`feature/*`, `refactor/*`, `fix/*`, `chore/*`). | **Sí, siempre.** |
-| `staging` | Pre-producción / QA. | Opcional — preguntar al dev. |
+| Rama      | Rol                                                                                                  | ¿Obligatoria?                       |
+| --------- | ---------------------------------------------------------------------------------------------------- | ----------------------------------- |
+| `main`    | Producción — solo recibe merges desde `staging` o hotfixes.                                          | Sí (puede llamarse `master` legacy) |
+| `dev`     | Integración — base de todas las ramas de work-items (`feature/*`, `refactor/*`, `fix/*`, `chore/*`). | **Sí, siempre.**                    |
+| `staging` | Pre-producción / QA.                                                                                 | Opcional — preguntar al dev.        |
 
 ## Pasos
 
@@ -54,9 +55,11 @@ echo "Default: $DEFAULT_BRANCH"
 ### 2. Si default es `master` — ofrecer rename a `main`
 
 Preguntar al dev:
+
 > "Tu repo usa `master` como branch principal. El estándar actual es `main`. ¿Renombrar?"
 
 Si sí:
+
 ```bash
 gh api -X POST "repos/$OWNER/$REPO/branches/master/rename" -f new_name=main
 git fetch origin
@@ -82,9 +85,11 @@ Si ya existe → respetarla tal cual. No renombrar ni recrear.
 ### 4. `staging` — preguntar (opcional)
 
 Solo si no existe:
+
 > "¿Quieres crear también la rama `staging`? Es útil si haces QA antes de producción. Default: no."
 
 Si sí:
+
 ```bash
 git branch staging "origin/$DEFAULT_BRANCH"
 git push -u origin staging

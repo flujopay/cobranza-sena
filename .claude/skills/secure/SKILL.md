@@ -20,6 +20,7 @@ Detecta la cuenta con acceso al repo y exporta `GH_TOKEN` y `GITHUB_USER`.
 **Obligatorio antes de cada `/deploy`.** No es opcional.
 
 También antes de:
+
 - Merge a `main`
 - Promoción de `staging` a `main`
 - Primer deploy de un entorno nuevo
@@ -51,6 +52,7 @@ comm -23 /tmp/vars-example.txt /tmp/vars-github.txt
 ```
 
 Bloquear si:
+
 - Hay vars usadas en código que no están en `.env.example`
 - Hay vars en `.env.example` sin secret correspondiente en GitHub
 
