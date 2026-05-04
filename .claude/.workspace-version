@@ -1,39 +1,54 @@
 {
-  "version": "1.1.2",
+  "version": "1.1.7",
   "skills": {
-    "init": "cc49506669f34febed7b245a88f8d4696029fe2ee19a5d76b09e30a4f1fbc723",
-    "plan": "5309f62339646041e022e8026c3ff84ece4f69bddd62a31437760076c3d51bb1",
-    "apply": "7f282d42c1c3014a3986c58a84b56159457fad54bc49b30b1fc1af1f16f2dd44",
+    "init": "2777135bb91769732cdd40bf823fc47b798289d838f6186b6fa9c9d91d62f9e2",
+    "plan": "fb31e45af923e029624b0ea59e44c0dc049a4038b27826c45db16626799014bc",
+    "apply": "27159b351dea53ba6fdb27692f286f07119bd7f01e9040163e2bfa6cde967a2a",
     "test": "697fca5ed8124039fafe2ab34ccaaaeeede2cd709b23173c861acf5bd9042ecd",
-    "build": "57d96201feaac14f6df8cf4e180f75d752b2e9c5c7e8596e96d98a67cb0a8ae9",
+    "build": "8e14b54a0aa04c4a6a031e53a44b481712204371b8b51d50fc2a1d29af6c605e",
     "review": "a6852f36796b81f846f9b7f04ffcc7f91f1431e2f5a0d64639750bde96bbf8a3",
-    "secure": "92065b6c592d80744f6b4d8089de5a082c982d16380f9b3f0cb10162ffa787a4",
-    "deploy": "264f4dae2a5af0bf6fad03bc428ae72b03bca2d45292164fa07a70cad0552579",
+    "secure": "437c5a0696ddcb0f3558606021a1a2098a86e6c0b247d82ac88c2a881fcbd265",
+    "deploy": "2e215ad9e8cef9155322532c5af0b04de10310b3da5469f8a5f413c12dd9a6cb",
     "branches": "b4d385b4b63224be3eb7662cdd2e95c5799d075fadc6d47c58f8534c1d8121a6",
     "debug": "b574bd8cf83d64675cbd3a4a04216f682e1f90f9f89bd35e442ec04a788a25b2",
-    "audit": "ee0ad1f4309f6a8185c584dbb0ed6f103a68f9a130696711ad90ce0867d3082d",
-    "pentest": "f426592e94c21c6d9b4a0f5e6a82a50d6e3587f27d2658feb5a39f88cc0ab17e",
+    "audit": "8b811d279b6076bbd59d19483d0da16871c3e8cb766c795f51d5aaae7f334393",
+    "pentest": "f504e4bb7de39587d3230f4be743e95a82347ce61225729abf1ccd042bc7173b",
     "sync": "1468b35b4716bd4a4eaf964c4431c84b07a4757e852c80fe1a6b51b5a4654b34",
     "rollback": "121e1374e1a81adf6974f11120155f17af51cf72f62aa5adfafe961c8dff289c",
     "design": "f9ab665ea7d6a7f9d729b382cdd3fd72f905d0e49dcebefac2a7b56704322335",
     "triage": "8a72a168c75c10a76d000621f07505eb8ef8735367970813e477c669618b1611",
     "cross": "77b3bc439350fb2f12be73738a58b15aadedc38276840c947bfb53b90ecc3d79",
-    "setup": "6ede68bbcb51500b0f216b5fbb99bcc1cf49959429c8ce59dc27926422f9a325"
+    "setup": "6ede68bbcb51500b0f216b5fbb99bcc1cf49959429c8ce59dc27926422f9a325",
+    "tools": "bcd6da798687ad419b6a2c01f9e807cbdb4e2c437c416b4f4fd768ce9ef292fa"
   },
   "rules": {
     "branching.md": "58311e7579acbb3da3f67d1b2b21f73209b1b261d774b5ec4226b02cc6fb5186",
     "commits.md": "0a17cca22d9b48ae75dc85c3939d71fb85f16da1f898ad4989d868cfa6298fa0",
-    "tests.md": "c11197669d613142649c380f100842487dfe3f5bde543ddc33eed7d4f4593e13",
-    "typescript.md": "71d5ffa043d5ecbcfe1dfd7b64dea5daafbf9373167e0c72cc10bc618117da4c"
+    "tests.md": "b0134635200ac3323c723d0c1b50aaf3df13e4f1aa88151d28e8493f2f314399",
+    "typescript.md": "71d5ffa043d5ecbcfe1dfd7b64dea5daafbf9373167e0c72cc10bc618117da4c",
+    "flutter.md": "833f3b4943bf74f651c9c164d9bcbd3c17c39c21956c8dd8f008e8390fb3ee3e",
+    "go.md": "55583efd298f1850de47b4d4a36927f35a40d431853ded1312c4d9c7bc17f4bd",
+    "python-django.md": "10a08968a9b11b87e75a6feff662ecdb1e89e25b699427571c53f47607fc38cb",
+    "python-fastapi.md": "66ef9947931b671580ca070d535e0a86db2fdd134c2cb12cd618bfd432eb0f5a"
   },
   "scripts": {
     "gh-isolated.sh": "17cf8cb32170563cf1a16ce8d1971210a11dba33a2a29a25787312818d60d64d",
-    "resolve-gh-creds.sh": "ed8308952637461fbe04d7abeb44aa1823a351ec1f6a77283ed9b90c608ce443"
+    "resolve-gh-creds.sh": "ed8308952637461fbe04d7abeb44aa1823a351ec1f6a77283ed9b90c608ce443",
+    "no-edit-without-plan.sh": "4915d3bd97d9076799f4ec6ee960ab7a884118d39cff38bfe09248aa7c4c08d5"
   },
   "installedAt": "2026-04-29T13:15:42.476Z",
   "githubProject": {
     "number": 4,
     "url": "https://github.com/orgs/flujopay/projects/4",
     "owner": "flujopay"
-  }
+  },
+  "github": {
+    ".github/ISSUE_TEMPLATE/feature.md": "e9ce82456cc53993280092d926fd963075ad3572be9019bc1852f3427f4c03d5",
+    ".github/ISSUE_TEMPLATE/refactor.md": "fca06305282c21d7b89201fe024deaae6fd4f33e09c106d55458b6ab8d5c6195",
+    ".github/ISSUE_TEMPLATE/chore.md": "9f77ba85f72af2474698cb217d059d5b58a736e5518df1194586c067847bdae2",
+    ".github/ISSUE_TEMPLATE/bug.md": "c9cffee8c4d434490ef90be1ab2ed25b44cd73f29ffcc2488599cdaf35cca334",
+    ".github/ISSUE_TEMPLATE/task.md": "a21bfac02b8e34dcf3aae13177e84db32c7d275da3cc002377a0161b3549f497",
+    ".github/pull_request_template.md": "d8b1165aff86dea1336e46e065fdfdb15fc111b1017006bc249e59aa573e9cf9"
+  },
+  "updatedAt": "2026-05-04T05:41:31.686Z"
 }
