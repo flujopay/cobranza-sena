@@ -23,6 +23,38 @@ Después de `/apply`, cuando una task está terminada y los tests pasan. Tambié
 
 ## Pasos
 
+### 0. Short-circuit: ¿el work-item ya tiene PR abierto y nada por commitear?
+
+Antes de cualquier otra cosa, detectar si el dev está invocando `/build` sobre un work-item cuyo PR ya está abierto y sin cambios locales pendientes. En ese caso, el dev probablemente quiere **decidir cómo cerrar el ciclo del PR** (review, self-merge, auto-merge, asignar reviewer) — no abrir uno nuevo ni commitear de cero.
+
+Hoy esas 4 opciones de merge solo se mostraban cuando `/build` abría el PR en la misma invocación; si el PR venía de una sesión previa, el flujo no las exponía. Este paso 0 corrige eso: las 4 opciones siempre están disponibles mientras el PR esté abierto.
+
+```bash
+source .claude/scripts/gh-isolated.sh || exit 1
+
+# Identificar work-item activo del dev (mismo criterio que /apply paso 1)
+PARENT_N=$(gh issue list --assignee @me --state open --label "in-progress" \
+  --json number,labels \
+  --jq '.[] | select(.labels[] | .name | IN("feature","refactor","fix","chore")) | .number' \
+  | head -1)
+
+# Si no hay PARENT_N (raro: invocación de /build sin work-item activo),
+# saltar este paso 0 entero y dejar que el flujo normal decida qué hacer.
+if [ -n "$PARENT_N" ]; then
+  PR_NUMBER=$(gh pr list --search "in:body \"#${PARENT_N}\"" --state open \
+    --json number --jq '.[0].number')
+  HAS_CHANGES=$([ -n "$(git status --porcelain)" ] && echo 1 || echo 0)
+fi
+```
+
+Decisión:
+
+- **`PR_NUMBER` existe y `HAS_CHANGES == 0`** → saltar directamente al **paso 6.6** (Elegir el camino de review/merge), reusando el `$PR_NUMBER` ya detectado. No pasar por los pasos 1–6.5 (no hay nada que commitear ni que pushear; el PR ya existe).
+
+- **`PR_NUMBER` existe y `HAS_CHANGES == 1`** → seguir al paso 1 normalmente: hay cambios pendientes que probablemente cierran otra task del mismo work-item. Tras commitear, al llegar al paso 6, si el PR ya estaba abierto, pasar también al paso 6.6 (no reabrir el PR; solo ofrecer las opciones de cierre).
+
+- **No hay `PR_NUMBER`** (PR aún no abierto) → flujo normal desde el paso 1.
+
 ### 1. Revisar cambios + guardrail "diff multi-task"
 
 ```bash
@@ -60,7 +92,6 @@ Si el dev elige 2 → salir sin tocar nada.
 ### 2. Confirmar commit con el dev (SIEMPRE, sin excepciones)
 
 **Nunca commitear sin preguntar.** Esto aplica a **cada** commit, sin excepciones:
-
 - Aunque sea el segundo, tercero o décimo commit de la sesión: preguntar.
 - Aunque la sesión anterior haya autorizado commits: preguntar de nuevo.
 - Aunque el dev haya dicho "vamos rápido": preguntar.
@@ -89,7 +120,6 @@ git commit -m "<tipo>(<scope>): descripción de la task (#<TASK_N>) — <tipo-pa
 ```
 
 **Reglas del mensaje (Conventional Commits):**
-
 - `<tipo>` = tipo de la task (`feat`, `fix`, `refactor`, `test`, `docs`, `chore`, `perf`).
 - `<scope>` = módulo afectado (ej: `payments`, `auth`, `api`).
 - `<tipo-padre>` = tipo del work-item (`feature`, `refactor`, `fix`, `chore`).
@@ -100,11 +130,11 @@ git commit -m "<tipo>(<scope>): descripción de la task (#<TASK_N>) — <tipo-pa
 
 **Modos de push (configuración por work-item):**
 
-| Modo              | Cuándo pushea                                                          | Para quién                                                                                                |
-| ----------------- | ---------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| `on-pr` (default) | **Solo cuando todas las tasks cerraron** y el dev confirma abrir el PR | Solo-dev / work-items cortos / ramas con CI ruidoso o pre-push hooks lentos                               |
-| `per-task`        | Después de cada commit (comportamiento clásico)                        | Equipos grandes, ramas compartidas con otros devs, work-items largos donde quieres backup remoto continuo |
-| `manual`          | Solo cuando el dev lo pide explícitamente                              | Devs que prefieren control total (raro, pero válido)                                                      |
+| Modo | Cuándo pushea | Para quién |
+|---|---|---|
+| `on-pr` (default) | **Solo cuando todas las tasks cerraron** y el dev confirma abrir el PR | Solo-dev / work-items cortos / ramas con CI ruidoso o pre-push hooks lentos |
+| `per-task` | Después de cada commit (comportamiento clásico) | Equipos grandes, ramas compartidas con otros devs, work-items largos donde quieres backup remoto continuo |
+| `manual` | Solo cuando el dev lo pide explícitamente | Devs que prefieren control total (raro, pero válido) |
 
 **Default: `on-pr`.** Pushear por cada task ensucia el feed del repo, dispara CI N veces y multiplica el costo de pre-push hooks lentos. Para el caso típico (1 dev, 1 work-item, 4-8 tasks), pushear una sola vez al final es lo correcto.
 
@@ -217,7 +247,9 @@ Si elige 1 → marcar #43 con `in-progress` y delegar a `/apply`. Si elige 2 →
 
 ### 6. Última task cerrada — preguntar qué hacer con el work-item
 
-**No abrir el PR automáticamente.** El dev puede querer agregar más tasks antes de cerrar el work-item, o dejarlo abierto sin PR por algún motivo. Preguntar:
+**Si el work-item ya tiene un PR abierto** (caso de invocación previa que abrió el PR y se commitearon más cambios después): saltar al **paso 6.6** directamente con ese `$PR_NUMBER`. No reabrir, no preguntar; lo único que falta es decidir cómo cerrar el ciclo del PR.
+
+**Si no hay PR abierto:** el dev puede querer agregar más tasks antes de cerrar el work-item, o dejarlo abierto sin PR por algún motivo. Preguntar:
 
 ```
 ✓ Última task del work-item #12 cerrada.
@@ -326,7 +358,9 @@ gh issue edit $PARENT_N --add-label "review" --remove-label "in-progress"
 
 ### 6.6. Elegir el camino de review/merge
 
-Una vez abierto el PR, preguntar al dev cómo quiere cerrar el ciclo. **Esta decisión es del dev, no de Claude** — nunca mergear automáticamente sin que el dev lo pida.
+**Entry points:** este paso se ejecuta **siempre que haya un PR abierto del work-item**, vengas del paso 0 (PR preexistente sin cambios), del paso 6.5 (PR recién abierto) o del paso 6 (PR preexistente con commits nuevos ya pusheados). Las 4 opciones siguientes son la única forma de cerrar el ciclo desde `/build`, así que no se pueden saltar mientras el PR esté abierto.
+
+Preguntar al dev cómo quiere cerrar el ciclo. **Esta decisión es del dev, no de Claude** — nunca mergear automáticamente sin que el dev lo pida.
 
 ```
 PR #19 abierto → https://github.com/<owner>/<repo>/pull/19
@@ -375,7 +409,6 @@ esac
 ```
 
 **Reglas:**
-
 - **Default = opción 1 (dejar para review humano).** No es deuda técnica esperar review — es el workflow correcto en equipos.
 - **Opción 2 (self-merge) solo tiene sentido para solo-devs** o repos donde el dev tiene permisos de merge directo. Si la rama protegida `dev` requiere review, esto fallará y se reporta el error sin reintentos creativos.
 - **Opción 3 (auto-merge) requiere "Allow auto-merge" habilitado** en Settings del repo. Si no está, sugerir habilitarlo y caer a opción 1 o 4.
@@ -490,7 +523,6 @@ Otros work-items abiertos:
 Si elige tomar uno → asignárselo y delegar a `/apply` (que pasará por su chequeo de ownership y creará la rama). Si elige terminar → cerrar la invocación.
 
 **Reglas:**
-
 - Cierre del work-item padre y de tasks colgantes: **automático, sin preguntar.** El merge ya fue la decisión.
 - Borrado de rama local/remota: **sí se pregunta** — destructivo y no revertible sin trabajo.
 - **Nada queda en `in-progress` si el work-item ya está cerrado.** Si Claude detecta esa inconsistencia en una próxima `/init`, debe limpiar.

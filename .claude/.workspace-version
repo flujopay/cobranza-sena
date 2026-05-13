@@ -1,11 +1,11 @@
 {
-  "version": "1.1.7",
+  "version": "1.1.8",
   "skills": {
-    "init": "2777135bb91769732cdd40bf823fc47b798289d838f6186b6fa9c9d91d62f9e2",
-    "plan": "fb31e45af923e029624b0ea59e44c0dc049a4038b27826c45db16626799014bc",
-    "apply": "27159b351dea53ba6fdb27692f286f07119bd7f01e9040163e2bfa6cde967a2a",
+    "init": "bad72edfe515ffcc6fe5ca63b2b0f183b4fd2260baee2f761bd41ca54b60408e",
+    "plan": "d31b77de777d1e1ef3b4065d4af8614d532d95471ff946c92d959f4489b42e8f",
+    "apply": "002f6f6ee97749071e932d2b18992e66b4b20f3f7f92716ec8d40fdc53739c1d",
     "test": "697fca5ed8124039fafe2ab34ccaaaeeede2cd709b23173c861acf5bd9042ecd",
-    "build": "8e14b54a0aa04c4a6a031e53a44b481712204371b8b51d50fc2a1d29af6c605e",
+    "build": "679d35490d1182dbefa06fea1a362c3082d5faa0e378f762f90cc20f560d9840",
     "review": "a6852f36796b81f846f9b7f04ffcc7f91f1431e2f5a0d64639750bde96bbf8a3",
     "secure": "437c5a0696ddcb0f3558606021a1a2098a86e6c0b247d82ac88c2a881fcbd265",
     "deploy": "2e215ad9e8cef9155322532c5af0b04de10310b3da5469f8a5f413c12dd9a6cb",
@@ -50,5 +50,5 @@
     ".github/ISSUE_TEMPLATE/task.md": "a21bfac02b8e34dcf3aae13177e84db32c7d275da3cc002377a0161b3549f497",
     ".github/pull_request_template.md": "d8b1165aff86dea1336e46e065fdfdb15fc111b1017006bc249e59aa573e9cf9"
   },
-  "updatedAt": "2026-05-04T05:41:31.686Z"
+  "updatedAt": "2026-05-13T11:55:55.611Z"
 }

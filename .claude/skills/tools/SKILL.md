@@ -9,10 +9,10 @@ Verifica e instala las herramientas complementarias recomendadas para este works
 
 ## Herramientas disponibles
 
-| Herramienta       | Para qué sirve                                                                                                 |
-| ----------------- | -------------------------------------------------------------------------------------------------------------- |
-| **Context7**      | Inyecta docs actualizadas de cualquier librería directamente en tu prompt — elimina respuestas desactualizadas |
-| **UI UX Pro Max** | Inteligencia de diseño: estilos, paletas, tipografía, componentes y accesibilidad                              |
+| Herramienta | Para qué sirve |
+|---|---|
+| **Context7** | Inyecta docs actualizadas de cualquier librería directamente en tu prompt — elimina respuestas desactualizadas |
+| **UI UX Pro Max** | Inteligencia de diseño: estilos, paletas, tipografía, componentes y accesibilidad |
 
 ## Pasos
 
@@ -29,13 +29,11 @@ uipro --version 2>/dev/null && echo "✓ UI UX Pro Max instalado" || echo "✗ U
 ### 2. Instalar las que falten
 
 **Context7:**
-
 ```bash
 npx ctx7 setup --claude
 ```
 
 **UI UX Pro Max:**
-
 ```bash
 npm install -g uipro-cli
 uipro init --ai claude
@@ -44,13 +42,11 @@ uipro init --ai claude
 ### 3. Verificar instalación
 
 Después de instalar, confirma que Claude Code reconoce las herramientas:
-
 - Context7: escribe `use context7` al final de cualquier prompt
 - UI UX Pro Max: invoca `/design` en este workspace
 
 ## Siguiente paso
 
 Con las herramientas instaladas, retoma el flujo normal:
-
 - `/init` — revisar estado del repo e issues activos
 - `/design` — ahora con UI UX Pro Max disponible

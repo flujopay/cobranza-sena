@@ -5,7 +5,6 @@
 ## Work-item
 
 Closes #
-
 <!-- Número del work-item padre (feature, refactor, fix o chore) que cierra este PR -->
 
 ## Tasks incluidas

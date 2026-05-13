@@ -20,12 +20,12 @@ Cuando el dev quiere planificar trabajo. Puede invocarse explícitamente o por i
 
 ## Tipos de work-item
 
-| Tipo         | Cuándo usarlo                               | Label      | Prefijo de rama       |
-| ------------ | ------------------------------------------- | ---------- | --------------------- |
-| **feature**  | Funcionalidad nueva                         | `feature`  | `feature/<N>-<slug>`  |
-| **refactor** | Mejorar código sin cambiar comportamiento   | `refactor` | `refactor/<N>-<slug>` |
-| **fix**      | Corregir un bug o comportamiento incorrecto | `fix`      | `fix/<N>-<slug>`      |
-| **chore**    | Mantenimiento técnico (deps, CI, tooling)   | `chore`    | `chore/<N>-<slug>`    |
+| Tipo | Cuándo usarlo | Label | Prefijo de rama |
+|---|---|---|---|
+| **feature** | Funcionalidad nueva | `feature` | `feature/<N>-<slug>` |
+| **refactor** | Mejorar código sin cambiar comportamiento | `refactor` | `refactor/<N>-<slug>` |
+| **fix** | Corregir un bug o comportamiento incorrecto | `fix` | `fix/<N>-<slug>` |
+| **chore** | Mantenimiento técnico (deps, CI, tooling) | `chore` | `chore/<N>-<slug>` |
 
 Las **tasks** dentro de cualquier work-item pueden ser de tipos mixtos (feat, refactor, test, docs, fix) — el tipo de la task se refleja en su mensaje de commit (Conventional Commits).
 
@@ -61,7 +61,6 @@ source .claude/scripts/gh-isolated.sh || exit 1
 ### 1. Entender el scope completo
 
 Preguntar al dev:
-
 - ¿Qué quiere hacer? (descripción libre — puede mencionar varias cosas)
 - ¿Qué repos afecta?
 
@@ -91,10 +90,49 @@ Mencionaste dos cosas: "rediseño de productos" y "pasarela de pagos".
 
 Si el dev mencionó una sola cosa con muchas piezas internas → **un solo work-item**, no preguntar.
 
+### 1.5 Chequeo de overlap con trabajo en progreso (paralelismo de chats)
+
+Antes de proponer el plan, verificar si los archivos/módulos que el dev mencionó se solapan con ramas de otros work-items `in-progress`. Esto evita que dos chats paralelos terminen tocando los mismos archivos sin saberlo y choquen al mergear.
+
+```bash
+git fetch origin --prune --quiet
+
+# Ramas remotas de work-items vivos (no incluye HEAD ni dev)
+ACTIVE_BRANCHES=$(git for-each-ref --format='%(refname:short)' refs/remotes/origin/ \
+  | grep -E '^origin/(feature|refactor|fix|chore|hotfix)/' \
+  | grep -v 'HEAD')
+
+# Por cada rama activa, listar archivos modificados respecto a dev
+for branch in $ACTIVE_BRANCHES; do
+  files=$(git diff --name-only "origin/dev...$branch" 2>/dev/null)
+  [ -n "$files" ] && echo "=== $branch ===" && echo "$files"
+done
+```
+
+Cruzar contra los archivos/módulos que el dev mencionó al describir el scope (paths explícitos en su descripción, módulos del stack según el tipo de trabajo). Si hay overlap → **advertir antes de proponer el plan**:
+
+```
+⚠  Overlap detectado con trabajo en progreso de otros chats/devs:
+
+   feature/15-checkout (asignado a @otro-dev) toca:
+     src/components/PaymentForm.tsx   ← también en lo que describiste
+     src/lib/payments/stripe.ts       ← también en lo que describiste
+
+¿Cómo continuamos?
+  1. Coordinar primero con @otro-dev y replantear el scope (recomendado)
+  2. Reducir el scope de este plan para no tocar esos archivos
+  3. Continuar igual (resolveré conflictos al mergear)
+```
+
+Si no hay overlap → seguir al paso 2 sin avisar nada (no contaminar el output con un "✓ Sin overlap" en cada `/plan`).
+
+**Cuándo saltar este paso:**
+- Si el dev no nombró archivos ni módulos concretos y la descripción es de muy alto nivel ("agregar onboarding"), no se puede inferir overlap → saltar y dejar que el chequeo más fino lo haga `/apply` cuando ya conoce los archivos.
+- Si no hay ramas activas remotas → saltar.
+
 ### 2. Inferir tipo de cada work-item
 
 Por cada work-item identificado, inferir tipo del lenguaje del dev:
-
 - "agregar / crear / implementar / integrar" → **feature**
 - "mejorar / migrar / extraer / limpiar / reorganizar" → **refactor**
 - "corregir / arreglar / no funciona / falla / bug" → **fix**

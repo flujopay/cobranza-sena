@@ -22,7 +22,6 @@ Detecta la cuenta con acceso al repo y exporta `GH_TOKEN` y `GITHUB_USER`.
 - Periódicamente sobre `main` para detectar regresiones.
 
 **Diferencia con otros skills:**
-
 - `/secure` → mira el **próximo deploy** (rápido, bloqueante)
 - `/audit` → mira el **PR actual** (profundo en lo que cambió)
 - `/pentest` → mira **todo el proyecto** (exhaustivo, periódico)
@@ -39,7 +38,6 @@ Work-item padre  ([AUDIT] fix)                ← issue padre
 ```
 
 Reglas:
-
 - **Cada hallazgo Critical/High/Medium es una task** (sub-issue nativo del padre vía `addSubIssue`).
 - Los **labels describen severidad y categoría OWASP**, no narrativa libre.
 - El **body de la task** explica problema, impacto y **remediación propuesta** con diff.
@@ -95,18 +93,18 @@ grep -rnE "(system|exec|popen|eval)\s*\(" --include="*.py" --include="*.ts" .
 
 ### 4. OWASP Top 10
 
-| ID  | Categoría                 | Check específico                                                                        |
-| --- | ------------------------- | --------------------------------------------------------------------------------------- |
-| A01 | Broken Access Control     | Cubierto en paso 2                                                                      |
-| A02 | Cryptographic Failures    | Passwords con bcrypt/argon2; PII cifrado en reposo; TLS en todos los endpoints externos |
-| A03 | Injection                 | Cubierto en paso 3                                                                      |
-| A04 | Insecure Design           | Lógica de negocio valida estado antes de actuar (no solo permisos)                      |
-| A05 | Security Misconfiguration | `DEBUG=False`, CORS restrictivo, headers de seguridad (CSP, HSTS)                       |
-| A06 | Vulnerable Components     | Cubierto por `/secure`                                                                  |
-| A07 | Auth Failures             | Sesiones se invalidan en logout; IDs no predecibles (UUID v4, no incremental)           |
-| A08 | Software/Data Integrity   | Verificar firmas de dependencias críticas; no usar `npm install` sin lock               |
-| A09 | Logging Failures          | No loguear passwords, tokens, PII; loguear intentos fallidos de auth                    |
-| A10 | SSRF                      | URLs provistas por usuario se validan contra allowlist                                  |
+| ID | Categoría | Check específico |
+|---|---|---|
+| A01 | Broken Access Control | Cubierto en paso 2 |
+| A02 | Cryptographic Failures | Passwords con bcrypt/argon2; PII cifrado en reposo; TLS en todos los endpoints externos |
+| A03 | Injection | Cubierto en paso 3 |
+| A04 | Insecure Design | Lógica de negocio valida estado antes de actuar (no solo permisos) |
+| A05 | Security Misconfiguration | `DEBUG=False`, CORS restrictivo, headers de seguridad (CSP, HSTS) |
+| A06 | Vulnerable Components | Cubierto por `/secure` |
+| A07 | Auth Failures | Sesiones se invalidan en logout; IDs no predecibles (UUID v4, no incremental) |
+| A08 | Software/Data Integrity | Verificar firmas de dependencias críticas; no usar `npm install` sin lock |
+| A09 | Logging Failures | No loguear passwords, tokens, PII; loguear intentos fallidos de auth |
+| A10 | SSRF | URLs provistas por usuario se validan contra allowlist |
 
 ### 5. Lógica de negocio sensible
 
@@ -156,7 +154,6 @@ done
 ```
 
 Colores recomendados (no bloquea si fallan):
-
 - `severity-critical` → `B60205`
 - `severity-high` → `D93F0B`
 - `severity-medium` → `FBCA04`

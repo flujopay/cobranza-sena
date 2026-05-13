@@ -34,7 +34,6 @@ Después de `/plan` (si el dev eligió arrancar un work-item del lote) o desde `
 5. **Si el repo es desconocido:** pedir al dev que señale los archivos clave en lugar de explorar.
 
 Reglas:
-
 - **Antes de cada Read, preguntarse:** ¿este archivo es necesario para esta task específica?
 - **Tasks no activas = no leer.** Solo el padre + la task activa.
 
@@ -67,7 +66,6 @@ Opciones:
 ```
 
 **Solo se sale del guardrail si:**
-
 - El dev acaba de invocar `/plan` y eligió "arrancar #N" (entonces `/apply` recibe `#N` como argumento explícito).
 - El dev acaba de invocar `/init` y eligió "continuar/empezar #N".
 - Hay exactamente un work-item asignado `in-progress` y se asume continuación.
@@ -117,7 +115,6 @@ Decidir según los casos:
 - **Caso A — sin asignar, sin label `in-progress`:** está libre. Lo tomo: asignármelo + agregar label `in-progress` (paso 3.5).
 - **Caso B — asignado a mí + `in-progress`:** ya es mío. Continuar.
 - **Caso C — asignado a otro dev + `in-progress`:** **otra persona lo tomó**. Parar y avisar:
-
   ```
   ⛔ El work-item #12 está siendo trabajado por @otro-dev.
      (Asignado: @otro-dev, label `in-progress`)
@@ -127,7 +124,6 @@ Decidir según los casos:
     2. Coordinar con @otro-dev y dejar este flujo
     3. Cancelar
   ```
-
   No modificar nada del work-item ajeno. No crear rama. No editar código.
 
 - **Caso D — asignado pero sin `in-progress`** (raro): preguntar al dev si quiere apropiarse del work-item antes de continuar.
@@ -135,7 +131,6 @@ Decidir según los casos:
 ### 3. Leer el plan de la task activa
 
 Extraer del body de la task:
-
 - **Subtareas pendientes** (checkboxes)
 - **Criterios de aceptación**
 - **Tipo de cambio** (feat, fix, refactor, test, docs, chore, perf)
@@ -206,6 +201,53 @@ Puedes cambiarlo en cualquier momento diciéndome \"cambia el push mode a <modo>
 
 **Override por chat:** si en cualquier momento del work-item el dev dice "cambia el push mode a per-task" / "ya no pushees hasta el final" / etc., actualizar el tag con un nuevo comentario (gana el más reciente).
 
+### 3.8 Chequeo de overlap con otras ramas activas (paralelismo de chats)
+
+Antes de crear la rama, verificar si los archivos que esta task planea tocar (según `## Notas técnicas` del body de la task activa) se solapan con archivos modificados en ramas de otros work-items `in-progress`. Esto previene colisiones entre chats paralelos antes de que empiecen a editar.
+
+```bash
+git fetch origin --prune --quiet
+
+# Extraer paths declarados en "Notas técnicas" del body de la task activa
+PLANNED_FILES=$(echo "$TASK_BODY" | sed -n '/## Notas técnicas/,/^## /p' \
+  | grep -oE '[a-zA-Z0-9_./-]+\.(ts|tsx|js|jsx|py|go|rb|java|kt|swift|dart|md)' \
+  | sort -u)
+
+# Ramas remotas de OTROS work-items vivos (excluir la del work-item actual)
+# La rama del work-item actual matchea por su número: <tipo>/<PARENT_N>-...
+OTHER_BRANCHES=$(git for-each-ref --format='%(refname:short)' refs/remotes/origin/ \
+  | grep -E '^origin/(feature|refactor|fix|chore|hotfix)/' \
+  | grep -vE "^origin/(feature|refactor|fix|chore|hotfix)/${PARENT_N}-" \
+  | grep -v 'HEAD')
+
+OVERLAP_REPORT=""
+for branch in $OTHER_BRANCHES; do
+  branch_files=$(git diff --name-only "origin/dev...$branch" 2>/dev/null)
+  shared=$(comm -12 <(echo "$PLANNED_FILES" | sort) <(echo "$branch_files" | sort))
+  [ -n "$shared" ] && OVERLAP_REPORT+="\n  $branch toca:\n$(echo "$shared" | sed 's/^/    /')\n"
+done
+```
+
+Si `OVERLAP_REPORT` no está vacío → **bloquear** y preguntar:
+
+```
+⚠  Overlap detectado con trabajo en progreso de otros work-items:
+$OVERLAP_REPORT
+   Si arrancas igual, ambos chats editarán los mismos archivos en paralelo
+   y vas a tener conflictos al mergear.
+
+Opciones:
+  1. Coordinar con el dev de la otra rama antes de empezar
+  2. Replantificar esta task para evitar esos archivos (/plan)
+  3. Continuar igual (asumiré los conflictos al mergear)
+```
+
+Si elige 1 o 2 → abortar `/apply` sin crear la rama. Si elige 3 → seguir al paso 4.
+
+**Cuándo saltar este paso:**
+- Si la task no declara archivos en `## Notas técnicas`, no hay forma de cruzar → saltar (el overlap se detectará tarde, al mergear).
+- Si no hay ramas remotas activas distintas a la del work-item → saltar.
+
 ### 4. Verificar / crear rama de trabajo
 
 ```bash
@@ -263,19 +305,16 @@ Si elige merge: `git merge origin/dev` + `git push`.
 Si el dev ya hizo este chequeo en esta sesión hace menos de 10 minutos (`_DRIFT_LAST_CHECK_AT`), saltar este paso silenciosamente. Tras un chequeo, actualizar el timestamp.
 
 **Excepciones:**
-
 - **Hotfix urgente** → rama `hotfix/<N>-<slug>` desde `main`. Confirmar con el dev.
 
 ### 5. Leer SOLO el contexto necesario
 
 **Sí leer:**
-
 - Archivos que el plan menciona explícitamente modificar
 - Tests existentes del módulo que vas a tocar (si existen)
 - La interfaz/tipo exacto que vas a usar (buscar por nombre, no leer el archivo completo)
 
 **No leer:**
-
 - Directorios completos sin motivo
 - Archivos de dependencias (`node_modules/`, `vendor/`, `.venv/`)
 - Builds o artefactos (`dist/`, `build/`, `__pycache__/`)
@@ -291,13 +330,11 @@ Si después de esto aún no tienes claridad: **pregúntale al dev qué archivo t
 ### 6. Implementar SOLO la task activa
 
 Ejecutar las subtareas de **la task activa** en orden:
-
 - Una subtarea a la vez
 - Verificar que el código nuevo no rompe importaciones existentes
 - Seguir las convenciones del stack (ver `.claude/rules/`)
 
 **Prohibido:**
-
 - Tocar archivos que pertenecen a otra task del work-item.
 - Implementar parcialmente la siguiente task "porque ya estaba ahí".
 - Refactorizar código fuera del alcance declarado en el body de la task.
@@ -308,16 +345,16 @@ Si descubres que la task se solapa con otra → parar, comentarlo en el work-ite
 
 `/apply` detecta el gate apropiado según el stack del repo y lo corre **una sola vez**, sin watchers, sin browsers headed, sin prompts. Detección y comandos:
 
-| Stack detectado                                           | Framework del gate | Comando                                                                 |
-| --------------------------------------------------------- | ------------------ | ----------------------------------------------------------------------- |
-| **Django** (con pytest)                                   | `pytest`           | `uv run pytest -x -q --tb=short` (o `pytest -x -q --tb=short` sin `uv`) |
-| **Django** (sin pytest)                                   | django-test        | `python manage.py test --keepdb -v 1`                                   |
-| **FastAPI**                                               | `pytest`           | `uv run pytest -x -q --tb=short`                                        |
-| **Go**                                                    | `go test`          | `go test -short -count=1 ./...`                                         |
-| **Flutter**                                               | `flutter test`     | `flutter test --reporter compact`                                       |
-| **React Native** (con jest)                               | `jest`             | `<pkg-mgr> test -- --ci --reporters=default`                            |
-| **Frontend web** (Next/React/Vue/Nuxt) **con Playwright** | `playwright`       | `<pkg-mgr> run test:e2e`                                                |
-| **Frontend web sin Playwright**                           | (ninguno)          | Sugerencia de chore para integrarlo (no bloquea)                        |
+| Stack detectado | Framework del gate | Comando |
+|---|---|---|
+| **Django** (con pytest) | `pytest` | `uv run pytest -x -q --tb=short` (o `pytest -x -q --tb=short` sin `uv`) |
+| **Django** (sin pytest) | django-test | `python manage.py test --keepdb -v 1` |
+| **FastAPI** | `pytest` | `uv run pytest -x -q --tb=short` |
+| **Go** | `go test` | `go test -short -count=1 ./...` |
+| **Flutter** | `flutter test` | `flutter test --reporter compact` |
+| **React Native** (con jest) | `jest` | `<pkg-mgr> test -- --ci --reporters=default` |
+| **Frontend web** (Next/React/Vue/Nuxt) **con Playwright** | `playwright` | `<pkg-mgr> run test:e2e` |
+| **Frontend web sin Playwright** | (ninguno) | Sugerencia de chore para integrarlo (no bloquea) |
 
 **Detección del package manager (JS/TS):** orden por lockfile — `pnpm-lock.yaml` → `pnpm`, `yarn.lock` → `yarn`, `bun.lockb`/`bun.lock` → `bun`, fallback `npm`. Nunca asumir `npm`.
 
@@ -336,8 +373,8 @@ Si descubres que la task se solapa con otra → parar, comentarlo en el work-ite
 
   ```ts
   // playwright.config.ts
-  import { defineConfig } from '@playwright/test'
-  const PORT = Number(process.env.PLAYWRIGHT_E2E_PORT ?? 39847)
+  import { defineConfig } from '@playwright/test';
+  const PORT = Number(process.env.PLAYWRIGHT_E2E_PORT ?? 39847);
 
   export default defineConfig({
     testDir: 'tests/e2e',
@@ -350,7 +387,7 @@ Si descubres que la task se solapa con otra → parar, comentarlo en el work-ite
       reuseExistingServer: !process.env.CI,
       timeout: 120_000,
     },
-  })
+  });
   ```
 
 - **Carpeta de tests fuera del bundle:** `tests/e2e/` al nivel del repo (no dentro de `app/` ni `src/`). El bundler de producción no la incluye.
@@ -381,7 +418,6 @@ Si el dev dice no, continuar sin gate. Si dice sí, dejar la nota en el output y
 ### 8. Verificar cobertura mínima
 
 El código nuevo debe tener al menos:
-
 - Happy path cubierto
 - Un caso de error cubierto
 - Sin tests vacíos (sin asserts)
